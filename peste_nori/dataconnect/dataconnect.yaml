@@ -1,0 +1,13 @@
+specVersion: "v1"
+serviceId: "pestenori-bc7a8-service"
+location: "europe-west3"
+schemas:
+  - source: "./schema"
+    datasource:
+      postgresql:
+        database: "pestenori-bc7a8-database"
+        cloudSql:
+          instanceId: "pestenori-bc7a8-instance"
+          # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
+          # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
+connectorDirs: ["./example"]

@@ -1,0 +1,1894 @@
+"""
+✨ `Badge_KeyOutput` returns the primary key fields of table type `Badge`.
+
+It has the same format as `Badge_Key`, but is only used as mutation return value.
+"""
+scalar Badge_KeyOutput
+"""
+✨ `LeaderboardEntry_KeyOutput` returns the primary key fields of table type `LeaderboardEntry`.
+
+It has the same format as `LeaderboardEntry_Key`, but is only used as mutation return value.
+"""
+scalar LeaderboardEntry_KeyOutput
+"""
+✨ `Peak_KeyOutput` returns the primary key fields of table type `Peak`.
+
+It has the same format as `Peak_Key`, but is only used as mutation return value.
+"""
+scalar Peak_KeyOutput
+"""
+✨ `User_KeyOutput` returns the primary key fields of table type `User`.
+
+It has the same format as `User_Key`, but is only used as mutation return value.
+"""
+scalar User_KeyOutput
+"""
+✨ `UserBadge_KeyOutput` returns the primary key fields of table type `UserBadge`.
+
+It has the same format as `UserBadge_Key`, but is only used as mutation return value.
+"""
+scalar UserBadge_KeyOutput
+"""
+✨ `UserPeak_KeyOutput` returns the primary key fields of table type `UserPeak`.
+
+It has the same format as `UserPeak_Key`, but is only used as mutation return value.
+"""
+scalar UserPeak_KeyOutput
+"""
+✨ Generated data input type for table 'Badge'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Badge_Data {
+  """
+  ✨ Generated from Field `Badge`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Badge`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Badge`.`criteriaDescription` of type `String!`
+  """
+  criteriaDescription: String
+  """
+  ✨ `_expr` server value variant of `criteriaDescription` (✨ Generated from Field `Badge`.`criteriaDescription` of type `String!`)
+  """
+  criteriaDescription_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Badge`.`iconUrl` of type `String!`
+  """
+  iconUrl: String
+  """
+  ✨ `_expr` server value variant of `iconUrl` (✨ Generated from Field `Badge`.`iconUrl` of type `String!`)
+  """
+  iconUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Badge`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Badge`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Badge`.`pointsReward` of type `Int`
+  """
+  pointsReward: Int
+  """
+  ✨ `_expr` server value variant of `pointsReward` (✨ Generated from Field `Badge`.`pointsReward` of type `Int`)
+  """
+  pointsReward_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `pointsReward` (✨ Generated from Field `Badge`.`pointsReward` of type `Int`)
+  """
+  pointsReward_update: [Int_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Badge`.`userBadges_on_badge` of type `[UserBadge!]!`
+  """
+  userBadges_on_badge: [UserBadge_Data!]
+}
+"""
+✨ Generated filter input type for table 'Badge'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Badge_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Badge_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Badge_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Badge_Filter!]
+  """
+  ✨ Generated from Field `Badge`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Badge`.`criteriaDescription` of type `String!`
+  """
+  criteriaDescription: String_Filter
+  """
+  ✨ Generated from Field `Badge`.`iconUrl` of type `String!`
+  """
+  iconUrl: String_Filter
+  """
+  ✨ Generated from Field `Badge`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `Badge`.`pointsReward` of type `Int`
+  """
+  pointsReward: Int_Filter
+  """
+  ✨ Generated from Field `Badge`.`userBadges_on_badge` of type `[UserBadge!]!`
+  """
+  userBadges_on_badge: UserBadge_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Badge'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Badge_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Badge_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Badge_Filter
+}
+"""
+✨ Generated having input type for table 'Badge'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Badge_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Badge_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Badge_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Badge_Having!]
+  """
+  ✨ Generated from Field `Badge`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Badge`.`criteriaDescription_count` of type `Int!`
+  """
+  criteriaDescription_count: Int_Filter
+  """
+  ✨ Generated from Field `Badge`.`iconUrl_count` of type `Int!`
+  """
+  iconUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `Badge`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Badge`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `Badge`.`pointsReward_count` of type `Int!`
+  """
+  pointsReward_count: Int_Filter
+  """
+  ✨ Generated from Field `Badge`.`pointsReward_sum` of type `Int`
+  """
+  pointsReward_sum: Int_Filter
+  """
+  ✨ Generated from Field `Badge`.`pointsReward_avg` of type `Float`
+  """
+  pointsReward_avg: Float_Filter
+  """
+  ✨ Generated from Field `Badge`.`pointsReward_min` of type `Int`
+  """
+  pointsReward_min: Int_Filter
+  """
+  ✨ Generated from Field `Badge`.`pointsReward_max` of type `Int`
+  """
+  pointsReward_max: Int_Filter
+}
+"""
+✨ Generated key input type for table 'Badge'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Badge_Key {
+  """
+  ✨ Generated from Field `Badge`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Badge`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'Badge'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Badge_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Badge_Filter
+}
+"""
+✨ Generated order input type for table 'Badge'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Badge_Order {
+  """
+  ✨ Generated from Field `Badge`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`criteriaDescription` of type `String!`
+  """
+  criteriaDescription: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`iconUrl` of type `String!`
+  """
+  iconUrl: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`pointsReward` of type `Int`
+  """
+  pointsReward: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`criteriaDescription_count` of type `Int!`
+  """
+  criteriaDescription_count: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`iconUrl_count` of type `Int!`
+  """
+  iconUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`pointsReward_count` of type `Int!`
+  """
+  pointsReward_count: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`pointsReward_sum` of type `Int`
+  """
+  pointsReward_sum: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`pointsReward_avg` of type `Float`
+  """
+  pointsReward_avg: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`pointsReward_min` of type `Int`
+  """
+  pointsReward_min: OrderDirection
+  """
+  ✨ Generated from Field `Badge`.`pointsReward_max` of type `Int`
+  """
+  pointsReward_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'LeaderboardEntry'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input LeaderboardEntry_Data {
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `LeaderboardEntry`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `LeaderboardEntry`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`user` of type `User!`
+  """
+  user: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`lastUpdated` of type `Timestamp`
+  """
+  lastUpdated: Timestamp
+  """
+  ✨ `_expr` server value variant of `lastUpdated` (✨ Generated from Field `LeaderboardEntry`.`lastUpdated` of type `Timestamp`)
+  """
+  lastUpdated_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `lastUpdated` (✨ Generated from Field `LeaderboardEntry`.`lastUpdated` of type `Timestamp`)
+  """
+  lastUpdated_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `lastUpdated` (✨ Generated from Field `LeaderboardEntry`.`lastUpdated` of type `Timestamp`)
+  """
+  lastUpdated_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`rankPosition` of type `Int!`
+  """
+  rankPosition: Int
+  """
+  ✨ `_expr` server value variant of `rankPosition` (✨ Generated from Field `LeaderboardEntry`.`rankPosition` of type `Int!`)
+  """
+  rankPosition_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `rankPosition` (✨ Generated from Field `LeaderboardEntry`.`rankPosition` of type `Int!`)
+  """
+  rankPosition_update: [Int_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount` of type `Int!`
+  """
+  totalPeaksCount: Int
+  """
+  ✨ `_expr` server value variant of `totalPeaksCount` (✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount` of type `Int!`)
+  """
+  totalPeaksCount_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `totalPeaksCount` (✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount` of type `Int!`)
+  """
+  totalPeaksCount_update: [Int_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'LeaderboardEntry'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input LeaderboardEntry_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [LeaderboardEntry_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: LeaderboardEntry_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [LeaderboardEntry_Filter!]
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`userId` of type `UUID!`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`lastUpdated` of type `Timestamp`
+  """
+  lastUpdated: Timestamp_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`rankPosition` of type `Int!`
+  """
+  rankPosition: Int_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount` of type `Int!`
+  """
+  totalPeaksCount: Int_Filter
+}
+"""
+✨ Generated first-row input type for table 'LeaderboardEntry'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input LeaderboardEntry_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [LeaderboardEntry_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: LeaderboardEntry_Filter
+}
+"""
+✨ Generated having input type for table 'LeaderboardEntry'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input LeaderboardEntry_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [LeaderboardEntry_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: LeaderboardEntry_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [LeaderboardEntry_Having!]
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`lastUpdated_count` of type `Int!`
+  """
+  lastUpdated_count: Int_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`rankPosition_count` of type `Int!`
+  """
+  rankPosition_count: Int_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount_count` of type `Int!`
+  """
+  totalPeaksCount_count: Int_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`rankPosition_sum` of type `Int`
+  """
+  rankPosition_sum: Int_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount_sum` of type `Int`
+  """
+  totalPeaksCount_sum: Int_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`rankPosition_avg` of type `Float`
+  """
+  rankPosition_avg: Float_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount_avg` of type `Float`
+  """
+  totalPeaksCount_avg: Float_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`lastUpdated_min` of type `Timestamp`
+  """
+  lastUpdated_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`rankPosition_min` of type `Int`
+  """
+  rankPosition_min: Int_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount_min` of type `Int`
+  """
+  totalPeaksCount_min: Int_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`lastUpdated_max` of type `Timestamp`
+  """
+  lastUpdated_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`rankPosition_max` of type `Int`
+  """
+  rankPosition_max: Int_Filter
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount_max` of type `Int`
+  """
+  totalPeaksCount_max: Int_Filter
+}
+"""
+✨ Generated key input type for table 'LeaderboardEntry'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input LeaderboardEntry_Key {
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `LeaderboardEntry`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'LeaderboardEntry'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input LeaderboardEntry_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: LeaderboardEntry_Filter
+}
+"""
+✨ Generated order input type for table 'LeaderboardEntry'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input LeaderboardEntry_Order {
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`userId` of type `UUID!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`lastUpdated` of type `Timestamp`
+  """
+  lastUpdated: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`rankPosition` of type `Int!`
+  """
+  rankPosition: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount` of type `Int!`
+  """
+  totalPeaksCount: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`lastUpdated_count` of type `Int!`
+  """
+  lastUpdated_count: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`rankPosition_count` of type `Int!`
+  """
+  rankPosition_count: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount_count` of type `Int!`
+  """
+  totalPeaksCount_count: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`rankPosition_sum` of type `Int`
+  """
+  rankPosition_sum: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount_sum` of type `Int`
+  """
+  totalPeaksCount_sum: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`rankPosition_avg` of type `Float`
+  """
+  rankPosition_avg: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount_avg` of type `Float`
+  """
+  totalPeaksCount_avg: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`lastUpdated_min` of type `Timestamp`
+  """
+  lastUpdated_min: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`rankPosition_min` of type `Int`
+  """
+  rankPosition_min: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount_min` of type `Int`
+  """
+  totalPeaksCount_min: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`lastUpdated_max` of type `Timestamp`
+  """
+  lastUpdated_max: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`rankPosition_max` of type `Int`
+  """
+  rankPosition_max: OrderDirection
+  """
+  ✨ Generated from Field `LeaderboardEntry`.`totalPeaksCount_max` of type `Int`
+  """
+  totalPeaksCount_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Peak'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Peak_Data {
+  """
+  ✨ Generated from Field `Peak`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Peak`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Peak`.`altitude` of type `Int!`
+  """
+  altitude: Int
+  """
+  ✨ `_expr` server value variant of `altitude` (✨ Generated from Field `Peak`.`altitude` of type `Int!`)
+  """
+  altitude_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `altitude` (✨ Generated from Field `Peak`.`altitude` of type `Int!`)
+  """
+  altitude_update: [Int_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Peak`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Peak`.`description` of type `String`)
+  """
+  description_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Peak`.`difficultyRating` of type `Int!`
+  """
+  difficultyRating: Int
+  """
+  ✨ `_expr` server value variant of `difficultyRating` (✨ Generated from Field `Peak`.`difficultyRating` of type `Int!`)
+  """
+  difficultyRating_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `difficultyRating` (✨ Generated from Field `Peak`.`difficultyRating` of type `Int!`)
+  """
+  difficultyRating_update: [Int_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Peak`.`imageUrl` of type `String`
+  """
+  imageUrl: String
+  """
+  ✨ `_expr` server value variant of `imageUrl` (✨ Generated from Field `Peak`.`imageUrl` of type `String`)
+  """
+  imageUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Peak`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Peak`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Peak`.`region` of type `String!`
+  """
+  region: String
+  """
+  ✨ `_expr` server value variant of `region` (✨ Generated from Field `Peak`.`region` of type `String!`)
+  """
+  region_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Peak`.`userPeaks_on_peak` of type `[UserPeak!]!`
+  """
+  userPeaks_on_peak: [UserPeak_Data!]
+}
+"""
+✨ Generated filter input type for table 'Peak'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Peak_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Peak_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Peak_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Peak_Filter!]
+  """
+  ✨ Generated from Field `Peak`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Peak`.`altitude` of type `Int!`
+  """
+  altitude: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `Peak`.`difficultyRating` of type `Int!`
+  """
+  difficultyRating: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`imageUrl` of type `String`
+  """
+  imageUrl: String_Filter
+  """
+  ✨ Generated from Field `Peak`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `Peak`.`region` of type `String!`
+  """
+  region: String_Filter
+  """
+  ✨ Generated from Field `Peak`.`userPeaks_on_peak` of type `[UserPeak!]!`
+  """
+  userPeaks_on_peak: UserPeak_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Peak'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Peak_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Peak_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Peak_Filter
+}
+"""
+✨ Generated having input type for table 'Peak'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Peak_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Peak_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Peak_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Peak_Having!]
+  """
+  ✨ Generated from Field `Peak`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`altitude_count` of type `Int!`
+  """
+  altitude_count: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`difficultyRating_count` of type `Int!`
+  """
+  difficultyRating_count: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`region_count` of type `Int!`
+  """
+  region_count: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`altitude_sum` of type `Int`
+  """
+  altitude_sum: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`difficultyRating_sum` of type `Int`
+  """
+  difficultyRating_sum: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`altitude_avg` of type `Float`
+  """
+  altitude_avg: Float_Filter
+  """
+  ✨ Generated from Field `Peak`.`difficultyRating_avg` of type `Float`
+  """
+  difficultyRating_avg: Float_Filter
+  """
+  ✨ Generated from Field `Peak`.`altitude_min` of type `Int`
+  """
+  altitude_min: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`difficultyRating_min` of type `Int`
+  """
+  difficultyRating_min: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`altitude_max` of type `Int`
+  """
+  altitude_max: Int_Filter
+  """
+  ✨ Generated from Field `Peak`.`difficultyRating_max` of type `Int`
+  """
+  difficultyRating_max: Int_Filter
+}
+"""
+✨ Generated key input type for table 'Peak'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Peak_Key {
+  """
+  ✨ Generated from Field `Peak`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Peak`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'Peak'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Peak_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Peak_Filter
+}
+"""
+✨ Generated order input type for table 'Peak'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Peak_Order {
+  """
+  ✨ Generated from Field `Peak`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`altitude` of type `Int!`
+  """
+  altitude: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`difficultyRating` of type `Int!`
+  """
+  difficultyRating: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`imageUrl` of type `String`
+  """
+  imageUrl: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`region` of type `String!`
+  """
+  region: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`altitude_count` of type `Int!`
+  """
+  altitude_count: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`difficultyRating_count` of type `Int!`
+  """
+  difficultyRating_count: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`region_count` of type `Int!`
+  """
+  region_count: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`altitude_sum` of type `Int`
+  """
+  altitude_sum: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`difficultyRating_sum` of type `Int`
+  """
+  difficultyRating_sum: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`altitude_avg` of type `Float`
+  """
+  altitude_avg: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`difficultyRating_avg` of type `Float`
+  """
+  difficultyRating_avg: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`altitude_min` of type `Int`
+  """
+  altitude_min: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`difficultyRating_min` of type `Int`
+  """
+  difficultyRating_min: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`altitude_max` of type `Int`
+  """
+  altitude_max: OrderDirection
+  """
+  ✨ Generated from Field `Peak`.`difficultyRating_max` of type `Int`
+  """
+  difficultyRating_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'User'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input User_Data {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`avatarUrl` of type `String!`
+  """
+  avatarUrl: String
+  """
+  ✨ `_expr` server value variant of `avatarUrl` (✨ Generated from Field `User`.`avatarUrl` of type `String!`)
+  """
+  avatarUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`bio` of type `String`
+  """
+  bio: String
+  """
+  ✨ `_expr` server value variant of `bio` (✨ Generated from Field `User`.`bio` of type `String`)
+  """
+  bio_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: String
+  """
+  ✨ `_expr` server value variant of `email` (✨ Generated from Field `User`.`email` of type `String!`)
+  """
+  email_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`joinedAt` of type `Timestamp`
+  """
+  joinedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `joinedAt` (✨ Generated from Field `User`.`joinedAt` of type `Timestamp`)
+  """
+  joinedAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `joinedAt` (✨ Generated from Field `User`.`joinedAt` of type `Timestamp`)
+  """
+  joinedAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `joinedAt` (✨ Generated from Field `User`.`joinedAt` of type `Timestamp`)
+  """
+  joinedAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`level` of type `Int!`
+  """
+  level: Int
+  """
+  ✨ `_expr` server value variant of `level` (✨ Generated from Field `User`.`level` of type `Int!`)
+  """
+  level_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `level` (✨ Generated from Field `User`.`level` of type `Int!`)
+  """
+  level_update: [Int_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`totalPoints` of type `Int!`
+  """
+  totalPoints: Int
+  """
+  ✨ `_expr` server value variant of `totalPoints` (✨ Generated from Field `User`.`totalPoints` of type `Int!`)
+  """
+  totalPoints_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `totalPoints` (✨ Generated from Field `User`.`totalPoints` of type `Int!`)
+  """
+  totalPoints_update: [Int_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`username` of type `String!`
+  """
+  username: String
+  """
+  ✨ `_expr` server value variant of `username` (✨ Generated from Field `User`.`username` of type `String!`)
+  """
+  username_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`leaderboardEntries_on_user` of type `[LeaderboardEntry!]!`
+  """
+  leaderboardEntries_on_user: [LeaderboardEntry_Data!]
+  """
+  ✨ Generated from Field `User`.`userBadges_on_user` of type `[UserBadge!]!`
+  """
+  userBadges_on_user: [UserBadge_Data!]
+  """
+  ✨ Generated from Field `User`.`userPeaks_on_user` of type `[UserPeak!]!`
+  """
+  userPeaks_on_user: [UserPeak_Data!]
+}
+"""
+✨ Generated filter input type for table 'User'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [User_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: User_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [User_Filter!]
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `User`.`avatarUrl` of type `String!`
+  """
+  avatarUrl: String_Filter
+  """
+  ✨ Generated from Field `User`.`bio` of type `String`
+  """
+  bio: String_Filter
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: String_Filter
+  """
+  ✨ Generated from Field `User`.`joinedAt` of type `Timestamp`
+  """
+  joinedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`level` of type `Int!`
+  """
+  level: Int_Filter
+  """
+  ✨ Generated from Field `User`.`totalPoints` of type `Int!`
+  """
+  totalPoints: Int_Filter
+  """
+  ✨ Generated from Field `User`.`username` of type `String!`
+  """
+  username: String_Filter
+  """
+  ✨ Generated from Field `User`.`leaderboardEntries_on_user` of type `[LeaderboardEntry!]!`
+  """
+  leaderboardEntries_on_user: LeaderboardEntry_ListFilter
+  """
+  ✨ Generated from Field `User`.`userBadges_on_user` of type `[UserBadge!]!`
+  """
+  userBadges_on_user: UserBadge_ListFilter
+  """
+  ✨ Generated from Field `User`.`userPeaks_on_user` of type `[UserPeak!]!`
+  """
+  userPeaks_on_user: UserPeak_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'User'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input User_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [User_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: User_Filter
+}
+"""
+✨ Generated having input type for table 'User'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [User_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: User_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [User_Having!]
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`avatarUrl_count` of type `Int!`
+  """
+  avatarUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`bio_count` of type `Int!`
+  """
+  bio_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`joinedAt_count` of type `Int!`
+  """
+  joinedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`level_count` of type `Int!`
+  """
+  level_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`totalPoints_count` of type `Int!`
+  """
+  totalPoints_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`username_count` of type `Int!`
+  """
+  username_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`level_sum` of type `Int`
+  """
+  level_sum: Int_Filter
+  """
+  ✨ Generated from Field `User`.`totalPoints_sum` of type `Int`
+  """
+  totalPoints_sum: Int_Filter
+  """
+  ✨ Generated from Field `User`.`level_avg` of type `Float`
+  """
+  level_avg: Float_Filter
+  """
+  ✨ Generated from Field `User`.`totalPoints_avg` of type `Float`
+  """
+  totalPoints_avg: Float_Filter
+  """
+  ✨ Generated from Field `User`.`joinedAt_min` of type `Timestamp`
+  """
+  joinedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`level_min` of type `Int`
+  """
+  level_min: Int_Filter
+  """
+  ✨ Generated from Field `User`.`totalPoints_min` of type `Int`
+  """
+  totalPoints_min: Int_Filter
+  """
+  ✨ Generated from Field `User`.`joinedAt_max` of type `Timestamp`
+  """
+  joinedAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`level_max` of type `Int`
+  """
+  level_max: Int_Filter
+  """
+  ✨ Generated from Field `User`.`totalPoints_max` of type `Int`
+  """
+  totalPoints_max: Int_Filter
+}
+"""
+✨ Generated key input type for table 'User'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input User_Key {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'User'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input User_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: User_Filter
+}
+"""
+✨ Generated order input type for table 'User'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input User_Order {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `User`.`avatarUrl` of type `String!`
+  """
+  avatarUrl: OrderDirection
+  """
+  ✨ Generated from Field `User`.`bio` of type `String`
+  """
+  bio: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: OrderDirection
+  """
+  ✨ Generated from Field `User`.`joinedAt` of type `Timestamp`
+  """
+  joinedAt: OrderDirection
+  """
+  ✨ Generated from Field `User`.`level` of type `Int!`
+  """
+  level: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalPoints` of type `Int!`
+  """
+  totalPoints: OrderDirection
+  """
+  ✨ Generated from Field `User`.`username` of type `String!`
+  """
+  username: OrderDirection
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`avatarUrl_count` of type `Int!`
+  """
+  avatarUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`bio_count` of type `Int!`
+  """
+  bio_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`joinedAt_count` of type `Int!`
+  """
+  joinedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`level_count` of type `Int!`
+  """
+  level_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalPoints_count` of type `Int!`
+  """
+  totalPoints_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`username_count` of type `Int!`
+  """
+  username_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`level_sum` of type `Int`
+  """
+  level_sum: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalPoints_sum` of type `Int`
+  """
+  totalPoints_sum: OrderDirection
+  """
+  ✨ Generated from Field `User`.`level_avg` of type `Float`
+  """
+  level_avg: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalPoints_avg` of type `Float`
+  """
+  totalPoints_avg: OrderDirection
+  """
+  ✨ Generated from Field `User`.`joinedAt_min` of type `Timestamp`
+  """
+  joinedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `User`.`level_min` of type `Int`
+  """
+  level_min: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalPoints_min` of type `Int`
+  """
+  totalPoints_min: OrderDirection
+  """
+  ✨ Generated from Field `User`.`joinedAt_max` of type `Timestamp`
+  """
+  joinedAt_max: OrderDirection
+  """
+  ✨ Generated from Field `User`.`level_max` of type `Int`
+  """
+  level_max: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalPoints_max` of type `Int`
+  """
+  totalPoints_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'UserBadge'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input UserBadge_Data {
+  """
+  ✨ Generated from Field `UserBadge`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `UserBadge`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserBadge`.`badgeId` of type `UUID!`
+  """
+  badgeId: UUID
+  """
+  ✨ `_expr` server value variant of `badgeId` (✨ Generated from Field `UserBadge`.`badgeId` of type `UUID!`)
+  """
+  badgeId_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserBadge`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `UserBadge`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserBadge`.`badge` of type `Badge!`
+  """
+  badge: Badge_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserBadge`.`user` of type `User!`
+  """
+  user: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserBadge`.`dateEarned` of type `Timestamp!`
+  """
+  dateEarned: Timestamp
+  """
+  ✨ `_expr` server value variant of `dateEarned` (✨ Generated from Field `UserBadge`.`dateEarned` of type `Timestamp!`)
+  """
+  dateEarned_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `dateEarned` (✨ Generated from Field `UserBadge`.`dateEarned` of type `Timestamp!`)
+  """
+  dateEarned_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `dateEarned` (✨ Generated from Field `UserBadge`.`dateEarned` of type `Timestamp!`)
+  """
+  dateEarned_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'UserBadge'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input UserBadge_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [UserBadge_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: UserBadge_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [UserBadge_Filter!]
+  """
+  ✨ Generated from Field `UserBadge`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `UserBadge`.`badgeId` of type `UUID!`
+  """
+  badgeId: UUID_Filter
+  """
+  ✨ Generated from Field `UserBadge`.`userId` of type `UUID!`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `UserBadge`.`badge` of type `Badge!`
+  """
+  badge: Badge_Filter
+  """
+  ✨ Generated from Field `UserBadge`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `UserBadge`.`dateEarned` of type `Timestamp!`
+  """
+  dateEarned: Timestamp_Filter
+}
+"""
+✨ Generated first-row input type for table 'UserBadge'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input UserBadge_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [UserBadge_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: UserBadge_Filter
+}
+"""
+✨ Generated having input type for table 'UserBadge'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input UserBadge_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [UserBadge_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: UserBadge_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [UserBadge_Having!]
+  """
+  ✨ Generated from Field `UserBadge`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `UserBadge`.`badgeId_count` of type `Int!`
+  """
+  badgeId_count: Int_Filter
+  """
+  ✨ Generated from Field `UserBadge`.`dateEarned_count` of type `Int!`
+  """
+  dateEarned_count: Int_Filter
+  """
+  ✨ Generated from Field `UserBadge`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `UserBadge`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `UserBadge`.`dateEarned_min` of type `Timestamp`
+  """
+  dateEarned_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `UserBadge`.`dateEarned_max` of type `Timestamp`
+  """
+  dateEarned_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'UserBadge'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input UserBadge_Key {
+  """
+  ✨ Generated from Field `UserBadge`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `UserBadge`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'UserBadge'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input UserBadge_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: UserBadge_Filter
+}
+"""
+✨ Generated order input type for table 'UserBadge'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input UserBadge_Order {
+  """
+  ✨ Generated from Field `UserBadge`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `UserBadge`.`badgeId` of type `UUID!`
+  """
+  badgeId: OrderDirection
+  """
+  ✨ Generated from Field `UserBadge`.`userId` of type `UUID!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `UserBadge`.`badge` of type `Badge!`
+  """
+  badge: Badge_Order
+  """
+  ✨ Generated from Field `UserBadge`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `UserBadge`.`dateEarned` of type `Timestamp!`
+  """
+  dateEarned: OrderDirection
+  """
+  ✨ Generated from Field `UserBadge`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `UserBadge`.`badgeId_count` of type `Int!`
+  """
+  badgeId_count: OrderDirection
+  """
+  ✨ Generated from Field `UserBadge`.`dateEarned_count` of type `Int!`
+  """
+  dateEarned_count: OrderDirection
+  """
+  ✨ Generated from Field `UserBadge`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `UserBadge`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `UserBadge`.`dateEarned_min` of type `Timestamp`
+  """
+  dateEarned_min: OrderDirection
+  """
+  ✨ Generated from Field `UserBadge`.`dateEarned_max` of type `Timestamp`
+  """
+  dateEarned_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'UserPeak'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input UserPeak_Data {
+  """
+  ✨ Generated from Field `UserPeak`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `UserPeak`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserPeak`.`peakId` of type `UUID!`
+  """
+  peakId: UUID
+  """
+  ✨ `_expr` server value variant of `peakId` (✨ Generated from Field `UserPeak`.`peakId` of type `UUID!`)
+  """
+  peakId_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserPeak`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `UserPeak`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserPeak`.`peak` of type `Peak!`
+  """
+  peak: Peak_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserPeak`.`user` of type `User!`
+  """
+  user: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserPeak`.`dateReached` of type `Date!`
+  """
+  dateReached: Date
+  """
+  ✨ `_date` server value variant of `dateReached` (✨ Generated from Field `UserPeak`.`dateReached` of type `Date!`)
+  """
+  dateReached_date: Date_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_expr` server value variant of `dateReached` (✨ Generated from Field `UserPeak`.`dateReached` of type `Date!`)
+  """
+  dateReached_expr: Date_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `dateReached` (✨ Generated from Field `UserPeak`.`dateReached` of type `Date!`)
+  """
+  dateReached_update: [Date_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserPeak`.`notes` of type `String`
+  """
+  notes: String
+  """
+  ✨ `_expr` server value variant of `notes` (✨ Generated from Field `UserPeak`.`notes` of type `String`)
+  """
+  notes_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserPeak`.`photos` of type `String`
+  """
+  photos: String
+  """
+  ✨ `_expr` server value variant of `photos` (✨ Generated from Field `UserPeak`.`photos` of type `String`)
+  """
+  photos_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'UserPeak'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input UserPeak_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [UserPeak_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: UserPeak_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [UserPeak_Filter!]
+  """
+  ✨ Generated from Field `UserPeak`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`peakId` of type `UUID!`
+  """
+  peakId: UUID_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`userId` of type `UUID!`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`peak` of type `Peak!`
+  """
+  peak: Peak_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`dateReached` of type `Date!`
+  """
+  dateReached: Date_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`notes` of type `String`
+  """
+  notes: String_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`photos` of type `String`
+  """
+  photos: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'UserPeak'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input UserPeak_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [UserPeak_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: UserPeak_Filter
+}
+"""
+✨ Generated having input type for table 'UserPeak'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input UserPeak_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [UserPeak_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: UserPeak_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [UserPeak_Having!]
+  """
+  ✨ Generated from Field `UserPeak`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`dateReached_count` of type `Int!`
+  """
+  dateReached_count: Int_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`notes_count` of type `Int!`
+  """
+  notes_count: Int_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`peakId_count` of type `Int!`
+  """
+  peakId_count: Int_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`photos_count` of type `Int!`
+  """
+  photos_count: Int_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`dateReached_min` of type `Date`
+  """
+  dateReached_min: Date_Filter
+  """
+  ✨ Generated from Field `UserPeak`.`dateReached_max` of type `Date`
+  """
+  dateReached_max: Date_Filter
+}
+"""
+✨ Generated key input type for table 'UserPeak'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input UserPeak_Key {
+  """
+  ✨ Generated from Field `UserPeak`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `UserPeak`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'UserPeak'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input UserPeak_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: UserPeak_Filter
+}
+"""
+✨ Generated order input type for table 'UserPeak'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input UserPeak_Order {
+  """
+  ✨ Generated from Field `UserPeak`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`peakId` of type `UUID!`
+  """
+  peakId: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`userId` of type `UUID!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`peak` of type `Peak!`
+  """
+  peak: Peak_Order
+  """
+  ✨ Generated from Field `UserPeak`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `UserPeak`.`dateReached` of type `Date!`
+  """
+  dateReached: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`notes` of type `String`
+  """
+  notes: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`photos` of type `String`
+  """
+  photos: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`dateReached_count` of type `Int!`
+  """
+  dateReached_count: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`notes_count` of type `Int!`
+  """
+  notes_count: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`peakId_count` of type `Int!`
+  """
+  peakId_count: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`photos_count` of type `Int!`
+  """
+  photos_count: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`dateReached_min` of type `Date`
+  """
+  dateReached_min: OrderDirection
+  """
+  ✨ Generated from Field `UserPeak`.`dateReached_max` of type `Date`
+  """
+  dateReached_max: OrderDirection
+}

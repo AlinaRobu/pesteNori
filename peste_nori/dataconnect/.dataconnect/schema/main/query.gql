@@ -1,0 +1,320 @@
+extend type Query {
+  """
+  ✨ Look up a single `Badge` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  badge(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Badge_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Badge_FirstRow
+  ): Badge @fdc_generated(from: "Badge", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `LeaderboardEntry` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  leaderboardEntry(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: LeaderboardEntry_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: LeaderboardEntry_FirstRow
+  ): LeaderboardEntry @fdc_generated(from: "LeaderboardEntry", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Peak` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  peak(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Peak_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Peak_FirstRow
+  ): Peak @fdc_generated(from: "Peak", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  user(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User @fdc_generated(from: "User", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `UserBadge` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  userBadge(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: UserBadge_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserBadge_FirstRow
+  ): UserBadge @fdc_generated(from: "UserBadge", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `UserPeak` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  userPeak(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: UserPeak_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserPeak_FirstRow
+  ): UserPeak @fdc_generated(from: "UserPeak", purpose: QUERY_SINGLE)
+  """
+  ✨ List `Badge` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  badges(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Badge_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Badge_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Badge_Having
+  ): [Badge!]! @fdc_generated(from: "Badge", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `LeaderboardEntry` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  leaderboardEntries(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: LeaderboardEntry_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [LeaderboardEntry_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: LeaderboardEntry_Having
+  ): [LeaderboardEntry!]! @fdc_generated(from: "LeaderboardEntry", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Peak` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  peaks(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Peak_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Peak_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Peak_Having
+  ): [Peak!]! @fdc_generated(from: "Peak", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `User` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  users(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: User_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [User_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: User_Having
+  ): [User!]! @fdc_generated(from: "User", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `UserBadge` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  userBadges(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserBadge_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserBadge_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserBadge_Having
+  ): [UserBadge!]! @fdc_generated(from: "UserBadge", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `UserPeak` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  userPeaks(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserPeak_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserPeak_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserPeak_Having
+  ): [UserPeak!]! @fdc_generated(from: "UserPeak", purpose: QUERY_MULTIPLE)
+}

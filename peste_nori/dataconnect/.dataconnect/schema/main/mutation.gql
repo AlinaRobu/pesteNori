@@ -1,0 +1,674 @@
+extend type Mutation {
+  """
+  ✨ Insert a single `Badge` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  badge_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Badge_Data!
+  ): Badge_KeyOutput! @fdc_generated(from: "Badge", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `LeaderboardEntry` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  leaderboardEntry_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: LeaderboardEntry_Data!
+  ): LeaderboardEntry_KeyOutput! @fdc_generated(from: "LeaderboardEntry", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Peak` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  peak_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Peak_Data!
+  ): Peak_KeyOutput! @fdc_generated(from: "Peak", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `User` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `UserBadge` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userBadge_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: UserBadge_Data!
+  ): UserBadge_KeyOutput! @fdc_generated(from: "UserBadge", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `UserPeak` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userPeak_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: UserPeak_Data!
+  ): UserPeak_KeyOutput! @fdc_generated(from: "UserPeak", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert `Badge` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  badge_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Badge_Data!]!
+  ): [Badge_KeyOutput!]! @fdc_generated(from: "Badge", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `LeaderboardEntry` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  leaderboardEntry_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [LeaderboardEntry_Data!]!
+  ): [LeaderboardEntry_KeyOutput!]! @fdc_generated(from: "LeaderboardEntry", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Peak` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  peak_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Peak_Data!]!
+  ): [Peak_KeyOutput!]! @fdc_generated(from: "Peak", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `User` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `UserBadge` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userBadge_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [UserBadge_Data!]!
+  ): [UserBadge_KeyOutput!]! @fdc_generated(from: "UserBadge", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `UserPeak` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userPeak_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [UserPeak_Data!]!
+  ): [UserPeak_KeyOutput!]! @fdc_generated(from: "UserPeak", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert or update a single `Badge` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Badge`.
+  """
+  badge_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Badge_Data!
+  ): Badge_KeyOutput! @fdc_generated(from: "Badge", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `LeaderboardEntry` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `LeaderboardEntry`.
+  """
+  leaderboardEntry_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: LeaderboardEntry_Data!
+  ): LeaderboardEntry_KeyOutput! @fdc_generated(from: "LeaderboardEntry", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Peak` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Peak`.
+  """
+  peak_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Peak_Data!
+  ): Peak_KeyOutput! @fdc_generated(from: "Peak", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `User` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `UserBadge` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserBadge`.
+  """
+  userBadge_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: UserBadge_Data!
+  ): UserBadge_KeyOutput! @fdc_generated(from: "UserBadge", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `UserPeak` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserPeak`.
+  """
+  userPeak_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: UserPeak_Data!
+  ): UserPeak_KeyOutput! @fdc_generated(from: "UserPeak", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update `Badge` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Badge`.
+  """
+  badge_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Badge_Data!]!
+  ): [Badge_KeyOutput!]! @fdc_generated(from: "Badge", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `LeaderboardEntry` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `LeaderboardEntry`.
+  """
+  leaderboardEntry_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [LeaderboardEntry_Data!]!
+  ): [LeaderboardEntry_KeyOutput!]! @fdc_generated(from: "LeaderboardEntry", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Peak` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Peak`.
+  """
+  peak_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Peak_Data!]!
+  ): [Peak_KeyOutput!]! @fdc_generated(from: "Peak", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `User` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `UserBadge` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserBadge`.
+  """
+  userBadge_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [UserBadge_Data!]!
+  ): [UserBadge_KeyOutput!]! @fdc_generated(from: "UserBadge", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `UserPeak` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserPeak`.
+  """
+  userPeak_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [UserPeak_Data!]!
+  ): [UserPeak_KeyOutput!]! @fdc_generated(from: "UserPeak", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Update a single `Badge` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Badge` or `null` if not found.
+  """
+  badge_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Badge_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Badge_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Badge_Data!
+  ): Badge_KeyOutput @fdc_generated(from: "Badge", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `LeaderboardEntry` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `LeaderboardEntry` or `null` if not found.
+  """
+  leaderboardEntry_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: LeaderboardEntry_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: LeaderboardEntry_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: LeaderboardEntry_Data!
+  ): LeaderboardEntry_KeyOutput @fdc_generated(from: "LeaderboardEntry", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Peak` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Peak` or `null` if not found.
+  """
+  peak_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Peak_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Peak_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Peak_Data!
+  ): Peak_KeyOutput @fdc_generated(from: "Peak", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `User` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `User` or `null` if not found.
+  """
+  user_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: User_Data!
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `UserBadge` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `UserBadge` or `null` if not found.
+  """
+  userBadge_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: UserBadge_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserBadge_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: UserBadge_Data!
+  ): UserBadge_KeyOutput @fdc_generated(from: "UserBadge", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `UserPeak` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `UserPeak` or `null` if not found.
+  """
+  userPeak_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: UserPeak_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserPeak_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: UserPeak_Data!
+  ): UserPeak_KeyOutput @fdc_generated(from: "UserPeak", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update `Badge` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  badge_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Badge_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Badge_Data!
+  ): Int! @fdc_generated(from: "Badge", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `LeaderboardEntry` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  leaderboardEntry_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: LeaderboardEntry_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: LeaderboardEntry_Data!
+  ): Int! @fdc_generated(from: "LeaderboardEntry", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Peak` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  peak_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Peak_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Peak_Data!
+  ): Int! @fdc_generated(from: "Peak", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `User` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  user_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: User_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: User_Data!
+  ): Int! @fdc_generated(from: "User", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `UserBadge` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  userBadge_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: UserBadge_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: UserBadge_Data!
+  ): Int! @fdc_generated(from: "UserBadge", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `UserPeak` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  userPeak_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: UserPeak_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: UserPeak_Data!
+  ): Int! @fdc_generated(from: "UserPeak", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Delete a single `Badge` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  badge_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Badge_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Badge_FirstRow
+  ): Badge_KeyOutput @fdc_generated(from: "Badge", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `LeaderboardEntry` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  leaderboardEntry_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: LeaderboardEntry_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: LeaderboardEntry_FirstRow
+  ): LeaderboardEntry_KeyOutput @fdc_generated(from: "LeaderboardEntry", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Peak` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  peak_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Peak_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Peak_FirstRow
+  ): Peak_KeyOutput @fdc_generated(from: "Peak", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `User` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  user_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `UserBadge` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  userBadge_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: UserBadge_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserBadge_FirstRow
+  ): UserBadge_KeyOutput @fdc_generated(from: "UserBadge", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `UserPeak` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  userPeak_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: UserPeak_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserPeak_FirstRow
+  ): UserPeak_KeyOutput @fdc_generated(from: "UserPeak", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete `Badge` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  badge_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Badge_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Badge", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `LeaderboardEntry` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  leaderboardEntry_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: LeaderboardEntry_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "LeaderboardEntry", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Peak` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  peak_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Peak_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Peak", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `User` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  user_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: User_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "User", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `UserBadge` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  userBadge_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: UserBadge_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "UserBadge", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `UserPeak` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  userPeak_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: UserPeak_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "UserPeak", purpose: DELETE_MULTIPLE)
+}

@@ -1,0 +1,783 @@
+extend type Badge {
+  """
+  ✨ List `UserBadge` objects in a one-to-many relationship (where `UserBadge`.`badge` is this object).
+  """
+  userBadges_on_badge(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserBadge_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserBadge_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserBadge_Having
+  ): [UserBadge!]! @fdc_generated(from: "UserBadge.badge", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Badge", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Badge` table.
+  """
+  _count: Int! @fdc_generated(from: "Badge.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Badge` table where the `criteriaDescription` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  criteriaDescription_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Badge.criteriaDescription", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Badge` table where the `iconUrl` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  iconUrl_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Badge.iconUrl", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Badge` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Badge.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Badge` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Badge.name", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Badge` table where the `pointsReward` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  pointsReward_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Badge.pointsReward", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `pointsReward` field in the `Badge` table.
+  """
+  pointsReward_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "Badge.pointsReward", purpose: QUERY_SUM)
+  """
+  ✨ Average the `pointsReward` field in the `Badge` table.
+  """
+  pointsReward_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Badge.pointsReward", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `pointsReward` field in the `Badge` table.
+  """
+  pointsReward_min: Int @fdc_generated(from: "Badge.pointsReward", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `pointsReward` field in the `Badge` table.
+  """
+  pointsReward_max: Int @fdc_generated(from: "Badge.pointsReward", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Badge.id", purpose: ENTITY_ID)
+}
+extend type LeaderboardEntry {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "LeaderboardEntry", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `LeaderboardEntry` table.
+  """
+  _count: Int! @fdc_generated(from: "LeaderboardEntry.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `LeaderboardEntry` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "LeaderboardEntry.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `LeaderboardEntry` table where the `lastUpdated` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  lastUpdated_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "LeaderboardEntry.lastUpdated", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `LeaderboardEntry` table where the `rankPosition` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  rankPosition_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "LeaderboardEntry.rankPosition", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `LeaderboardEntry` table where the `totalPeaksCount` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  totalPeaksCount_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "LeaderboardEntry.totalPeaksCount", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `LeaderboardEntry` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "LeaderboardEntry.userId", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `rankPosition` field in the `LeaderboardEntry` table.
+  """
+  rankPosition_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "LeaderboardEntry.rankPosition", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `totalPeaksCount` field in the `LeaderboardEntry` table.
+  """
+  totalPeaksCount_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "LeaderboardEntry.totalPeaksCount", purpose: QUERY_SUM)
+  """
+  ✨ Average the `rankPosition` field in the `LeaderboardEntry` table.
+  """
+  rankPosition_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "LeaderboardEntry.rankPosition", purpose: QUERY_AVG)
+  """
+  ✨ Average the `totalPeaksCount` field in the `LeaderboardEntry` table.
+  """
+  totalPeaksCount_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "LeaderboardEntry.totalPeaksCount", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `lastUpdated` field in the `LeaderboardEntry` table.
+  """
+  lastUpdated_min: Timestamp @fdc_generated(from: "LeaderboardEntry.lastUpdated", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `rankPosition` field in the `LeaderboardEntry` table.
+  """
+  rankPosition_min: Int @fdc_generated(from: "LeaderboardEntry.rankPosition", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `totalPeaksCount` field in the `LeaderboardEntry` table.
+  """
+  totalPeaksCount_min: Int @fdc_generated(from: "LeaderboardEntry.totalPeaksCount", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `lastUpdated` field in the `LeaderboardEntry` table.
+  """
+  lastUpdated_max: Timestamp @fdc_generated(from: "LeaderboardEntry.lastUpdated", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `rankPosition` field in the `LeaderboardEntry` table.
+  """
+  rankPosition_max: Int @fdc_generated(from: "LeaderboardEntry.rankPosition", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `totalPeaksCount` field in the `LeaderboardEntry` table.
+  """
+  totalPeaksCount_max: Int @fdc_generated(from: "LeaderboardEntry.totalPeaksCount", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "LeaderboardEntry.id", purpose: ENTITY_ID)
+}
+extend type Peak {
+  """
+  ✨ List `UserPeak` objects in a one-to-many relationship (where `UserPeak`.`peak` is this object).
+  """
+  userPeaks_on_peak(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserPeak_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserPeak_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserPeak_Having
+  ): [UserPeak!]! @fdc_generated(from: "UserPeak.peak", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Peak", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Peak` table.
+  """
+  _count: Int! @fdc_generated(from: "Peak.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Peak` table where the `altitude` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  altitude_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Peak.altitude", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Peak` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  description_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Peak.description", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Peak` table where the `difficultyRating` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  difficultyRating_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Peak.difficultyRating", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Peak` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Peak.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Peak` table where the `imageUrl` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  imageUrl_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Peak.imageUrl", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Peak` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Peak.name", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Peak` table where the `region` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  region_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Peak.region", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `altitude` field in the `Peak` table.
+  """
+  altitude_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "Peak.altitude", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `difficultyRating` field in the `Peak` table.
+  """
+  difficultyRating_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "Peak.difficultyRating", purpose: QUERY_SUM)
+  """
+  ✨ Average the `altitude` field in the `Peak` table.
+  """
+  altitude_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Peak.altitude", purpose: QUERY_AVG)
+  """
+  ✨ Average the `difficultyRating` field in the `Peak` table.
+  """
+  difficultyRating_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Peak.difficultyRating", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `altitude` field in the `Peak` table.
+  """
+  altitude_min: Int @fdc_generated(from: "Peak.altitude", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `difficultyRating` field in the `Peak` table.
+  """
+  difficultyRating_min: Int @fdc_generated(from: "Peak.difficultyRating", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `altitude` field in the `Peak` table.
+  """
+  altitude_max: Int @fdc_generated(from: "Peak.altitude", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `difficultyRating` field in the `Peak` table.
+  """
+  difficultyRating_max: Int @fdc_generated(from: "Peak.difficultyRating", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Peak.id", purpose: ENTITY_ID)
+}
+extend type User {
+  """
+  ✨ List `LeaderboardEntry` objects in a one-to-many relationship (where `LeaderboardEntry`.`user` is this object).
+  """
+  leaderboardEntries_on_user(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: LeaderboardEntry_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [LeaderboardEntry_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: LeaderboardEntry_Having
+  ): [LeaderboardEntry!]! @fdc_generated(from: "LeaderboardEntry.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `UserBadge` objects in a one-to-many relationship (where `UserBadge`.`user` is this object).
+  """
+  userBadges_on_user(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserBadge_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserBadge_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserBadge_Having
+  ): [UserBadge!]! @fdc_generated(from: "UserBadge.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `UserPeak` objects in a one-to-many relationship (where `UserPeak`.`user` is this object).
+  """
+  userPeaks_on_user(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserPeak_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserPeak_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserPeak_Having
+  ): [UserPeak!]! @fdc_generated(from: "UserPeak.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "User", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `User` table.
+  """
+  _count: Int! @fdc_generated(from: "User.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `avatarUrl` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  avatarUrl_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.avatarUrl", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `bio` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  bio_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.bio", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  email_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.email", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `joinedAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  joinedAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.joinedAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `level` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  level_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.level", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `totalPoints` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  totalPoints_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.totalPoints", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `username` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  username_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.username", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `level` field in the `User` table.
+  """
+  level_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "User.level", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `totalPoints` field in the `User` table.
+  """
+  totalPoints_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "User.totalPoints", purpose: QUERY_SUM)
+  """
+  ✨ Average the `level` field in the `User` table.
+  """
+  level_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "User.level", purpose: QUERY_AVG)
+  """
+  ✨ Average the `totalPoints` field in the `User` table.
+  """
+  totalPoints_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "User.totalPoints", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `joinedAt` field in the `User` table.
+  """
+  joinedAt_min: Timestamp @fdc_generated(from: "User.joinedAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `level` field in the `User` table.
+  """
+  level_min: Int @fdc_generated(from: "User.level", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `totalPoints` field in the `User` table.
+  """
+  totalPoints_min: Int @fdc_generated(from: "User.totalPoints", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `joinedAt` field in the `User` table.
+  """
+  joinedAt_max: Timestamp @fdc_generated(from: "User.joinedAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `level` field in the `User` table.
+  """
+  level_max: Int @fdc_generated(from: "User.level", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `totalPoints` field in the `User` table.
+  """
+  totalPoints_max: Int @fdc_generated(from: "User.totalPoints", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "User.id", purpose: ENTITY_ID)
+}
+extend type UserBadge {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "UserBadge", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `UserBadge` table.
+  """
+  _count: Int! @fdc_generated(from: "UserBadge.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserBadge` table where the `badgeId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  badgeId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserBadge.badgeId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserBadge` table where the `dateEarned` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  dateEarned_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserBadge.dateEarned", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserBadge` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserBadge.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserBadge` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserBadge.userId", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `dateEarned` field in the `UserBadge` table.
+  """
+  dateEarned_min: Timestamp @fdc_generated(from: "UserBadge.dateEarned", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `dateEarned` field in the `UserBadge` table.
+  """
+  dateEarned_max: Timestamp @fdc_generated(from: "UserBadge.dateEarned", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "UserBadge.id", purpose: ENTITY_ID)
+}
+extend type UserPeak {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "UserPeak", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `UserPeak` table.
+  """
+  _count: Int! @fdc_generated(from: "UserPeak.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserPeak` table where the `dateReached` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  dateReached_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserPeak.dateReached", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserPeak` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserPeak.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserPeak` table where the `notes` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  notes_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserPeak.notes", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserPeak` table where the `peakId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  peakId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserPeak.peakId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserPeak` table where the `photos` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  photos_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserPeak.photos", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserPeak` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserPeak.userId", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `dateReached` field in the `UserPeak` table.
+  """
+  dateReached_min: Date @fdc_generated(from: "UserPeak.dateReached", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `dateReached` field in the `UserPeak` table.
+  """
+  dateReached_max: Date @fdc_generated(from: "UserPeak.dateReached", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "UserPeak.id", purpose: ENTITY_ID)
+}

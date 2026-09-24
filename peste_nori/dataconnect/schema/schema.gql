@@ -1,0 +1,46 @@
+type User @table {
+  username: String!
+  email: String!
+  avatarUrl: String!
+  level: Int!
+  totalPoints: Int!
+  bio: String
+  joinedAt: Timestamp
+}
+
+type Peak @table {
+  name: String!
+  altitude: Int!
+  region: String!
+  difficultyRating: Int!
+  imageUrl: String
+  description: String
+}
+
+type UserPeak @table {
+  user: User!
+  peak: Peak!
+  dateReached: Date!
+  notes: String
+  photos: String
+}
+
+type Badge @table {
+  name: String!
+  criteriaDescription: String!
+  iconUrl: String!
+  pointsReward: Int
+}
+
+type UserBadge @table {
+  user: User!
+  badge: Badge!
+  dateEarned: Timestamp!
+}
+
+type LeaderboardEntry @table {
+  user: User!
+  rankPosition: Int!
+  totalPeaksCount: Int!
+  lastUpdated: Timestamp
+}
