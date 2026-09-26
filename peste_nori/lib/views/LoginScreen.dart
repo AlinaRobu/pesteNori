@@ -295,7 +295,7 @@ class _LoginScreen extends StartupStateTemplate {
 
       // Google authentication succeeded.
       // Navigate to your application here if needed.
-
+      openApplication(context);
     } catch (error) {
       if (!context.mounted) return;
 

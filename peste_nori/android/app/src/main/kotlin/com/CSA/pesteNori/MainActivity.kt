@@ -1,4 +1,4 @@
-package com.example.peste_nori
+package com.CSA.pesteNori
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -53,6 +53,11 @@ dev_dependencies:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/ic_launcher.png"
+
 # The following section is specific to Flutter packages.
 flutter:
 
@@ -65,7 +70,8 @@ flutter:
   assets:
     - assets/appBackground.jpg
     - assets/backgroundCollors.png
-    - assets/pesteNori_logo2.png
+    - assets/pesteNori_logo.png
+    - assets/ic_launcher.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

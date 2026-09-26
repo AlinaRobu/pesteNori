@@ -7,12 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:154994703214:android:ccb495b1c29ddde79a1f7f",
+        "mobilesdk_app_id": "1:154994703214:android:6328bedf9b44feee9a1f7f",
         "android_client_info": {
-          "package_name": "com.example.peste_nori"
+          "package_name": "com.CSA.pesteNori"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "154994703214-qa3p473i1hvniq1h7tf9cl84jg4mkj4b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.CSA.pesteNori",
+            "certificate_hash": "1d44fe396776513ebaec55507084c302c43348f3"
+          }
+        },
         {
           "client_id": "154994703214-hddq99gdadm0jonf7i0npuashdavsgbe.apps.googleusercontent.com",
           "client_type": 3
@@ -29,6 +37,13 @@
             {
               "client_id": "154994703214-hddq99gdadm0jonf7i0npuashdavsgbe.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "154994703214-5u206p43nn223etg23sns61o0dghhfpt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.CSA.pesteNori"
+              }
             }
           ]
         }

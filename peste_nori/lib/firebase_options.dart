@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -46,19 +49,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCHVTEOApW3O6A3XQOyJpv94OWGnZkXVjY',
-    appId: '1:154994703214:web:188ee9a070728b669a1f7f',
-    messagingSenderId: '154994703214',
-    projectId: 'pestenori-bc7a8',
-    authDomain: 'pestenori-bc7a8.firebaseapp.com',
-    storageBucket: 'pestenori-bc7a8.firebasestorage.app',
-    measurementId: 'G-GHJPY4S0V5',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBR9xc7Br_1_R0vYgytIm9j3P6prqUYhPU',
-    appId: '1:154994703214:android:ccb495b1c29ddde79a1f7f',
+    appId: '1:154994703214:android:6328bedf9b44feee9a1f7f',
     messagingSenderId: '154994703214',
     projectId: 'pestenori-bc7a8',
     storageBucket: 'pestenori-bc7a8.firebasestorage.app',
@@ -66,11 +59,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBx85BfBKQIRNcg-TQzN2kYw_1NVCzBea8',
-    appId: '1:154994703214:ios:7464a349afcff28b9a1f7f',
+    appId: '1:154994703214:ios:734aa8efb49dee3e9a1f7f',
     messagingSenderId: '154994703214',
     projectId: 'pestenori-bc7a8',
     storageBucket: 'pestenori-bc7a8.firebasestorage.app',
-    iosClientId: '154994703214-5u206p43nn223etg23sns61o0dghhfpt.apps.googleusercontent.com',
-    iosBundleId: 'com.example.pesteNori',
+    androidClientId: '154994703214-uu9ovhno9lm0cmldjs25c78ul7290cq8.apps.googleusercontent.com',
+    iosClientId: '154994703214-btlkd2ubiv3t5ot4tetom7l8p14bue6u.apps.googleusercontent.com',
+    iosBundleId: 'com.CSA.pesteNori',
   );
 }

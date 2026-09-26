@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'MainAppScreen.dart';
 
 abstract class StartupTemplate extends StatefulWidget {
   const StartupTemplate({Key? key}) : super(key: key);
@@ -43,7 +44,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                                     const Image(
                                         height: 250,
                                         image: AssetImage(
-                                            'assets/pesteNori_logo2.png'),
+                                            'assets/pesteNori_logo.png'),
                                         fit: BoxFit.fill),
                                     SizedBox(height: widgetsTop),
                                     getPageWidgets(context)
@@ -58,15 +59,11 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
   Widget getPageWidgets(BuildContext context);
 
   void openApplication(BuildContext context) {
-    /*
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (_) => MainAppScreen(),
       ),
     );
-    */
-
-    Navigator.pop(context);
   }
 }
