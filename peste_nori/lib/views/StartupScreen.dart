@@ -1,32 +1,75 @@
 import 'package:flutter/material.dart';
-import 'StartupTemplate.dart';
 import 'dart:ui';
 import 'LoginScreen.dart';
 import 'RegisterScreen.dart';
 
-class StartupScreen extends StartupTemplate {
-  const StartupScreen({super.key});
+class StartupScreen extends StatefulWidget {
+  const StartupScreen({Key? key}) : super(key: key);
 
-  @override
+   @override
   _StartupScreen createState() => _StartupScreen();
 }
 
-class _StartupScreen extends StartupStateTemplate {
+class _StartupScreen extends State<StartupScreen> {
  _StartupScreen();
 
-  Widget getPageWidgets(BuildContext context) {
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: Column(
+            // This makes each child fill the full width of the screen
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Expanded(
+                  child: SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
+                      child: Container(
+                          alignment: Alignment.topCenter,
+                          constraints: BoxConstraints(
+                              minHeight: MediaQuery.of(context).size.height),
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage("assets/appBackground.jpg"),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          child: SingleChildScrollView(
+                            physics: const ClampingScrollPhysics(),
+                            child: BackdropFilter(
+                              filter:
+                                  ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+                              child: Center(
+                                child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      const Image(
+                                          height: 250,
+                                          image: AssetImage(
+                                              'assets/pesteNori_logo.png'),
+                                          fit: BoxFit.fill),
+                                      SizedBox(height: 320),
+                                      getPageWidgets(context)
+                                    ]),
+                              ),
+                            ),
+                          ))))
+            ]),
+    );  
+  }
+
+  getPageWidgets(BuildContext context){
     return SafeArea(
-      child: Center(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 50, right: 50),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _loginButton(context),
 
             const SizedBox(height: 15),
 
-            _registerButton(context),
-
-            const SizedBox(height: 60),
+            _registerButton(context)
           ],
         ),
       ),

@@ -19,12 +19,12 @@ class _RegisterScreen extends StartupStateTemplate {
   final TextEditingController myPswCtrl = TextEditingController();
   final TextEditingController myConfirmPswCtrl = TextEditingController();
 
-  bool _isLoading = false;
+  bool isLoading = false;
 
   @override
-  double get widgetsTop => 100;
+  double get widgetsTop => 50;
   @override
-  String get imageBackground => "assets/backgroundCollors.png";
+  String get imageBackground => "assets/loginBackground.jpg";
 
   @override
   void dispose() {
@@ -35,71 +35,7 @@ class _RegisterScreen extends StartupStateTemplate {
   }
 
   @override
-  Widget getPageWidgets(BuildContext context) {
-     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 50, right: 50),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildRegisterButton(context),
-
-            const SizedBox(height: 15),
-
-            const Row(
-              children: [
-                Expanded(child: Divider()),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Text('SAU'),
-                ),
-                Expanded(child: Divider()),
-              ],
-            ),
-
-            const SizedBox(height: 15),
-
-            _buildGoogleButton(context)
-          ],
-        ),
-      ),
-    );    
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hintText,
-    bool obscureText = false,
-    TextInputType? keyboardType,
-  }) {
-    return Container(
-      height: 55,
-      child: TextField(
-        controller: controller,
-        obscureText: obscureText,
-        keyboardType: keyboardType,
-        style: const TextStyle(
-          fontSize: 20,
-        ),
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white38,
-          hintText: hintText,
-          contentPadding: const EdgeInsets.only(
-            left: 14,
-            bottom: 8,
-            top: 8,
-          ),
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none,
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRegisterButton(BuildContext context) {
+  Widget buildEmailForm(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -140,6 +76,40 @@ class _RegisterScreen extends StartupStateTemplate {
     );
   }
 
+/// -----------------------PRIVATE METHODS -----------------------------///
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    bool obscureText = false,
+    TextInputType? keyboardType,
+  }) {
+    return Container(
+      height: 55,
+      child: TextField(
+        controller: controller,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        style: const TextStyle(
+          fontSize: 20,
+        ),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white38,
+          hintText: hintText,
+          contentPadding: const EdgeInsets.only(
+            left: 14,
+            bottom: 8,
+            top: 8,
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildEmailButton(BuildContext context) {
     return Center(
       child: SizedBox(
@@ -171,43 +141,6 @@ class _RegisterScreen extends StartupStateTemplate {
     );
   }
 
-  Widget _buildGoogleButton(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: 220,
-        height: 45,
-        child: OutlinedButton(
-          onPressed: _isLoading
-              ? null
-              : () => _registerWithGoogle(context),
-          style: OutlinedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black87,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'G',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(width: 10),
-              Text(
-                'Continuă cu Google',
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Future<void> _registerWithEmail(BuildContext context) async {
     final email = myUsrCtrl.text.trim();
     final password = myPswCtrl.text;
@@ -216,7 +149,7 @@ class _RegisterScreen extends StartupStateTemplate {
     if (email.isEmpty ||
         password.isEmpty ||
         confirmPassword.isEmpty) {
-      _showError(
+      showError(
         context,
         'Te rugăm să completezi toate câmpurile.',
       );
@@ -224,7 +157,7 @@ class _RegisterScreen extends StartupStateTemplate {
     }
 
     if (password != confirmPassword) {
-      _showError(
+      showError(
         context,
         'Parolele nu coincid.',
       );
@@ -232,7 +165,7 @@ class _RegisterScreen extends StartupStateTemplate {
     }
 
     if (password.length < 6) {
-      _showError(
+      showError(
         context,
         'Parola trebuie să conțină cel puțin 6 caractere.',
       );
@@ -240,7 +173,7 @@ class _RegisterScreen extends StartupStateTemplate {
     }
 
     setState(() {
-      _isLoading = true;
+      isLoading = true;
     });
 
     try {
@@ -259,54 +192,20 @@ class _RegisterScreen extends StartupStateTemplate {
     } catch (e) {
       if (!context.mounted) return;
 
-      _showError(
+      showError(
         context,
         e.toString(),
       );
     } finally {
       if (mounted) {
         setState(() {
-          _isLoading = false;
+          isLoading = false;
         });
       }
     }
   }
 
-  Future<void> _registerWithGoogle(BuildContext context) async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      await myCtrl.signInWithGoogle();
-
-      if (!context.mounted) return;
-
-      openApplication(context);
-    } on FirebaseAuthException catch (e) {
-      if (!context.mounted) return;
-
-      _showFirebaseError(context, e);
-    } catch (e) {
-      if (!context.mounted) return;
-
-      _showError(
-        context,
-        e.toString(),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  void _showFirebaseError(
-    BuildContext context,
-    FirebaseAuthException error,
-  ) {
+  void _showFirebaseError(BuildContext context, FirebaseAuthException error,) {
     String message;
 
     switch (error.code) {
@@ -330,25 +229,6 @@ class _RegisterScreen extends StartupStateTemplate {
         message = error.message ?? 'A apărut o eroare.';
     }
 
-    _showError(context, message);
-  }
-
-  void _showError(
-    BuildContext context,
-    String message,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Eroare'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+    showError(context, message);
   }
 }

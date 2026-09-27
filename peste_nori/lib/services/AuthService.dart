@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class AuthService {
   static const String _serverClientId =
@@ -14,6 +15,10 @@ class AuthService {
   User? get currentUser => _auth.currentUser;
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
+
+  User? getIfLoggedIn(){
+    return _auth.currentUser;
+  }
 
   Future<UserCredential> registerWithEmail(String email, String password) async {
     return await _auth.createUserWithEmailAndPassword(
@@ -27,6 +32,14 @@ class AuthService {
       email: email,
       password: password,
     );
+  }
+
+  Future<UserCredential> signInWithFacebook() async {
+    if (kIsWeb) {
+      return await _auth.signInWithPopup(FacebookAuthProvider());
+    } else {
+      return await FirebaseAuth.instance.signInWithProvider(FacebookAuthProvider());
+    }
   }
 
   Future<UserCredential> signInWithGoogle() async {
@@ -50,4 +63,36 @@ class AuthService {
       serverClientId: _serverClientId,
     );
   }
+
+  Future<void> loginWithFacebook() async {
+  try {
+    final LoginResult result = await FacebookAuth.instance.login();
+
+    switch (result.status) {
+      case LoginStatus.success:
+        final AccessToken accessToken = result.accessToken!;
+
+        print('Facebook token: ${accessToken.token}');
+
+        final userData = await FacebookAuth.instance.getUserData();
+
+        print(userData);
+        break;
+
+      case LoginStatus.cancelled:
+        print('Facebook login cancelled');
+        break;
+
+      case LoginStatus.failed:
+        print('Facebook login failed: ${result.message}');
+        break;
+
+      case LoginStatus.operationInProgress:
+        print('Facebook login already in progress');
+        break;
+    }
+  } catch (e) {
+    print('Facebook login exception: $e');
+  }
+}
 }

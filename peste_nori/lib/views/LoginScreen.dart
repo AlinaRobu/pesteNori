@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-import '../controllers/AppLoginCtrl.dart';
 import 'StartupTemplate.dart';
 
 
@@ -13,17 +11,14 @@ class LoginScreen extends StartupTemplate {
 
 class _LoginScreen extends StartupStateTemplate {
  _LoginScreen();
-  final AppLoginCtrl myCtrl = AppLoginCtrl();
 
   final TextEditingController myUsrCtrl = TextEditingController();
   final TextEditingController myPswCtrl = TextEditingController();
 
-  bool _isLoading = false;
-
   @override
   double get widgetsTop => 100;
   @override
-  String get imageBackground => "assets/backgroundCollors.png";
+  String get imageBackground => "assets/loginBackground.jpg";
 
   @override
   void dispose() {
@@ -33,25 +28,7 @@ class _LoginScreen extends StartupStateTemplate {
   }
 
   @override
-  Widget getPageWidgets(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 50, right: 50),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildLoginArea(context),
-
-            const SizedBox(height: 15),
-
-            _buildGoogleButton(context)
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoginArea(BuildContext context) {
+  Widget buildEmailForm(BuildContext context) {
     return Column(
       children: [
         // EMAIL
@@ -75,60 +52,11 @@ class _LoginScreen extends StartupStateTemplate {
           onPressed: () => _loginWithEmail(context),
           child: const Text('Conectează-te'),
         ),
-
-        const SizedBox(height: 15),
-
-        const Row(
-          children: [
-            Expanded(child: Divider()),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text('SAU'),
-            ),
-            Expanded(child: Divider()),
-          ],
-        ),
       ],
     );
   }
 
-  Widget _buildGoogleButton(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: 220,
-        height: 45,
-        child: OutlinedButton(
-          onPressed: _isLoading
-              ? null
-              : () => _loginWithGoogle(context),
-          style: OutlinedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black87,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'G',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(width: 10),
-              Text(
-                'Continuă cu Google',
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
+/// -----------------------PRIVATE METHODS -----------------------------///
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
       filled: true,
@@ -183,7 +111,7 @@ class _LoginScreen extends StartupStateTemplate {
     final enabled =
         myUsrCtrl.text.trim().isNotEmpty &&
         myPswCtrl.text.isNotEmpty &&
-        !_isLoading;
+        !isLoading;
 
     return TextButton(
       onPressed: enabled ? () => _loginWithEmail(context) : null,
@@ -198,7 +126,7 @@ class _LoginScreen extends StartupStateTemplate {
           width: 130,
           height: 40,
           alignment: Alignment.center,
-          child: _isLoading
+          child: isLoading
               ? const SizedBox(
                   width: 18,
                   height: 18,
@@ -218,45 +146,9 @@ class _LoginScreen extends StartupStateTemplate {
     );
   }
 
-  Widget _googleLoginButton(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: 220,
-        height: 45,
-        child: OutlinedButton(
-          onPressed: _isLoading
-              ? null
-              : () => _loginWithGoogle(context),
-          style: OutlinedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black87,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // You can replace this with your Google logo asset.
-              const Text(
-                'G',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(width: 10),
-              const Text('Sign in with Google'),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Future<void> _loginWithEmail(BuildContext context) async {
     setState(() {
-      _isLoading = true;
+      isLoading = true;
     });
 
     try {
@@ -273,55 +165,13 @@ class _LoginScreen extends StartupStateTemplate {
     } catch (error) {
       if (!context.mounted) return;
 
-      _showError(context, error);
+      showError(context, error);
     } finally {
       if (mounted) {
         setState(() {
-          _isLoading = false;
+          isLoading = false;
         });
       }
     }
-  }
-
-  Future<void> _loginWithGoogle(BuildContext context) async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      await myCtrl.signInWithGoogle();
-
-      if (!context.mounted) return;
-
-      // Google authentication succeeded.
-      // Navigate to your application here if needed.
-      openApplication(context);
-    } catch (error) {
-      if (!context.mounted) return;
-
-      _showError(context, error);
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  void _showError(BuildContext context, Object error) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Login failed'),
-        content: Text(error.toString()),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
+  } 
 }
