@@ -27,6 +27,10 @@ class AuthService {
     );
   }
 
+  resetPassword(String email){
+    _auth.sendPasswordResetEmail(email: email);
+  }
+
   Future<UserCredential> signInWithEmail(String email, String password) async {
     return await _auth.signInWithEmailAndPassword(
       email: email,
@@ -50,6 +54,16 @@ class AuthService {
     }
   }
 
+  Future<UserCredential> signInWithApple() async {
+    if (kIsWeb) {
+      return await _auth.signInWithPopup(AppleAuthProvider());
+    } else {
+      return await FirebaseAuth.instance.signInWithProvider(AppleAuthProvider());
+    }
+  }
+
+  
+
   Future<void> signOut() async {
     if (!kIsWeb) {
       await _ensureGoogleSignInInitialized();
@@ -72,7 +86,7 @@ class AuthService {
       case LoginStatus.success:
         final AccessToken accessToken = result.accessToken!;
 
-        print('Facebook token: ${accessToken.token}');
+        print('Facebook token: ${accessToken.tokenString}');
 
         final userData = await FacebookAuth.instance.getUserData();
 

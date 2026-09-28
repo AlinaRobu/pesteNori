@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../controllers/AppLoginCtrl.dart';
+import 'LoginScreen.dart';
 import 'StartupTemplate.dart';
 
 class RegisterScreen extends StartupTemplate {
@@ -25,6 +26,8 @@ class _RegisterScreen extends StartupStateTemplate {
   double get widgetsTop => 50;
   @override
   String get imageBackground => "assets/loginBackground.jpg";
+  bool obscurePassword = true;
+  bool obscureConfirmPassword = true;
 
   @override
   void dispose() {
@@ -35,113 +38,140 @@ class _RegisterScreen extends StartupStateTemplate {
   }
 
   @override
-  Widget buildEmailForm(BuildContext context) {
+  Widget topWidgets(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
         children: [
             Text(
-              'Creează cont',
+              'Creează-ti contul',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 23,
+                fontSize: 20,
                 fontFamily: 'Calibri',
               ),
             ),
           // EMAIL
-          _buildTextField(
+          buildTextField(
             controller: myUsrCtrl,
-            hintText: 'Email',
-            keyboardType: TextInputType.emailAddress,
+            hint: 'Email',
+            icon: Icons.email_outlined,
           ),
-
+          const SizedBox(height: 14),
           // PASSWORD
-          _buildTextField(
+          buildTextField(
             controller: myPswCtrl,
-            hintText: 'Parolă',
-            obscureText: true,
+            hint: 'Parolă',
+            icon: Icons.lock_outline,
+            obscureText: obscurePassword,
+            suffixIcon: IconButton(
+              icon: Icon(
+                obscurePassword
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+                color: Colors.white70,
+              ),
+              onPressed: () {
+                setState(() {
+                  obscurePassword = !obscurePassword;
+                });
+              },
+            ),
           ),
-
+          const SizedBox(height: 14),
           // CONFIRM PASSWORD
-          _buildTextField(
+          buildTextField(
             controller: myConfirmPswCtrl,
-            hintText: 'Confirmă parola',
-            obscureText: true,
+            hint: 'Confirmă parola',
+            icon: Icons.lock_outline,
+            obscureText: obscureConfirmPassword,
+            suffixIcon: IconButton(
+              icon: Icon(
+                obscureConfirmPassword
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+                color: Colors.white70,
+              ),
+              onPressed: () {
+                setState(() {
+                  obscureConfirmPassword =
+                      !obscureConfirmPassword;
+                });
+              },
+            ),
           ),
 
-          const SizedBox(height: 15),
+          const SizedBox(height: 10),
 
-          _buildEmailButton(context),
-          
+          // Create account button
+          SizedBox(
+            width: double.infinity,
+            height: 45,
+            child: ElevatedButton(
+              onPressed: () => _registerWithEmail(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 8, 128, 249),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Creează cont',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Icon(Icons.arrow_forward, size: 23),
+                ],
+              ),
+            ),
+          ),
       ]
     );
   }
 
-/// -----------------------PRIVATE METHODS -----------------------------///
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hintText,
-    bool obscureText = false,
-    TextInputType? keyboardType,
-  }) {
-    return Container(
-      height: 55,
-      child: TextField(
-        controller: controller,
-        obscureText: obscureText,
-        keyboardType: keyboardType,
-        style: const TextStyle(
-          fontSize: 20,
-        ),
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white38,
-          hintText: hintText,
-          contentPadding: const EdgeInsets.only(
-            left: 14,
-            bottom: 8,
-            top: 8,
-          ),
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none,
-            borderRadius: BorderRadius.circular(8),
+  @override
+  Widget bottomWidgets(BuildContext context){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox(height: 55),
+        const Text(
+          'Ai deja cont? ',
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 16,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildEmailButton(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: 200,
-        height: 45,
-        child: OutlinedButton(
-          onPressed: () => _registerWithEmail(context),
-          style: OutlinedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black87,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            side: const BorderSide(
-              width: 2,
-              color: Colors.white,
-            ),
-          ),
-          child: 
-          const Text(
-            'Creează cont',
+        GestureDetector(
+          onTap: () {
+             Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => LoginScreen(),
+              ),
+            );
+          },
+          child: const Text(
+            'Autentificare',
             style: TextStyle(
-              color: Colors.black,
+              color: Color(0xFF168BFF),
               fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          ),
         ),
+      ],
     );
   }
-
-  Future<void> _registerWithEmail(BuildContext context) async {
+/// -----------------------PRIVATE METHODS -----------------------------///
+ Future<void> _registerWithEmail(BuildContext context) async {
     final email = myUsrCtrl.text.trim();
     final password = myPswCtrl.text;
     final confirmPassword = myConfirmPswCtrl.text;

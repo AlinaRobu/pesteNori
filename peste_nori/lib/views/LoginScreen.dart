@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'StartupTemplate.dart';
-
+import 'ResetPassword.dart';
+import 'RegisterScreen.dart';
 
 class LoginScreen extends StartupTemplate {
   const LoginScreen({super.key});
@@ -14,6 +15,7 @@ class _LoginScreen extends StartupStateTemplate {
 
   final TextEditingController myUsrCtrl = TextEditingController();
   final TextEditingController myPswCtrl = TextEditingController();
+  bool obscurePassword = true;
 
   @override
   double get widgetsTop => 100;
@@ -28,124 +30,126 @@ class _LoginScreen extends StartupStateTemplate {
   }
 
   @override
-  Widget buildEmailForm(BuildContext context) {
+  Widget topWidgets(BuildContext context) {
     return Column(
       children: [
         // EMAIL
-          _buildTextField(
-            controller: myUsrCtrl,
-            hintText: 'Email',
-            keyboardType: TextInputType.emailAddress,
+        buildTextField(
+          controller: myUsrCtrl,
+          hint: 'Email',
+          icon: Icons.email_outlined,
+        ),
+        const SizedBox(height: 14),
+        // PASSWORD
+        buildTextField(
+          controller: myPswCtrl,
+          hint: 'Parolă',
+          icon: Icons.lock_outline,
+          obscureText: obscurePassword,
+          suffixIcon: IconButton(
+            icon: Icon(
+              obscurePassword
+                  ? Icons.visibility_outlined
+                  : Icons.visibility_off_outlined,
+              color: Colors.white70,
+            ),
+            onPressed: () {
+              setState(() {
+                obscurePassword = !obscurePassword;
+              });
+            },
           ),
-
-          // PASSWORD
-          _buildTextField(
-            controller: myPswCtrl,
-            hintText: 'Parolă',
-            obscureText: true,
-          ),
+        ),
 
         const SizedBox(height: 20),
 
         // Email login
-        ElevatedButton(
-          onPressed: () => _loginWithEmail(context),
-          child: const Text('Conectează-te'),
+        SizedBox(
+          width: double.infinity,
+          height: 35,
+          child: ElevatedButton(
+            onPressed: () => _loginWithEmail(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 8, 128, 249),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(width: 12),
+                Icon(Icons.arrow_forward, size: 23),
+              ],
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 20),
+
+        GestureDetector(
+          onTap: () {
+             Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ResetPassword(),
+              ),
+            );
+          },
+          child: const Text(
+            'Am uitat parola',
+            style: TextStyle(
+              color: Color(0xFF168BFF),
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        
+        const Text(
+          'Nu ai cont? Nu-ti face griji!',
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 16,
+          ),
+        ),
+
+        GestureDetector(
+          onTap: () {
+             Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => RegisterScreen(),
+              ),
+            );
+          },
+          child: const Text(
+            'Poti crea rapid unul aici!',
+            style: TextStyle(
+              color: Color(0xFF168BFF),
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
       ],
     );
   }
 
+  @override
+  Widget bottomWidgets(BuildContext context){
+    return SizedBox();
+  }
 /// -----------------------PRIVATE METHODS -----------------------------///
-  InputDecoration _inputDecoration(String hint) {
-    return InputDecoration(
-      filled: true,
-      fillColor: Colors.white38,
-      hintText: hint,
-      contentPadding: const EdgeInsets.only(
-        left: 14,
-        bottom: 8,
-        top: 8,
-      ),
-      border: OutlineInputBorder(
-        borderSide: BorderSide.none,
-        borderRadius: BorderRadius.circular(8),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hintText,
-    bool obscureText = false,
-    TextInputType? keyboardType,
-  }) {
-    return Container(
-      height: 55,
-      child: TextField(
-        controller: controller,
-        obscureText: obscureText,
-        keyboardType: keyboardType,
-        style: const TextStyle(
-          fontSize: 20,
-        ),
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white38,
-          hintText: hintText,
-          contentPadding: const EdgeInsets.only(
-            left: 14,
-            bottom: 8,
-            top: 8,
-          ),
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none,
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _emailLoginButton(BuildContext context) {
-    final enabled =
-        myUsrCtrl.text.trim().isNotEmpty &&
-        myPswCtrl.text.isNotEmpty &&
-        !isLoading;
-
-    return TextButton(
-      onPressed: enabled ? () => _loginWithEmail(context) : null,
-      child: Ink(
-        decoration: BoxDecoration(
-          color: enabled ? Colors.white38 : Colors.white10,
-          borderRadius: const BorderRadius.all(
-            Radius.circular(80),
-          ),
-        ),
-        child: Container(
-          width: 130,
-          height: 40,
-          alignment: Alignment.center,
-          child: isLoading
-              ? const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                )
-              : Text(
-                  'Login',
-                  style: TextStyle(
-                    color: enabled ? Colors.white : Colors.white24,
-                  ),
-                ),
-        ),
-      ),
-    );
-  }
-
   Future<void> _loginWithEmail(BuildContext context) async {
     setState(() {
       isLoading = true;

@@ -1,10 +1,12 @@
 import "package:firebase_auth/firebase_auth.dart";
+import "package:peste_nori/views/ResetPassword.dart";
 import "../services/AuthService.dart";
 
 final authService = AuthService();
 
 class AppLoginCtrl {
-  getIfLoggedIn(){
+  
+  bool getIfLoggedIn(){
     bool loggedIn = false;
     try {
       User? user = authService.getIfLoggedIn();
@@ -23,7 +25,7 @@ class AppLoginCtrl {
     return loggedIn;
   }
 
-  registerWithEmail(myEmailCtrl, myPswCtrl) async {
+  Future<void> registerWithEmail(myEmailCtrl, myPswCtrl) async {
     try {
       final credential = await authService.registerWithEmail(
         myEmailCtrl.trim(),
@@ -33,6 +35,14 @@ class AppLoginCtrl {
       print('Logged in: ${credential.user?.uid}');
     } on FirebaseAuthException catch (e) {
       print('Login failed: ${e.code}');
+    }
+  }
+
+  resetPassword(myEmailCtrl){
+    try {
+      authService.resetPassword(myEmailCtrl.trim());
+    } on FirebaseAuthException catch (e) {
+      print('Password reset failed: ${e.code}');
     }
   }
 
@@ -52,6 +62,16 @@ class AppLoginCtrl {
   Future<void> signInWithGoogle() async {
     try {
       final credential = await AuthService().signInWithGoogle();
+
+      print('Logged in: ${credential.user?.email}');
+    } on FirebaseAuthException catch (e) {
+      print('Google login failed: ${e.code}');
+    }
+  }
+
+  Future<void> signInWithApple() async {
+    try {
+      final credential = await AuthService().signInWithApple();
 
       print('Logged in: ${credential.user?.email}');
     } on FirebaseAuthException catch (e) {

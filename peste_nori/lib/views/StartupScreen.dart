@@ -77,73 +77,77 @@ class _StartupScreen extends State<StartupScreen> {
   }
 
   Widget _loginButton(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => LoginScreen(),
+    return Center(
+      child: TextButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => LoginScreen(),
+            ),
+          );
+        },
+        child: Ink(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                Color.fromARGB(255, 210, 173, 26),
+                Color.fromARGB(255, 91, 72, 11),
+              ],
+            ),
+            borderRadius: BorderRadius.all(
+              Radius.circular(80),
+            ),
           ),
-        );
-      },
-      child: Ink(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [
-              Color.fromARGB(255, 210, 173, 26),
-              Color.fromARGB(255, 91, 72, 11),
-            ],
-          ),
-          borderRadius: BorderRadius.all(
-            Radius.circular(80),
+          child: Container(
+            width: 200,
+            height: 45,
+            alignment: Alignment.center,
+            child: const Text(
+              'Conectează-te',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              ),
+            ),
           ),
         ),
-        child: Container(
-          width: 200,
-          height: 45,
-          alignment: Alignment.center,
+      )
+    );
+  }
+
+  Widget _registerButton(BuildContext context) {
+    return Center(
+      child: SizedBox(
+        width: 200,
+        height: 45,
+        child: OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            shape: const StadiumBorder(),
+            side: const BorderSide(
+              width: 2,
+              color: Color.fromARGB(255, 210, 149, 26),
+            ),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => RegisterScreen(),
+              ),
+            );
+          },
           child: const Text(
-            'Conectează-te',
+            'Creează cont',
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _registerButton(BuildContext context) {
-    return SizedBox(
-      width: 200,
-      height: 45,
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          shape: const StadiumBorder(),
-          side: const BorderSide(
-            width: 2,
-            color: Color.fromARGB(255, 210, 149, 26),
-          ),
-        ),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => RegisterScreen(),
-            ),
-          );
-        },
-        child: const Text(
-          'Creează cont',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
-        ),
-      ),
+      )
     );
   }
 }

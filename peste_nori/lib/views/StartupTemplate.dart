@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'dart:io' show Platform;
 import 'HomeScreen.dart';
 import '../controllers/AppLoginCtrl.dart';
 
@@ -33,6 +34,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                           image: DecorationImage(
                             image: AssetImage(imageBackground),
                             fit: BoxFit.cover,
+                            opacity: 0.8
                           ),
                         ),
                         child: SingleChildScrollView(
@@ -45,10 +47,21 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     const Image(
-                                        height: 250,
-                                        image: AssetImage(
-                                            'assets/pesteNori_logo.png'),
-                                        fit: BoxFit.fill),
+                                      height: 200,
+                                      image: AssetImage(
+                                          'assets/pesteNori_logo.png'),
+                                      fit: BoxFit.fill),
+                                      const Text(
+                                        'Colecționează experiențe.\nDescoperă munții.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          height: 1.35,
+                                          fontFamily: 'Calibri',
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
                                     SizedBox(height: widgetsTop),
                                     getPageWidgets(context)
                                   ]),
@@ -59,8 +72,6 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
     );
   }
 
-  Widget buildEmailForm(BuildContext context);
-
   Widget getPageWidgets(BuildContext context){
     return SafeArea(
       child: Padding(
@@ -68,29 +79,115 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildEmailForm(context),
+            topWidgets(context),
 
             const SizedBox(height: 15),
 
-            const Row(
+            // OR separator
+            Row(
               children: [
-                Expanded(child: Divider()),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Text('SAU'),
+                Expanded(
+                  child: Container(
+                    height: 1,
+                    color: Colors.white38,
+                  ),
                 ),
-                Expanded(child: Divider()),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    'SAU',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    height: 1,
+                    color: Colors.white38,
+                  ),
+                ),
               ],
             ),
 
             const SizedBox(height: 15),
 
-            buildGoogleButton(context),
-
+            // Google / Apple login
+            _socialButton(
+              icon: Platform.isIOS ?  const Icon(
+                Icons.apple,
+                color: Colors.white,
+                size: 27,
+              ) : const Text(
+                  'G',
+                  style: TextStyle(
+                    color: Color(0xFF4285F4),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              text: Platform.isIOS ? 'Continuă cu Apple' : 'Continuă cu Google',
+              onPressed: Platform.isIOS ?  myCtrl.signInWithApple : myCtrl.signInWithGoogle
+            ),
+        
             const SizedBox(height: 15),
 
-            buildFacebookButton(context)
+            buildFacebookButton(context),
+
+            bottomWidgets(context)
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget bottomWidgets(BuildContext context);
+
+  Widget topWidgets(BuildContext context);
+
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+    bool obscureText = false,
+    Widget? suffixIcon,
+  }) {
+    return Container(
+      height: 45,
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 38, 53, 85).withOpacity(0.9),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.25),
+          width: 1,
+        ),
+      ),
+      child: TextField(
+        textAlignVertical: TextAlignVertical.center,
+        controller: controller,
+        obscureText: obscureText,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 17,
+        ),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: hint,
+          hintStyle: const TextStyle(
+            color: Colors.white70,
+            fontSize: 17,
+          ),
+          prefixIcon: Icon(
+            icon,
+            color: Colors.white70,
+            size: 27,
+          ),
+          suffixIcon: suffixIcon,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 0,
+          ),
         ),
       ),
     );
@@ -220,6 +317,44 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
   }
 
   /// -----------------------PRIVATE METHODS -----------------------------///
+  Widget _socialButton({required Widget icon, required String text, required VoidCallback onPressed}) {
+    return SizedBox(
+      width: double.infinity,
+      height: 45,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: const Color.fromARGB(255, 38, 53, 85).withOpacity(0.9),
+          foregroundColor: Colors.white,
+          side: const BorderSide(
+            color: Colors.white54,
+            width: 1,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 35,
+              child: Center(child: icon),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              text,
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _loginWithGoogle(BuildContext context) async {
     setState(() {
       isLoading = true;
