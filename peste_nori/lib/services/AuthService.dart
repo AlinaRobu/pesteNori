@@ -27,8 +27,12 @@ class AuthService {
     );
   }
 
-  resetPassword(String email){
-    _auth.sendPasswordResetEmail(email: email);
+  Future<void> resetPassword(String email){
+    return _auth.sendPasswordResetEmail(email: email);
+  }
+
+  Future<void> confirmPasswordReset(String code, String newPassword){
+    return _auth.confirmPasswordReset(code: code, newPassword: newPassword);
   }
 
   Future<UserCredential> signInWithEmail(String email, String password) async {

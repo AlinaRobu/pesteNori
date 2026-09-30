@@ -1,5 +1,4 @@
 import "package:firebase_auth/firebase_auth.dart";
-import "package:peste_nori/views/ResetPassword.dart";
 import "../services/AuthService.dart";
 
 final authService = AuthService();
@@ -45,6 +44,15 @@ class AppLoginCtrl {
       print('Password reset failed: ${e.code}');
     }
   }
+
+  confirmPasswordReset(String code, String newPassword){
+    try {
+      authService.confirmPasswordReset(code, newPassword);
+    } on FirebaseAuthException catch (e) {
+      print('Password reset failed: ${e.code}');
+    }
+  }
+
 
   signInWithEmail(myEmailCtrl, myPswCtrl) async {
     try {

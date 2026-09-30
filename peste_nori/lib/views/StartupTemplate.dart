@@ -9,8 +9,9 @@ abstract class StartupTemplate extends StatefulWidget {
 }
 
 abstract class StartupStateTemplate extends State<StartupTemplate> {
+  bool get showSocialButtons => true;
   double get widgetsTop => 320;
-  String get imageBackground => "assets/appBackground.jpg";
+  String get imageBackground => "assets/startBackground.jpg";
   bool isLoading = false;
   final AppLoginCtrl myCtrl = AppLoginCtrl();
 
@@ -83,57 +84,59 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
 
             const SizedBox(height: 15),
 
-            // OR separator
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 1,
-                    color: Colors.white38,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    'SAU',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 15,
+            if(showSocialButtons)...[
+              // OR separator
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 1,
+                      color: Colors.white38,
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Container(
-                    height: 1,
-                    color: Colors.white38,
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      'SAU',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 15,
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 15),
-
-            // Google / Apple login
-            _socialButton(
-              icon: Platform.isIOS ?  const Icon(
-                Icons.apple,
-                color: Colors.white,
-                size: 27,
-              ) : const Text(
-                  'G',
-                  style: TextStyle(
-                    color: Color(0xFF4285F4),
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Container(
+                      height: 1,
+                      color: Colors.white38,
+                    ),
                   ),
-                ),
-              text: Platform.isIOS ? 'Continuă cu Apple' : 'Continuă cu Google',
-              onPressed: Platform.isIOS ?  myCtrl.signInWithApple : myCtrl.signInWithGoogle
-            ),
-        
-            const SizedBox(height: 15),
+                ],
+              ),
 
-            buildFacebookButton(context),
+              const SizedBox(height: 15),
+
+              // Google / Apple login
+              _socialButton(
+                icon: Platform.isIOS ?  const Icon(
+                  Icons.apple,
+                  color: Colors.white,
+                  size: 27,
+                ) : const Text(
+                    'G',
+                    style: TextStyle(
+                      color: Color(0xFF4285F4),
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                text: Platform.isIOS ? 'Continuă cu Apple' : 'Continuă cu Google',
+                onPressed: Platform.isIOS ?  myCtrl.signInWithApple : myCtrl.signInWithGoogle
+              ),
+          
+              const SizedBox(height: 15),
+
+              buildFacebookButton(context),
+            ],
 
             bottomWidgets(context)
           ],
@@ -149,7 +152,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
   Widget buildTextField({
     required TextEditingController controller,
     required String hint,
-    required IconData icon,
+    IconData? icon,
     bool obscureText = false,
     Widget? suffixIcon,
   }) {
@@ -178,11 +181,11 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
             color: Colors.white70,
             fontSize: 17,
           ),
-          prefixIcon: Icon(
+          prefixIcon: icon != null ? Icon(
             icon,
             color: Colors.white70,
             size: 27,
-          ),
+          ): SizedBox(width: 0),
           suffixIcon: suffixIcon,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 10,

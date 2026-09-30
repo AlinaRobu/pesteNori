@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'LoginScreen.dart';
-import 'RegisterScreen.dart';
+import 'login/LoginScreen.dart';
+import 'login/RegisterScreen.dart';
 
 class StartupScreen extends StatefulWidget {
   const StartupScreen({Key? key}) : super(key: key);
@@ -30,7 +30,7 @@ class _StartupScreen extends State<StartupScreen> {
                               minHeight: MediaQuery.of(context).size.height),
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: AssetImage("assets/appBackground.jpg"),
+                              image: AssetImage("assets/startBackground.jpg"),
                               fit: BoxFit.cover,
                             ),
                           ),

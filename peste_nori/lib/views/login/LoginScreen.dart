@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'StartupTemplate.dart';
+import '../StartupTemplate.dart';
 import 'ResetPassword.dart';
 import 'RegisterScreen.dart';
 

@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../controllers/AppLoginCtrl.dart';
+import '../../controllers/AppLoginCtrl.dart';
 import 'LoginScreen.dart';
-import 'StartupTemplate.dart';
+import '../StartupTemplate.dart';
 
 class RegisterScreen extends StartupTemplate {
   const RegisterScreen({super.key});
