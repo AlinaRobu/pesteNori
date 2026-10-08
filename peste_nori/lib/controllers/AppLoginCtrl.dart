@@ -1,7 +1,10 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "../services/AuthService.dart";
+import '../../globals.dart';
+import '../services/UserService.dart';
 
 final authService = AuthService();
+final userService = UserService();
 
 class AppLoginCtrl {
   
@@ -31,9 +34,11 @@ class AppLoginCtrl {
         myPswCtrl,
       );
 
-      print('Logged in: ${credential.user?.uid}');
+      print('Register in: ${credential.user?.uid}');
+      //save user
+      await userService.addUser(credential.user);
     } on FirebaseAuthException catch (e) {
-      print('Login failed: ${e.code}');
+      print('Registering failed: ${e.code}');
     }
   }
 
@@ -53,7 +58,6 @@ class AppLoginCtrl {
     }
   }
 
-
   signInWithEmail(myEmailCtrl, myPswCtrl) async {
     try {
       final credential = await authService.signInWithEmail(
@@ -72,6 +76,12 @@ class AppLoginCtrl {
       final credential = await AuthService().signInWithGoogle();
 
       print('Logged in: ${credential.user?.email}');
+
+      final exists = await userService.userExists(credential.user?.uid);
+
+      if (!exists) {
+        await userService.addUser(credential.user);
+      }
     } on FirebaseAuthException catch (e) {
       print('Google login failed: ${e.code}');
     }
@@ -82,6 +92,12 @@ class AppLoginCtrl {
       final credential = await AuthService().signInWithApple();
 
       print('Logged in: ${credential.user?.email}');
+
+      final exists = await userService.userExists(credential.user?.uid);
+
+      if (!exists) {
+        await userService.addUser(credential.user);
+      }
     } on FirebaseAuthException catch (e) {
       print('Google login failed: ${e.code}');
     }
@@ -92,6 +108,12 @@ class AppLoginCtrl {
       final credential = await AuthService().signInWithFacebook();
 
       print('Logged in: ${credential.user?.email}');
+
+      final exists = await userService.userExists(credential.user?.uid);
+
+      if (!exists) {
+        await userService.addUser(credential.user);
+      }
     } on FirebaseAuthException catch (e) {
       print('Facebook login failed: ${e.code}');
     }
@@ -101,7 +123,7 @@ class AppLoginCtrl {
     try {
       await AuthService().signOut();
 
-      print('Logged out: ${AuthService().currentUser}');
+      print('Logged out: ${currentUser}');
     } on FirebaseAuthException catch (e) {
       print('Google login failed: ${e.code}');
     }

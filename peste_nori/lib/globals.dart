@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-int flex = kIsWeb ? 1 : 2;
-double width = 0;
-double height = 0;
+
+User? currentUser; 
+
 
