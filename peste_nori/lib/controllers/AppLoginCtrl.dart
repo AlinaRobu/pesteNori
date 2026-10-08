@@ -73,7 +73,7 @@ class AppLoginCtrl {
 
   Future<void> signInWithGoogle() async {
     try {
-      final credential = await AuthService().signInWithGoogle();
+      final credential = await authService.signInWithGoogle();
 
       print('Logged in: ${credential.user?.email}');
 
@@ -89,7 +89,7 @@ class AppLoginCtrl {
 
   Future<void> signInWithApple() async {
     try {
-      final credential = await AuthService().signInWithApple();
+      final credential = await authService.signInWithApple();
 
       print('Logged in: ${credential.user?.email}');
 
@@ -105,7 +105,7 @@ class AppLoginCtrl {
 
   Future<void> signInWithFacebook() async {
     try {
-      final credential = await AuthService().signInWithFacebook();
+      final credential = await authService.signInWithFacebook();
 
       print('Logged in: ${credential.user?.email}');
 
@@ -121,11 +121,21 @@ class AppLoginCtrl {
 
   Future<void> signOut() async {
     try {
-      await AuthService().signOut();
+      await authService.signOut();
 
       print('Logged out: ${currentUser}');
     } on FirebaseAuthException catch (e) {
       print('Google login failed: ${e.code}');
     }
+  }
+
+  Future<void> deleteAccount() async{
+    await authService.deleteAccount();
+
+    print('Deleted account ${currentUser}');
+  }
+
+  Future<bool> reauthenticateWithCredential (Set<String>? providers, String? password) async {
+    return await authService.reauthenticateWithCredential(providers, password);
   }
 }

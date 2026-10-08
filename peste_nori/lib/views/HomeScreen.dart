@@ -1,9 +1,14 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:peste_nori/globals.dart';
 import 'ProfilePicture.dart';
 import 'FullScreenImage.dart';
 import '../controllers/UserProfileCtrl.dart';
+import '../controllers/AppLoginCtrl.dart';
+
+enum _HomeMenuAction { deleteAccount, signOut }
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,6 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = true;
   final ImagePicker _picker = ImagePicker();
   final UserProfileCtrl _userProfileCtrl = UserProfileCtrl();
+  final AppLoginCtrl _authCtrl = AppLoginCtrl();
+  final controller = TextEditingController();
 
   File? _profileImage;
 
@@ -31,53 +38,99 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void dispose() {
     super.dispose();
+    controller.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: Stack(
         children: [
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              child: Container(
-                constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height,
-                ),
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(imageBackground),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 20),
-
-                      ProfilePicture(
-                        imageFile: _profileImage,
-                        radius: 35,
-                        onTap: () {
-                          if (_profileImage != null) {
-                            _showFullScreenImage();
-                          } else {
-                            _showImageSourceDialog();
-                          }
-                        },
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minHeight: MediaQuery.of(context).size.height,
+                    ),
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(imageBackground),
+                        fit: BoxFit.cover,
                       ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20),
 
-                      const SizedBox(height: 30),
+                          ProfilePicture(
+                            imageFile: _profileImage,
+                            radius: 35,
+                            onTap: () {
+                              if (_profileImage != null) {
+                                _showFullScreenImage();
+                              } else {
+                                _showImageSourceDialog();
+                              }
+                            },
+                          ),
 
-                      // Other widgets...
-                    ],
+                          const SizedBox(height: 30),
+
+                          // Other widgets...
+                        ],
+                      ),
+                    ),
                   ),
                 ),
+              ),
+            ],
+          ),
+          Positioned(
+            top: 8,
+            right: 12,
+            child: SafeArea(
+              child: PopupMenuButton<_HomeMenuAction>(
+                tooltip: 'Settings',
+                icon: const Icon(Icons.settings, color: Colors.white),
+                color: Colors.white,
+                onSelected: (action) {
+                  switch (action) {
+                    case _HomeMenuAction.deleteAccount:
+                      _confirmDeleteAccount();
+                    case _HomeMenuAction.signOut:
+                      _signOut();
+                  }
+                },
+                itemBuilder: (context) => const [
+                  PopupMenuItem(
+                    value: _HomeMenuAction.signOut,
+                    child: Row(
+                      children: [
+                        Icon(Icons.logout),
+                        SizedBox(width: 12),
+                        Text('Sign out'),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: _HomeMenuAction.deleteAccount,
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_forever, color: Colors.red),
+                        SizedBox(width: 12),
+                        Text('Delete account', style: TextStyle(color: Colors.red)),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -106,6 +159,128 @@ class _HomeScreenState extends State<HomeScreen> {
 
       debugPrint('Error loading user data: $e');
     }
+  }
+
+  Future<void> _signOut() async {
+    try {
+      await _authCtrl.signOut();
+    } catch (e) {
+      debugPrint('Error signing out: $e');
+    }
+  }
+
+  Future<void> _confirmDeleteAccount() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete account?'),
+        content: const Text(
+          'This permanently deletes your account. You may need to sign in again first.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Delete account'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      await _authCtrl.deleteAccount();
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+
+      if(e.code == 'requires-recent-login'){
+        bool authenticated = await _reauthenticateUser();
+
+        if (!authenticated) {
+          return;
+        }
+
+        // Try deleting again after reauthentication.
+        await _authCtrl.deleteAccount();        
+      } else {
+        final message = 'Could not delete your account. Please try again.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
+    }
+  }
+
+  Future<String?> _askForPassword() async {
+    try {
+      return await showDialog<String>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Confirm your password'),
+            content: TextField(
+              controller: controller,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Password',
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, controller.text);
+                },
+                child: const Text('Confirm'),
+              ),
+            ],
+          );
+        },
+      );
+    } finally {
+      controller.clear();
+    }
+  }
+
+  Future<bool> _reauthenticateUser() async{
+    if (currentUser == null) {
+      return false;
+    }
+
+    String? password;
+    final providers = currentUser?.providerData
+        .map((provider) => provider.providerId)
+        .toSet();
+
+    // Email / password
+    if (providers!.contains('password')) {
+      password = await _askForPassword();
+    }
+
+    bool authenticated = false;
+    try{  
+      authenticated = await _authCtrl.reauthenticateWithCredential(providers, password);
+    } on FirebaseAuthException catch (e) {
+      String message = "Cannot delete account";
+      if(e.code == "invalid-credential"){
+        message = "Wrong password!";
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+      );
+    }
+
+    setState((){
+      password = "";
+    });
+    return authenticated;
   }
 
   void _showFullScreenImage() {

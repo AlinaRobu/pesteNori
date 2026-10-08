@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../globals.dart';
 
 class AuthService {
@@ -45,7 +46,7 @@ class AuthService {
     if (kIsWeb) {
       return await _auth.signInWithPopup(FacebookAuthProvider());
     } else {
-      return await FirebaseAuth.instance.signInWithProvider(FacebookAuthProvider());
+      return await _auth.signInWithProvider(FacebookAuthProvider());
     }
   }
 
@@ -53,7 +54,7 @@ class AuthService {
     if (kIsWeb) {
       return await _auth.signInWithPopup(GoogleAuthProvider());
     } else {
-      return await FirebaseAuth.instance.signInWithProvider(GoogleAuthProvider());
+      return await _auth.signInWithProvider(GoogleAuthProvider());
     }
   }
 
@@ -61,11 +62,9 @@ class AuthService {
     if (kIsWeb) {
       return await _auth.signInWithPopup(AppleAuthProvider());
     } else {
-      return await FirebaseAuth.instance.signInWithProvider(AppleAuthProvider());
+      return await _auth.signInWithProvider(AppleAuthProvider());
     }
   }
-
-  
 
   Future<void> signOut() async {
     if (!kIsWeb) {
@@ -75,6 +74,13 @@ class AuthService {
     await _auth.signOut();
   }
 
+  Future<void> deleteAccount() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    await user.delete();
+  }
+
   Future<void> _ensureGoogleSignInInitialized() {
     return _googleSignInInitialization ??= GoogleSignIn.instance.initialize(
       serverClientId: _serverClientId,
@@ -82,34 +88,130 @@ class AuthService {
   }
 
   Future<void> loginWithFacebook() async {
-  try {
-    final LoginResult result = await FacebookAuth.instance.login();
+    try {
+      final LoginResult result = await FacebookAuth.instance.login();
 
-    switch (result.status) {
-      case LoginStatus.success:
-        final AccessToken accessToken = result.accessToken!;
+      switch (result.status) {
+        case LoginStatus.success:
+          final AccessToken accessToken = result.accessToken!;
 
-        print('Facebook token: ${accessToken.tokenString}');
+          print('Facebook token: ${accessToken.tokenString}');
 
-        final userData = await FacebookAuth.instance.getUserData();
+          final userData = await FacebookAuth.instance.getUserData();
 
-        print(userData);
-        break;
+          print(userData);
+          break;
 
-      case LoginStatus.cancelled:
-        print('Facebook login cancelled');
-        break;
+        case LoginStatus.cancelled:
+          print('Facebook login cancelled');
+          break;
 
-      case LoginStatus.failed:
-        print('Facebook login failed: ${result.message}');
-        break;
+        case LoginStatus.failed:
+          print('Facebook login failed: ${result.message}');
+          break;
 
-      case LoginStatus.operationInProgress:
-        print('Facebook login already in progress');
-        break;
+        case LoginStatus.operationInProgress:
+          print('Facebook login already in progress');
+          break;
+      }
+    } catch (e) {
+      print('Facebook login exception: $e');
     }
-  } catch (e) {
-    print('Facebook login exception: $e');
   }
-}
+
+  Future<bool> reauthenticateWithCredential(Set<String>? providers, String? password) async{
+    if (currentUser == null) {
+      return false;
+    }
+
+    try {
+      // Email / password
+      if (providers!.contains('password')) {
+        if (password == null || password.isEmpty) {
+          return false;
+        }
+
+        final credential = EmailAuthProvider.credential(
+          email: currentUser!.email!,
+          password: password,
+        );
+
+        await _auth.currentUser?.reauthenticateWithCredential(credential);
+
+        return true;
+      }
+
+      // Google
+      if (providers.contains('google.com')) {
+        await _ensureGoogleSignInInitialized();
+        final googleUser = await GoogleSignIn.instance.authenticate();
+        final googleAuth = googleUser.authentication;
+        final idToken = googleAuth.idToken;
+
+        if (idToken == null) {
+          return false;
+        }
+
+        final credential = GoogleAuthProvider.credential(
+          idToken: idToken,
+        );
+
+        await _auth.currentUser?.reauthenticateWithCredential(credential);
+
+        return true;
+      }
+
+      //Apple
+      if (providers.contains('apple.com')) {
+        final appleCredential = await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+        );
+
+        final oauthCredential = OAuthProvider('apple.com').credential(
+          idToken: appleCredential.identityToken,
+          accessToken: appleCredential.authorizationCode,
+        );
+
+        await _auth.currentUser?.reauthenticateWithCredential(oauthCredential);
+
+        return true;
+      }
+
+      // Facebook
+      if (providers.contains('facebook.com')) {
+        final result = await FacebookAuth.instance.login();
+
+        if (result.status != LoginStatus.success) {
+          return false;
+        }
+
+        final accessToken = result.accessToken;
+
+        if (accessToken == null) {
+          return false;
+        }
+
+        final credential = FacebookAuthProvider.credential(
+          accessToken.tokenString,
+        );
+
+        await _auth.currentUser?.reauthenticateWithCredential(credential);
+
+        return true;
+      }
+
+      return false;
+    } on FirebaseAuthException catch (e) {
+      print('Reauthentication failed: ${e.code}');
+
+      rethrow;
+    } catch (e) {
+      print('Reauthentication error: $e');
+
+      return false;
+    }
+  }
 }

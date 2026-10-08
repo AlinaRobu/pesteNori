@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
               body: Center(child: CircularProgressIndicator()),
             );
           }
-
+          AuthService().getIfLoggedIn();
           return snapshot.data == null ? const StartupScreen() : const HomeScreen();
         },
       ),
