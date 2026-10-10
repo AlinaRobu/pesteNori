@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class FullScreenImage extends StatelessWidget {
-  final File image;
+  final String? imageUrl;
 
   const FullScreenImage({
     super.key,
-    required this.image,
+    this.imageUrl
   });
 
   @override
@@ -16,18 +16,32 @@ class FullScreenImage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        elevation: 0,
       ),
       body: Center(
         child: InteractiveViewer(
           minScale: 0.5,
           maxScale: 4.0,
-          child: Image.file(
-            image,
-            fit: BoxFit.contain,
-          ),
+          child: _getImage(),
         ),
       ),
     );
+  }
+
+  ///------------------------------PRIVATE METHODS------------------------///
+  Widget _getImage(){
+    Widget image;
+
+    if (imageUrl != null && imageUrl!.isNotEmpty) {
+      image = Image.network(
+        imageUrl!,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) =>
+            const Icon(Icons.broken_image, color: Colors.white, size: 50),
+      );
+    } else {
+      image = const Icon(Icons.person, color: Colors.white, size: 80);
+    }
+
+    return image;
   }
 }

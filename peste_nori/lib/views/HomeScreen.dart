@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final controller = TextEditingController();
 
   File? _profileImage;
+  String? _profileImageUrl;
 
   double get widgetsTop => 100;
   String get imageBackground => "assets/appBackground.png";
@@ -72,10 +73,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(height: 20),
 
                           ProfilePicture(
-                            imageFile: _profileImage,
+                            imageUrl: _profileImageUrl,
                             radius: 35,
                             onTap: () {
-                              if (_profileImage != null) {
+                              if (_profileImageUrl != null && _profileImageUrl != "") {
                                 _showFullScreenImage();
                               } else {
                                 _showImageSourceDialog();
@@ -149,6 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         userData = data;
+        _profileImageUrl = userData?['profileImageUrl'];
         isLoading = false;
       });
     } catch (e) {
@@ -298,12 +300,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showFullScreenImage() {
-    if (_profileImage == null) return;
+    if (_profileImageUrl == null) return;
 
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => FullScreenImage(
-          image: _profileImage!,
+          imageUrl: _profileImageUrl
         ),
       ),
     );
@@ -356,8 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _profileImage = File(pickedFile.path);
       });
 
-      // Upload _profileImage to your backend here.
-      
+      _uploadProfileImage();
     } catch (e) {
       debugPrint('Error selecting image: $e');
     }

@@ -1,6 +1,5 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "../services/UserService.dart";
-import "package:peste_nori/globals.dart";
 import 'dart:io';
 
 final userService = UserService();
@@ -10,9 +9,9 @@ class UserProfileCtrl {
 
   Future<void> saveProfileImage(File profileImage) async {
     try {
-      await userService.uploadProfileImage(profileImage, currentUser?.uid);
+      await userService.saveProfileImage(profileImage);
 
-      print('Profile image failed');
+      print('Profile image saved!');
       //save user
     } on FirebaseAuthException catch (e) {
       print('Profile image failed: ${e.code}');

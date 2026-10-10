@@ -4,14 +4,12 @@ import 'package:flutter/material.dart';
 
 class ProfilePicture extends StatelessWidget {
   final String? imageUrl;
-  final File? imageFile;
   final double radius;
   final VoidCallback? onTap;
 
   const ProfilePicture({
     super.key,
     this.imageUrl,
-    this.imageFile,
     this.radius = 60,
     this.onTap,
   });
@@ -20,9 +18,7 @@ class ProfilePicture extends StatelessWidget {
   Widget build(BuildContext context) {
     ImageProvider? imageProvider;
 
-    if (imageFile != null) {
-      imageProvider = FileImage(imageFile!);
-    } else if (imageUrl != null && imageUrl!.isNotEmpty) {
+    if (imageUrl != null && imageUrl!.isNotEmpty) {
       imageProvider = NetworkImage(imageUrl!);
     }
 

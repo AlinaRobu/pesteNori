@@ -58,25 +58,32 @@ class UserService {
         return doc.exists;
     }
 
-    Future<void> saveProfileImage(File image, User user) async {
-        final imageUrl = await uploadProfileImage(image, user.uid);
+    Future<void> saveProfileImage(File image) async {
+      print('Image path: ${image.path}');
+      print('Image exists: ${await image.exists()}');
+      if (currentUser != null) {
+        final imageUrl = await uploadProfileImage(image, currentUser?.uid);
 
         await FirebaseFirestore.instance
             .collection('users')
-            .doc(user.uid)
-            .set({
-            'profileImageUrl': imageUrl,
-        }, SetOptions(merge: true));
+            .doc(currentUser?.uid)
+            .set({'profileImageUrl': imageUrl}, SetOptions(merge: true));
+      }
     }
 
 ///--------------------------------PRIVATE METHODS------------------------///
     Future<String> uploadProfileImage(File image, String? uid) async {
-        final ref = _storage.ref()
+      final ref = _storage.ref()
             .child('profile_images')
             .child('$uid.jpg');
-
-        await ref.putFile(image);
-
+      try{
+        final snapshot = await ref.putFile(image);
+        print('Upload complete: ${snapshot.state}');
         return await ref.getDownloadURL();
+      } on FirebaseException catch (e) {
+        print('Storage error code: ${e.code}');
+        print('Storage error message: ${e.message}');
+        return "";
+      }
     }
 }
