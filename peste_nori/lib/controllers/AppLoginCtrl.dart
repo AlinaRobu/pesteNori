@@ -28,18 +28,14 @@ class AppLoginCtrl {
   }
 
   Future<void> registerWithEmail(myEmailCtrl, myPswCtrl) async {
-    try {
-      final credential = await authService.registerWithEmail(
-        myEmailCtrl.trim(),
-        myPswCtrl,
-      );
+    final credential = await authService.registerWithEmail(
+      myEmailCtrl.trim(),
+      myPswCtrl,
+    );
 
-      print('Register in: ${credential.user?.uid}');
-      //save user
-      await userService.addUser(credential.user);
-    } on FirebaseAuthException catch (e) {
-      print('Registering failed: ${e.code}');
-    }
+    print('Register in: ${credential.user?.uid}');
+    //save user
+    await userService.addUser(credential.user);
   }
 
   resetPassword(myEmailCtrl){
@@ -59,16 +55,12 @@ class AppLoginCtrl {
   }
 
   signInWithEmail(myEmailCtrl, myPswCtrl) async {
-    try {
-      final credential = await authService.signInWithEmail(
-        myEmailCtrl.trim(),
-        myPswCtrl,
-      );
+    final credential = await authService.signInWithEmail(
+      myEmailCtrl.trim(),
+      myPswCtrl,
+    );
 
-      print('Logged in: ${credential.user?.uid}');
-    } on FirebaseAuthException catch (e) {
-      print('Login failed: ${e.code}');
-    }
+    print('Logged in: ${credential.user?.uid}');
   }
 
   Future<void> signInWithGoogle() async {
@@ -133,6 +125,7 @@ class AppLoginCtrl {
     await authService.deleteAccount();
 
     print('Deleted account ${currentUser}');
+    await userService.deleteUser(currentUser);
   }
 
   Future<bool> reauthenticateWithCredential (Set<String>? providers, String? password) async {

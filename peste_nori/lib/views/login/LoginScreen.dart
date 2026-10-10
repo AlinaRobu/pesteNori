@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../StartupTemplate.dart';
 import 'ResetPassword.dart';
@@ -166,10 +167,10 @@ class _LoginScreen extends StartupStateTemplate {
       // At this point Firebase authentication succeeded.
       openApplication(context);
 
-    } catch (error) {
+    } on FirebaseAuthException catch (e) {
       if (!context.mounted) return;
 
-      showError(context, error);
+      showError(context, e);
     } finally {
       if (mounted) {
         setState(() {

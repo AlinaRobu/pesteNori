@@ -23,6 +23,15 @@ class UserService {
         }
     }
 
+    Future<void> deleteUser(User? user) async {
+        if (user != null) {
+            await _auth
+            .collection('users')
+            .doc(user.uid)
+            .delete();
+        }
+    }
+
     Future<Map<String, dynamic>?> getUserData() async {
 
         if (currentUser == null) return null;

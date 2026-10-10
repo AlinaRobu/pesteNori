@@ -20,8 +20,6 @@ class _RegisterScreen extends StartupStateTemplate {
   final TextEditingController myPswCtrl = TextEditingController();
   final TextEditingController myConfirmPswCtrl = TextEditingController();
 
-  bool isLoading = false;
-
   @override
   double get widgetsTop => 50;
   @override
@@ -181,7 +179,7 @@ class _RegisterScreen extends StartupStateTemplate {
         confirmPassword.isEmpty) {
       showError(
         context,
-        'Te rugăm să completezi toate câmpurile.',
+        new FirebaseAuthException(code: "Te rugăm să completezi toate câmpurile."),
       );
       return;
     }
@@ -189,15 +187,14 @@ class _RegisterScreen extends StartupStateTemplate {
     if (password != confirmPassword) {
       showError(
         context,
-        'Parolele nu coincid.',
+        new FirebaseAuthException(code: "Parolele nu coincid."),
       );
       return;
     }
 
     if (password.length < 6) {
-      showError(
-        context,
-        'Parola trebuie să conțină cel puțin 6 caractere.',
+      showError(context,
+        new FirebaseAuthException(code: "Parola trebuie să conțină cel puțin 6 caractere."),
       );
       return;
     }
@@ -219,13 +216,6 @@ class _RegisterScreen extends StartupStateTemplate {
       if (!context.mounted) return;
 
       _showFirebaseError(context, e);
-    } catch (e) {
-      if (!context.mounted) return;
-
-      showError(
-        context,
-        e.toString(),
-      );
     } finally {
       if (mounted) {
         setState(() {
@@ -259,6 +249,6 @@ class _RegisterScreen extends StartupStateTemplate {
         message = error.message ?? 'A apărut o eroare.';
     }
 
-    showError(context, message);
+    showError(context, new FirebaseAuthException(code: message));
   }
 }

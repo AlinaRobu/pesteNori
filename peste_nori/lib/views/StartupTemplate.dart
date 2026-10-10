@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'dart:io' show Platform;
@@ -61,6 +62,18 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                                           height: 1.35,
                                           fontFamily: 'Calibri',
                                           fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible: isLoading,
+                                        child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          alignment: Alignment.center,
+                                          margin: const EdgeInsets.only(top: 25),
+                                          child: const CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 0, 109, 167)),
+                                          ),
                                         ),
                                       ),
                                     SizedBox(height: widgetsTop),
@@ -211,9 +224,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
         width: 220,
         height: 45,
         child: OutlinedButton(
-          onPressed: isLoading
-              ? null
-              : () => _loginWithGoogle(context),
+          onPressed: () => _loginWithGoogle(context),
           style: OutlinedButton.styleFrom(
             backgroundColor: Colors.white,
             foregroundColor: Colors.black87,
@@ -247,9 +258,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
       crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           OutlinedButton(
-            onPressed: isLoading
-                ? null
-                : _signInWithFacebook,
+            onPressed: () => _signInWithFacebook(context),
             style: OutlinedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: const Color(0xFF1877F2),
@@ -260,55 +269,48 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: isLoading
-                ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 26,
-                        height: 26,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF1877F2),
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: const Text(
-                          'f',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      const Text(
-                        'Continua cu Facebook',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 26,
+                  height: 26,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF1877F2),
+                    shape: BoxShape.circle,
                   ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    'f',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  'Continua cu Facebook',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           )
         ]
     );
   }
 
-  void showError(BuildContext context, Object error) {
+  void showError(BuildContext context, FirebaseAuthException error) {
+    String errorMessage = error.message ?? "Error";
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Login failed'),
-        content: Text(error.toString()),
+        content: Text(errorMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -371,10 +373,10 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
       // Google authentication succeeded.
       // Navigate to your application here if needed.
       openApplication(context);
-    } catch (error) {
+    } on FirebaseAuthException catch (e) {
       if (!context.mounted) return;
 
-      showError(context, error);
+      showError(context, e);
     } finally {
       if (mounted) {
         setState(() {
@@ -384,7 +386,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
     }
   }
 
-  Future<void> _signInWithFacebook() async {
+  Future<void> _signInWithFacebook(BuildContext context) async {
     setState(() {
       isLoading = true;
     });
@@ -397,10 +399,10 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
       // Google authentication succeeded.
       // Navigate to your application here if needed.
       openApplication(context);
-    } catch (error) {
+    } on FirebaseAuthException catch (e) {
       if (!context.mounted) return;
 
-      showError(context, error);
+      showError(context, e);
     } finally {
       if (mounted) {
         setState(() {

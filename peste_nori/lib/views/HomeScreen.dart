@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peste_nori/globals.dart';
+import 'package:peste_nori/views/StartupScreen.dart';
 import 'ProfilePicture.dart';
 import 'FullScreenImage.dart';
 import '../controllers/UserProfileCtrl.dart';
@@ -164,6 +165,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _signOut() async {
     try {
       await _authCtrl.signOut();
+
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<void>(
+          builder: (_) => const StartupScreen(),
+        ), (route) => false,
+      );
     } catch (e) {
       debugPrint('Error signing out: $e');
     }
@@ -211,8 +218,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(message)),
         );
+        return;
       }
     }
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute<void>(
+        builder: (_) => const StartupScreen(),
+      ), (route) => false,
+    );
   }
 
   Future<String?> _askForPassword() async {

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../StartupTemplate.dart';
 import 'ConfirmResetPassword.dart';
@@ -96,24 +97,23 @@ class _ResetPassword extends StartupStateTemplate {
       if (!context.mounted) return;
 
       showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Reset password'),
-        content: Text('A fost trimis un link de resetare a parolei pe adresa de email: ${myUsrCtrl.text}'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-      // alinarobu@rocketmail.com
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Reset password'),
+          content: Text('A fost trimis un link de resetare a parolei pe adresa de email: ${myUsrCtrl.text}'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
 
-    } catch (error) {
+    } on FirebaseAuthException catch (e) {
       if (!context.mounted) return;
 
-      showError(context, error);
+      showError(context, e);
     } finally {
       if (mounted) {
         setState(() {
