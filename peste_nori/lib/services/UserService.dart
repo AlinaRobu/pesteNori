@@ -58,17 +58,20 @@ class UserService {
         return doc.exists;
     }
 
-    Future<void> saveProfileImage(File image) async {
+    Future<String> saveProfileImage(File image) async {
       print('Image path: ${image.path}');
       print('Image exists: ${await image.exists()}');
+      String imageUrl = "";
       if (currentUser != null) {
-        final imageUrl = await uploadProfileImage(image, currentUser?.uid);
+        imageUrl = await uploadProfileImage(image, currentUser?.uid);
 
         await FirebaseFirestore.instance
             .collection('users')
             .doc(currentUser?.uid)
             .set({'profileImageUrl': imageUrl}, SetOptions(merge: true));
       }
+
+      return imageUrl;
     }
 
 ///--------------------------------PRIVATE METHODS------------------------///

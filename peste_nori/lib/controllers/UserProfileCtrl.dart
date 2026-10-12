@@ -7,15 +7,11 @@ final userService = UserService();
 class UserProfileCtrl {
   FirebaseAuth get _auth => FirebaseAuth.instance;
 
-  Future<void> saveProfileImage(File profileImage) async {
-    try {
-      await userService.saveProfileImage(profileImage);
-
-      print('Profile image saved!');
-      //save user
-    } on FirebaseAuthException catch (e) {
-      print('Profile image failed: ${e.code}');
-    }
+  Future<String> saveProfileImage(File profileImage) async {
+    String imageUrl = await userService.saveProfileImage(profileImage);
+    print('Profile image saved!');
+      
+    return imageUrl;
   }
 
   Future<Map<String, dynamic>?> getUserData() async {

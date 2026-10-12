@@ -1,12 +1,13 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 
 class FullScreenImage extends StatelessWidget {
   final String? imageUrl;
+  final VoidCallback onEditTap;
 
   const FullScreenImage({
     super.key,
-    this.imageUrl
+    this.imageUrl,
+    required this.onEditTap,
   });
 
   @override
@@ -17,31 +18,50 @@ class FullScreenImage extends StatelessWidget {
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
-      body: Center(
-        child: InteractiveViewer(
-          minScale: 0.5,
-          maxScale: 4.0,
-          child: _getImage(),
-        ),
+      body: Stack(
+        children: [
+          Center(
+            child: InteractiveViewer(
+              minScale: 0.5,
+              maxScale: 4.0,
+              child: _getImage(),
+            ),
+          ),
+
+          // Pencil button in the bottom-right corner
+          Positioned(
+            right: 24,
+            bottom: 24,
+            child: FloatingActionButton(
+              onPressed: onEditTap,
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              child: const Icon(Icons.edit),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  ///------------------------------PRIVATE METHODS------------------------///
-  Widget _getImage(){
-    Widget image;
-
+  Widget _getImage() {
     if (imageUrl != null && imageUrl!.isNotEmpty) {
-      image = Image.network(
+      return Image.network(
         imageUrl!,
         fit: BoxFit.contain,
         errorBuilder: (context, error, stackTrace) =>
-            const Icon(Icons.broken_image, color: Colors.white, size: 50),
+            const Icon(
+              Icons.broken_image,
+              color: Colors.white,
+              size: 50,
+            ),
       );
-    } else {
-      image = const Icon(Icons.person, color: Colors.white, size: 80);
     }
 
-    return image;
+    return const Icon(
+      Icons.person,
+      color: Colors.white,
+      size: 80,
+    );
   }
 }

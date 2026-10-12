@@ -26,7 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final AppLoginCtrl _authCtrl = AppLoginCtrl();
   final controller = TextEditingController();
 
-  File? _profileImage;
   String? _profileImageUrl;
 
   double get widgetsTop => 100;
@@ -305,7 +304,8 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => FullScreenImage(
-          imageUrl: _profileImageUrl
+          imageUrl: _profileImageUrl,
+          onEditTap: _showImageSourceDialog,
         ),
       ),
     );
@@ -354,19 +354,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (pickedFile == null) return;
 
-      setState(() {
-        _profileImage = File(pickedFile.path);
-      });
+      File profileImage = File(pickedFile.path);
 
-      _uploadProfileImage();
+      _uploadProfileImage(profileImage);
     } catch (e) {
       debugPrint('Error selecting image: $e');
     }
   }
 
-  Future<void> _uploadProfileImage() async {
-    if (_profileImage == null) return;
+  Future<void> _uploadProfileImage(profileImage) async {
+    if (profileImage == null) return;
 
-    _userProfileCtrl.saveProfileImage(_profileImage!);
+    try {
+      String imageUrl = await _userProfileCtrl.saveProfileImage(profileImage!);
+
+      setState(() {
+        _profileImageUrl = imageUrl;
+      });
+    } on FirebaseAuthException catch (e) {
+      print('Profile image saving failed: ${e.code}');
+    }
   }
 }
