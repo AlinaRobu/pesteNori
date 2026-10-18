@@ -165,7 +165,7 @@ class _LoginScreen extends StartupStateTemplate {
       if (!context.mounted) return;
 
       // At this point Firebase authentication succeeded.
-      openApplication(context);
+      openApplication(context, false);
 
     } on FirebaseAuthException catch (e) {
       if (!context.mounted) return;

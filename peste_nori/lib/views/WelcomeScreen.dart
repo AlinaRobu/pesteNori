@@ -1,0 +1,472 @@
+import 'package:flutter/material.dart';
+
+class WelcomeScreen extends StatefulWidget {
+  const WelcomeScreen({Key? key}) : super(key: key);
+
+  _WelcomeScreenState createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  _WelcomeScreenState();
+
+  final _formKey = GlobalKey<FormState>();
+
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+
+  DateTime? _dateOfBirth;
+  String? _sex;
+  bool _acceptedTerms = false;
+
+  static const Color primaryColor = Color(0xFF315DCC);
+
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [
+              Colors.white,
+              Color(0xFFEAF3FF),
+              Color(0xFFD6E8FF),
+            ],
+          ),
+        ),
+        child: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Header
+                    Center(
+                      child: Container(
+                        width: 100,
+                        height: 90,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage("assets/logo_welcome.png"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Transform.translate(
+                      offset: const Offset(0, -10),
+                      child: 
+                        const Text(
+                          'Peste Nori',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF17223B),
+                          ),
+                        ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    const Text(
+                      'Bun venit in comunitate',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF17223B),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    const Text(
+                      "Creaza-ti profilul pentru a\n"
+                      'decoperi oameni si amintiri.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 15,
+                        height: 1.5,
+                        color: Color(0xFF667085),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+
+                    // First name
+                    const Text(
+                      'First name',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 8),
+                    buildTextField(
+                      controller: _firstNameController,
+                      hint: 'Enter your first name',
+                      icon: Icons.person_outline_rounded,
+                    ),
+                    const SizedBox(height: 18),
+
+                    // Last name
+                    const Text('Last name',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 8),
+
+                    buildTextField(
+                      controller: _lastNameController,
+                      hint: 'Enter your last name',
+                      icon: Icons.person_outline_rounded,
+                    ),
+                    const SizedBox(height: 18),
+
+                    // Date of birth
+                    const Text(
+                      'Date of birth',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 8),
+                    
+                    InkWell(
+                      onTap: _selectDateOfBirth,
+                      borderRadius: BorderRadius.circular(14),
+                      child: SizedBox(
+                        height: 50,
+                        child: InputDecorator(
+                          decoration: _inputDecoration(
+                            hint: 'Select your date of birth',
+                            icon: Icons.calendar_today_outlined,
+                            suffixIcon: const Icon(
+                              Icons.calendar_month_rounded,
+                              color: primaryColor,
+                            ),
+                          ),
+                          child: Text(
+                            _dateOfBirth == null
+                                ? 'DD / MM / YYYY'
+                                : '${_dateOfBirth!.day.toString().padLeft(2, '0')} / '
+                                  '${_dateOfBirth!.month.toString().padLeft(2, '0')} / '
+                                  '${_dateOfBirth!.year}',
+                            style: TextStyle(
+                              fontSize: 17,
+                              color: _dateOfBirth == null
+                                  ? Colors.blueGrey
+                                  : Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Sex
+                    const Text(
+                      'Sex',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildSexOption(
+                          value: 'masculin',
+                          label: 'Masculin',
+                          icon: Icons.male_rounded,
+                        ),
+                        const SizedBox(width: 12),
+                        _buildSexOption(
+                          value: 'feminin',
+                          label: 'Feminin',
+                          icon: Icons.female_rounded,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 22),
+
+                    // Badge checkbox
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _acceptedTerms = !_acceptedTerms;
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          children: [
+                            AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeInOut,
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: _acceptedTerms
+                                    ? primaryColor
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(7),
+                                border: Border.all(
+                                  color: _acceptedTerms
+                                      ? primaryColor
+                                      : const Color(0xFFD0D5DD),
+                                  width: 1.5,
+                                ),
+                                boxShadow: _acceptedTerms
+                                    ? [
+                                        BoxShadow(
+                                          color: primaryColor.withValues(alpha: 0.20),
+                                          blurRadius: 6,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ]
+                                    : [],
+                              ),
+                              child: _acceptedTerms
+                                  ? const Icon(
+                                      Icons.check_rounded,
+                                      size: 17,
+                                      color: Colors.white,
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Arata badge aniversar.',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: _acceptedTerms
+                                      ? primaryColor
+                                      : const Color(0xFF344054),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 22),
+
+                    // Submit button
+                    SizedBox(
+                      height: 56,
+                      child: ElevatedButton.icon(
+                        onPressed: _submit,
+                        icon: const Icon(Icons.cloud),
+                        label: const Text(
+                          'Continua',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryColor,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      )
+    );
+  }
+
+///----------------------------------------- PRIVATE METHODS---------------------------------///
+Future<void> _selectDateOfBirth() async {
+    final now = DateTime.now();
+
+    final date = await showDatePicker(
+      context: context,
+      initialDate: DateTime(now.year - 18, now.month, now.day),
+      firstDate: DateTime(1900),
+      lastDate: now,
+      helpText: 'Select your date of birth',
+    );
+
+    if (date != null && mounted) {
+      setState(() => _dateOfBirth = date);
+    }
+  }
+
+  void _submit() {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (_dateOfBirth == null) {
+      _showMessage('Please select your date of birth.');
+      return;
+    }
+
+    if (_sex == null) {
+      _showMessage('Please select your sex.');
+      return;
+    }
+
+    if (!_acceptedTerms) {
+      _showMessage('Please accept the terms to continue.');
+      return;
+    }
+
+    // Use the collected data here.
+    _showMessage(
+      'Welcome, ${_firstNameController.text.trim()}!',
+    );
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  InputDecoration _inputDecoration({
+    required String hint,
+    required IconData icon,
+    Widget? suffixIcon,
+  }) {
+    return InputDecoration(
+      hintText: hint,
+      prefixIcon: Icon(icon, color: Colors.blueGrey),
+      suffixIcon: suffixIcon,
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 0,
+        vertical: 0,
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: Color(0xFFD9DFEA)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: Color(0xFFD9DFEA)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(
+          color: primaryColor,
+          width: 1.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSexOption({
+    required String value,
+    required String label,
+    required IconData icon,
+  }) {
+    final selected = _sex == value;
+
+    return InkWell(
+        onTap: () => setState(() => _sex = value),
+        borderRadius: BorderRadius.circular(14),
+        child: AnimatedContainer(
+          height: 65,
+          width: 150,
+          duration: const Duration(milliseconds: 180),
+          decoration: BoxDecoration(
+            color: selected
+                ? const Color(0xFFE9EFFF)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: selected
+                  ? primaryColor
+                  : const Color(0xFFD9DFEA),
+              width: selected ? 1.5 : 1,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 27,
+                color: selected ? primaryColor : Colors.blueGrey,
+              ),
+             Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: selected ? primaryColor : Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+  }
+
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String hint,
+    IconData? icon,
+    bool obscureText = false,
+    Widget? suffixIcon,
+  }) {
+    return Container(
+      height: 45,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.25),
+          width: 1,
+        ),
+      ),
+      child: TextField(
+        textCapitalization: TextCapitalization.words,
+        textAlignVertical: TextAlignVertical.center,
+        controller: controller,
+        obscureText: obscureText,
+        style: const TextStyle(
+          color: Colors.black87,
+          fontSize: 17,
+        ),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: hint,
+          hintStyle: const TextStyle(
+            color: Colors.blueGrey,
+            fontSize: 17,
+          ),
+          prefixIcon: icon != null ? Icon(
+            icon,
+            color: Colors.blueGrey,
+            size: 27,
+          ): SizedBox(width: 0),
+          suffixIcon: suffixIcon,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 0,
+          ),
+        ),
+      ),
+    );
+  }
+}

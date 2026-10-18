@@ -77,6 +77,7 @@ flutter:
     - assets/ic_launcher.png
     - assets/avatar_man.png
     - assets/avatar_women.png
+    - assets/logo_welcome.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

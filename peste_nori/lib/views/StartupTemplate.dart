@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'dart:io' show Platform;
 import 'HomeScreen.dart';
 import '../controllers/AppLoginCtrl.dart';
+import 'WelcomeScreen.dart';
 
 abstract class StartupTemplate extends StatefulWidget {
   const StartupTemplate({Key? key}) : super(key: key);
@@ -209,11 +210,11 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
     );
   }
 
-  void openApplication(BuildContext context) {
+  void openApplication(BuildContext context, bool newUser) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => HomeScreen(),
+        builder: (_) => newUser ? WelcomeScreen() : HomeScreen(),
       ),
     );
   }
@@ -331,13 +332,13 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
     });
 
     try {
-      await myCtrl.signInWithApple();
+      bool newUser = await myCtrl.signInWithApple();
 
       if (!context.mounted) return;
 
       // Google authentication succeeded.
       // Navigate to your application here if needed.
-      openApplication(context);
+      openApplication(context, newUser);
     } on FirebaseAuthException catch (e) {
       if (!context.mounted) return;
 
@@ -357,13 +358,13 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
     });
 
     try {
-      await myCtrl.signInWithGoogle();
+      bool newUser = await myCtrl.signInWithGoogle();
 
       if (!context.mounted) return;
 
       // Google authentication succeeded.
       // Navigate to your application here if needed.
-      openApplication(context);
+      openApplication(context, newUser);
     } on FirebaseAuthException catch (e) {
       if (!context.mounted) return;
 
@@ -383,13 +384,13 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
     });
 
     try {
-      await myCtrl.signInWithFacebook();
+      bool newUser = await myCtrl.signInWithFacebook();
 
       if (!context.mounted) return;
 
       // Google authentication succeeded.
       // Navigate to your application here if needed.
-      openApplication(context);
+      openApplication(context, newUser);
     } on FirebaseAuthException catch (e) {
       if (!context.mounted) return;
 

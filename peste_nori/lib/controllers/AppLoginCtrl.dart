@@ -63,7 +63,7 @@ class AppLoginCtrl {
     print('Logged in: ${credential.user?.uid}');
   }
 
-  Future<void> signInWithGoogle() async {
+  Future<bool> signInWithGoogle() async {
     final credential = await authService.signInWithGoogle();
 
     print('Logged in: ${credential.user?.email}');
@@ -73,9 +73,11 @@ class AppLoginCtrl {
     if (!exists) {
       await userService.addUser(credential.user);
     }
+
+    return !exists;
   }
 
-  Future<void> signInWithApple() async {
+  Future<bool> signInWithApple() async {
     final credential = await authService.signInWithApple();
 
     print('Logged in: ${credential.user?.email}');
@@ -85,9 +87,11 @@ class AppLoginCtrl {
     if (!exists) {
       await userService.addUser(credential.user);
     }
+
+    return !exists;
   }
 
-  Future<void> signInWithFacebook() async {
+  Future<bool> signInWithFacebook() async {
     final credential = await authService.signInWithFacebook();
 
     print('Logged in: ${credential?.user?.email}');
@@ -100,6 +104,8 @@ class AppLoginCtrl {
     if (!exists) {
       await userService.addUser(credential?.user);
     }
+
+    return !exists;
   }
 
   Future<void> signOut() async {

@@ -179,7 +179,7 @@ class _RegisterScreen extends StartupStateTemplate {
         confirmPassword.isEmpty) {
       showError(
         context,
-        new FirebaseAuthException(code: "Te rugăm să completezi toate câmpurile."),
+        new FirebaseAuthException(code: "", message: "Te rugăm să completezi toate câmpurile."),
       );
       return;
     }
@@ -187,14 +187,14 @@ class _RegisterScreen extends StartupStateTemplate {
     if (password != confirmPassword) {
       showError(
         context,
-        new FirebaseAuthException(code: "Parolele nu coincid."),
+        new FirebaseAuthException(code: "", message: "Parolele nu coincid."),
       );
       return;
     }
 
     if (password.length < 6) {
       showError(context,
-        new FirebaseAuthException(code: "Parola trebuie să conțină cel puțin 6 caractere."),
+        new FirebaseAuthException(code: "", message: "Parola trebuie să conțină cel puțin 6 caractere."),
       );
       return;
     }
@@ -204,14 +204,14 @@ class _RegisterScreen extends StartupStateTemplate {
     });
 
     try {
-      await myCtrl.registerWithEmail(
+      /*await myCtrl.registerWithEmail(
         email,
         password,
       );
 
-      if (!context.mounted) return;
+      if (!context.mounted) return;*/
 
-      openApplication(context);
+      openApplication(context, true);
     } on FirebaseAuthException catch (e) {
       if (!context.mounted) return;
 
