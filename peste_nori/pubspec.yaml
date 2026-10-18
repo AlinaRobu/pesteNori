@@ -40,6 +40,7 @@ dependencies:
   image_picker: ^1.1.3
   firebase_storage: ^13.6.0
   cloud_firestore: ^6.10.0
+  firebase_app_check: ^0.4.8
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -74,6 +75,8 @@ flutter:
     - assets/loginBackground.jpg
     - assets/pesteNori_logo.png
     - assets/ic_launcher.png
+    - assets/avatar_man.png
+    - assets/avatar_women.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

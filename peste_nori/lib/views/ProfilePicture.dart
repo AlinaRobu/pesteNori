@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 
 class ProfilePicture extends StatelessWidget {
   final String? imageUrl;
+  final AssetImage? image;
   final double radius;
   final VoidCallback? onTap;
 
   const ProfilePicture({
     super.key,
     this.imageUrl,
+    this.image,
     this.radius = 60,
     this.onTap,
   });
@@ -20,6 +22,8 @@ class ProfilePicture extends StatelessWidget {
 
     if (imageUrl != null && imageUrl!.isNotEmpty) {
       imageProvider = NetworkImage(imageUrl!);
+    } else if(image != null){
+      imageProvider = image;
     }
 
     return GestureDetector(

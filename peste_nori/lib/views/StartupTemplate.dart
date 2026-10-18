@@ -143,7 +143,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                     ),
                   ),
                 text: Platform.isIOS ? 'Continuă cu Apple' : 'Continuă cu Google',
-                onPressed: Platform.isIOS ?  myCtrl.signInWithApple : myCtrl.signInWithGoogle
+                onPressed: () => Platform.isIOS ? _loginWithApple(context) : _loginWithGoogle(context)
               ),
           
               const SizedBox(height: 15),
@@ -214,41 +214,6 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
       context,
       MaterialPageRoute(
         builder: (_) => HomeScreen(),
-      ),
-    );
-  }
-
-  Widget buildGoogleButton(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: 220,
-        height: 45,
-        child: OutlinedButton(
-          onPressed: () => _loginWithGoogle(context),
-          style: OutlinedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black87,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'G',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(width: 10),
-              Text(
-                'Continuă cu Google',
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -358,6 +323,32 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
         ),
       ),
     );
+  }
+
+  Future<void> _loginWithApple(BuildContext context) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      await myCtrl.signInWithApple();
+
+      if (!context.mounted) return;
+
+      // Google authentication succeeded.
+      // Navigate to your application here if needed.
+      openApplication(context);
+    } on FirebaseAuthException catch (e) {
+      if (!context.mounted) return;
+
+      showError(context, e);
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> _loginWithGoogle(BuildContext context) async {

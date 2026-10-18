@@ -64,61 +64,48 @@ class AppLoginCtrl {
   }
 
   Future<void> signInWithGoogle() async {
-    try {
-      final credential = await authService.signInWithGoogle();
+    final credential = await authService.signInWithGoogle();
 
-      print('Logged in: ${credential.user?.email}');
+    print('Logged in: ${credential.user?.email}');
 
-      final exists = await userService.userExists(credential.user?.uid);
+    final exists = await userService.userExists(credential.user?.uid);
 
-      if (!exists) {
-        await userService.addUser(credential.user);
-      }
-    } on FirebaseAuthException catch (e) {
-      print('Google login failed: ${e.code}');
+    if (!exists) {
+      await userService.addUser(credential.user);
     }
   }
 
   Future<void> signInWithApple() async {
-    try {
-      final credential = await authService.signInWithApple();
+    final credential = await authService.signInWithApple();
 
-      print('Logged in: ${credential.user?.email}');
+    print('Logged in: ${credential.user?.email}');
 
-      final exists = await userService.userExists(credential.user?.uid);
+    final exists = await userService.userExists(credential.user?.uid);
 
-      if (!exists) {
-        await userService.addUser(credential.user);
-      }
-    } on FirebaseAuthException catch (e) {
-      print('Google login failed: ${e.code}');
+    if (!exists) {
+      await userService.addUser(credential.user);
     }
   }
 
   Future<void> signInWithFacebook() async {
-    try {
-      final credential = await authService.signInWithFacebook();
+    final credential = await authService.signInWithFacebook();
 
-      print('Logged in: ${credential.user?.email}');
+    print('Logged in: ${credential?.user?.email}');
 
-      final exists = await userService.userExists(credential.user?.uid);
+    if(credential == null){
+      throw new FirebaseAuthException(message: "Facebook login failed", code:"login_failed");
+    }
+    final exists = await userService.userExists(credential?.user?.uid);
 
-      if (!exists) {
-        await userService.addUser(credential.user);
-      }
-    } on FirebaseAuthException catch (e) {
-      print('Facebook login failed: ${e.code}');
+    if (!exists) {
+      await userService.addUser(credential?.user);
     }
   }
 
   Future<void> signOut() async {
-    try {
-      await authService.signOut();
+    await authService.signOut();
 
-      print('Logged out: ${currentUser}');
-    } on FirebaseAuthException catch (e) {
-      print('Google login failed: ${e.code}');
-    }
+    print('Logged out: ${currentUser}');
   }
 
   Future<void> deleteAccount() async{

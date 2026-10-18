@@ -42,11 +42,20 @@ class AuthService {
     );
   }
 
-  Future<UserCredential> signInWithFacebook() async {
+  Future<UserCredential?> signInWithFacebook() async {
     if (kIsWeb) {
       return await _auth.signInWithPopup(FacebookAuthProvider());
     } else {
-      return await _auth.signInWithProvider(FacebookAuthProvider());
+      //return await _auth.signInWithProvider(FacebookAuthProvider());
+      final result = await FacebookAuth.instance.login();
+
+      if (result.status == LoginStatus.success) {
+        final token = result.accessToken!.tokenString;
+
+        final credential = FacebookAuthProvider.credential(token);
+
+        return await FirebaseAuth.instance.signInWithCredential(credential);
+      }
     }
   }
 

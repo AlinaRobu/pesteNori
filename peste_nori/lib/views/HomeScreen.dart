@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final controller = TextEditingController();
 
   String? _profileImageUrl;
+  final AssetImage _profileImage = AssetImage("assets/avatar_man.png");
 
   double get widgetsTop => 100;
   String get imageBackground => "assets/appBackground.png";
@@ -73,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           ProfilePicture(
                             imageUrl: _profileImageUrl,
+                            image: _profileImage,
                             radius: 35,
                             onTap: () {
                               if (_profileImageUrl != null && _profileImageUrl != "") {
