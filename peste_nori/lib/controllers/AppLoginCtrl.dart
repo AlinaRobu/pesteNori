@@ -8,25 +8,6 @@ final userService = UserService();
 
 class AppLoginCtrl {
   
-  bool getIfLoggedIn(){
-    bool loggedIn = false;
-    try {
-      User? user = authService.getIfLoggedIn();
-
-      if (user != null && user!.email!.isNotEmpty) {
-        loggedIn = true;
-        String displayName = user.displayName ?? "";
-        print('Already signed in: ${displayName}');
-      } else {
-        print("Not signed in");
-      }
-    } on FirebaseAuthException catch (e) {
-      print('Login failed: ${e.code}');
-    }
-
-    return loggedIn;
-  }
-
   Future<void> registerWithEmail(myEmailCtrl, myPswCtrl) async {
     final credential = await authService.registerWithEmail(
       myEmailCtrl.trim(),
@@ -36,6 +17,8 @@ class AppLoginCtrl {
     print('Register in: ${credential.user?.uid}');
     //save user
     await userService.addUser(credential.user);
+
+    print('Logged in: ' + authService.getIfLoggedIn().toString());
   }
 
   resetPassword(myEmailCtrl){
@@ -60,7 +43,7 @@ class AppLoginCtrl {
       myPswCtrl,
     );
 
-    print('Logged in: ${credential.user?.uid}');
+    print('Logged in: ' + authService.getIfLoggedIn().toString());
   }
 
   Future<bool> signInWithGoogle() async {
@@ -73,6 +56,8 @@ class AppLoginCtrl {
     if (!exists) {
       await userService.addUser(credential.user);
     }
+
+    print('Logged in: ' + authService.getIfLoggedIn().toString());
 
     return !exists;
   }
@@ -87,6 +72,8 @@ class AppLoginCtrl {
     if (!exists) {
       await userService.addUser(credential.user);
     }
+
+    print('Logged in: ' + authService.getIfLoggedIn().toString());
 
     return !exists;
   }
@@ -105,6 +92,8 @@ class AppLoginCtrl {
       await userService.addUser(credential?.user);
     }
 
+    print('Logged in: ' + authService.getIfLoggedIn().toString());
+
     return !exists;
   }
 
@@ -112,6 +101,8 @@ class AppLoginCtrl {
     await authService.signOut();
 
     print('Logged out: ${currentUser}');
+
+    print('Logged in: ' + authService.getIfLoggedIn().toString());
   }
 
   Future<void> deleteAccount() async{
@@ -119,6 +110,8 @@ class AppLoginCtrl {
 
     print('Deleted account ${currentUser}');
     await userService.deleteUser(currentUser);
+
+    print('Logged in: ' + authService.getIfLoggedIn().toString());
   }
 
   Future<bool> reauthenticateWithCredential (Set<String>? providers, String? password) async {

@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final controller = TextEditingController();
 
   String? _profileImageUrl;
-  final AssetImage _profileImage = AssetImage("assets/avatar_man.png");
+  AssetImage? _profileImage;
 
   double get widgetsTop => 100;
   String get imageBackground => "assets/appBackground.png";
@@ -151,6 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         userData = data;
+        _profileImage = AssetImage(userData!["sex"] == "F" ? "assets/avatar_women.png" : "assets/avatar_man.png");
         _profileImageUrl = userData?['profileImageUrl'];
         isLoading = false;
       });

@@ -59,8 +59,6 @@ class UserService {
     }
 
     Future<String> saveProfileImage(File image) async {
-      print('Image path: ${image.path}');
-      print('Image exists: ${await image.exists()}');
       String imageUrl = "";
       if (currentUser != null) {
         imageUrl = await uploadProfileImage(image, currentUser?.uid);
@@ -72,6 +70,21 @@ class UserService {
       }
 
       return imageUrl;
+    }
+
+    Future<void> setUserMainData(Map<String, Object> userData) async{
+      if (currentUser != null) {
+        await _auth
+          .collection('users')
+          .doc(currentUser?.uid)
+          .set({
+            'firstName': userData["firstName"] ?? '',
+            'lastName': userData["lastName"] ?? '',
+            'dateOfBirth': userData["dateOfBirth"] ?? 0,
+            'sex': userData["sex"] ?? 'F',
+            'showBirthdayBadge': userData["showBirthdayBadge"] ?? false
+          }, SetOptions(merge: true));
+      }
     }
 
 ///--------------------------------PRIVATE METHODS------------------------///

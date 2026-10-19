@@ -14,6 +14,11 @@ class UserProfileCtrl {
     return imageUrl;
   }
 
+  Future<void> setUserMainData(Map<String, Object> userData) async{
+    await userService.setUserMainData(userData);
+    print('User main data saved!');
+  }
+
   Future<Map<String, dynamic>?> getUserData() async {
     final userData = await userService.getUserData();
 

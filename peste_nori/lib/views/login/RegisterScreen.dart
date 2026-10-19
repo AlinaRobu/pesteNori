@@ -204,12 +204,12 @@ class _RegisterScreen extends StartupStateTemplate {
     });
 
     try {
-      /*await myCtrl.registerWithEmail(
+      await myCtrl.registerWithEmail(
         email,
         password,
       );
 
-      if (!context.mounted) return;*/
+      if (!context.mounted) return;
 
       openApplication(context, true);
     } on FirebaseAuthException catch (e) {

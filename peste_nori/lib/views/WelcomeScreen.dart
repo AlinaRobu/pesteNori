@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'HomeScreen.dart';
+import '../controllers/UserProfileCtrl.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -13,10 +16,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
+  final UserProfileCtrl _userProfileCtrl = UserProfileCtrl();
 
   DateTime? _dateOfBirth;
   String? _sex;
-  bool _acceptedTerms = false;
+  bool _showBirthdayBadge = false;
 
   static const Color primaryColor = Color(0xFF315DCC);
 
@@ -107,33 +111,33 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
                     // First name
                     const Text(
-                      'First name',
+                      'Prenume',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
                     buildTextField(
                       controller: _firstNameController,
-                      hint: 'Enter your first name',
+                      hint: 'Introdu prenumele',
                       icon: Icons.person_outline_rounded,
                     ),
                     const SizedBox(height: 18),
 
                     // Last name
-                    const Text('Last name',
+                    const Text('Nume',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
 
                     buildTextField(
                       controller: _lastNameController,
-                      hint: 'Enter your last name',
+                      hint: 'Introdu numele',
                       icon: Icons.person_outline_rounded,
                     ),
                     const SizedBox(height: 18),
 
                     // Date of birth
                     const Text(
-                      'Date of birth',
+                      'Data nasterii',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
@@ -180,13 +184,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _buildSexOption(
-                          value: 'masculin',
+                          value: 'M',
                           label: 'Masculin',
                           icon: Icons.male_rounded,
                         ),
                         const SizedBox(width: 12),
                         _buildSexOption(
-                          value: 'feminin',
+                          value: 'F',
                           label: 'Feminin',
                           icon: Icons.female_rounded,
                         ),
@@ -198,7 +202,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     InkWell(
                       onTap: () {
                         setState(() {
-                          _acceptedTerms = !_acceptedTerms;
+                          _showBirthdayBadge = !_showBirthdayBadge;
                         });
                       },
                       borderRadius: BorderRadius.circular(12),
@@ -212,17 +216,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               width: 20,
                               height: 20,
                               decoration: BoxDecoration(
-                                color: _acceptedTerms
+                                color: _showBirthdayBadge
                                     ? primaryColor
                                     : Colors.white,
                                 borderRadius: BorderRadius.circular(7),
                                 border: Border.all(
-                                  color: _acceptedTerms
+                                  color: _showBirthdayBadge
                                       ? primaryColor
                                       : const Color(0xFFD0D5DD),
                                   width: 1.5,
                                 ),
-                                boxShadow: _acceptedTerms
+                                boxShadow: _showBirthdayBadge
                                     ? [
                                         BoxShadow(
                                           color: primaryColor.withValues(alpha: 0.20),
@@ -232,7 +236,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                       ]
                                     : [],
                               ),
-                              child: _acceptedTerms
+                              child: _showBirthdayBadge
                                   ? const Icon(
                                       Icons.check_rounded,
                                       size: 17,
@@ -247,7 +251,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: _acceptedTerms
+                                  color: _showBirthdayBadge
                                       ? primaryColor
                                       : const Color(0xFF344054),
                                 ),
@@ -313,24 +317,38 @@ Future<void> _selectDateOfBirth() async {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
 
+    if (_firstNameController.text == "") {
+      _showMessage('Numele nu este completat!');
+      return;
+    }
+
+    if (_lastNameController.text == "") {
+      _showMessage('Data nasterii nu este completata!');
+      return;
+    }
+
     if (_dateOfBirth == null) {
-      _showMessage('Please select your date of birth.');
+      _showMessage('Data nasterii nu este completata!');
       return;
     }
 
     if (_sex == null) {
-      _showMessage('Please select your sex.');
-      return;
-    }
-
-    if (!_acceptedTerms) {
-      _showMessage('Please accept the terms to continue.');
+      _showMessage('Sex-ul nu este completat.');
       return;
     }
 
     // Use the collected data here.
-    _showMessage(
-      'Welcome, ${_firstNameController.text.trim()}!',
+  final UserProfileCtrl _userProfileCtrl = UserProfileCtrl();
+  Timestamp timestamp = Timestamp.fromDate(_dateOfBirth!);
+
+    Map<String, Object> data = {"firstName": _firstNameController.text, "lastName": _lastNameController.text, 
+    "dateOfBirth": timestamp, "sex": _sex!, "showBirthdayBadge": _showBirthdayBadge};
+    _userProfileCtrl.setUserMainData(data);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => HomeScreen(),
+      ),
     );
   }
 

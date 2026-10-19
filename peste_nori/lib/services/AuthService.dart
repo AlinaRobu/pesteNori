@@ -146,7 +146,7 @@ class AuthService {
         );
 
         await _auth.currentUser?.reauthenticateWithCredential(credential);
-
+        print('Logged in: ' + getIfLoggedIn().toString());
         return true;
       }
 
@@ -166,7 +166,7 @@ class AuthService {
         );
 
         await _auth.currentUser?.reauthenticateWithCredential(credential);
-
+        print('Logged in: ' + getIfLoggedIn().toString());
         return true;
       }
 
@@ -185,7 +185,7 @@ class AuthService {
         );
 
         await _auth.currentUser?.reauthenticateWithCredential(oauthCredential);
-
+        print('Logged in: ' + getIfLoggedIn().toString());
         return true;
       }
 
@@ -208,10 +208,10 @@ class AuthService {
         );
 
         await _auth.currentUser?.reauthenticateWithCredential(credential);
-
+        print('Logged in: ' + getIfLoggedIn().toString());
         return true;
       }
-
+      print('Logged in: ' + getIfLoggedIn().toString());
       return false;
     } on FirebaseAuthException catch (e) {
       print('Reauthentication failed: ${e.code}');
@@ -222,5 +222,6 @@ class AuthService {
 
       return false;
     }
+    
   }
 }
