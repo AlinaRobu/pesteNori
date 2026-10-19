@@ -391,34 +391,52 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _getCollection(IconData icon, String count, String text){
     return Expanded(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: Color(0xFFD4AF37),
-            size: 28,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 26, 13, 55),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
+            width: 1,
           ),
-          const SizedBox(height: 8),
-          Text(
-            count,
-            style: const TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
               color: Color(0xFFD4AF37),
+              size: 28,
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w300,
-              color: Colors.white.withValues(alpha: 0.8),
+            const SizedBox(height: 8),
+            Text(
+              count,
+              style: const TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFD4AF37),
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 4),
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w300,
+                color: Colors.white.withValues(alpha: 0.8),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
