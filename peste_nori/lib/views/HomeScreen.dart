@@ -28,9 +28,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String? _profileImageUrl;
   AssetImage? _profileImage;
+  String _firstName = "";
 
   double get widgetsTop => 100;
   String get imageBackground => "assets/appBackground.png";
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -47,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
+      bottomNavigationBar: _getBottomButtons(),
       body: Stack(
         children: [
           Column(
@@ -72,22 +75,225 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           const SizedBox(height: 20),
 
-                          ProfilePicture(
-                            imageUrl: _profileImageUrl,
-                            image: _profileImage,
-                            radius: 35,
-                            onTap: () {
-                              if (_profileImageUrl != null && _profileImageUrl != "") {
-                                _showFullScreenImage();
-                              } else {
-                                _showImageSourceDialog();
-                              }
-                            },
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ProfilePicture(
+                                imageUrl: _profileImageUrl,
+                                image: _profileImage,
+                                radius: 35,
+                                onTap: () {
+                                  if (_profileImageUrl != null &&
+                                      _profileImageUrl != "") {
+                                    _showFullScreenImage();
+                                  } else {
+                                    _showImageSourceDialog();
+                                  }
+                                },
+                              ),
+
+                              const SizedBox(width: 14),
+
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Bun venit,', // Second line
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        color: Colors.white.withValues(alpha: 0.8),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _firstName,
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
 
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 100),
 
-                          // Other widgets...
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                               const Image(
+                                  height: 100,
+                                  image: AssetImage(
+                                    'assets/gardianul_potecilor.png'),
+                                  fit: BoxFit.fill),
+
+                              const SizedBox(width: 14),
+
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Nivel actual', // Second line
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.white.withValues(alpha: 0.8),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "GARDIAN AL POTECILOR",
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFFD4AF37),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          //progress
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: const LinearProgressIndicator(
+                                    value: 0.75, // 75% progress
+                                    minHeight: 8,
+                                    backgroundColor: Color(0xFFE0E5EF),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Color(0xFFD4AF37), // Gold
+                                    ),
+                                  ),
+                                ),
+                              ),                              
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '1.850',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white.withValues(alpha: 0.8),
+                                ),
+                              ),
+                              Text(
+                                ' / 3.000 XP',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.white.withValues(alpha: 0.8),
+                                ),
+                              )
+                            ],
+                          ),
+                        
+                          const SizedBox(height: 50),
+
+                          Row(
+                            children: [
+                              _getCollection(Icons.star_rounded, '38', 'Varfuri cucerite'),
+                              _getCollection(Icons.home, '15', 'Cabane descoperite'),
+                              _getCollection(Icons.emoji_events_rounded, '6', 'Colectii complete'),
+                            ],
+                          ),
+
+                          const SizedBox(height: 50),
+
+                          Row(
+                            children: [
+                              Text(
+                                'Urmatorul Nivel',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white.withValues(alpha: 0.8),
+                                ),
+                              ),
+                            ]
+                          ),
+
+                          //next progress
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                               const Image(
+                                  height: 100,
+                                  image: AssetImage(
+                                    'assets/cuceritor_de_creste.png'),
+                                  fit: BoxFit.fill),
+
+                              const SizedBox(width: 14),
+
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Cuceritor de Creste', // Second line
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white.withValues(alpha: 0.8),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "3.000 XP",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.white.withValues(alpha: 0.8),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: const LinearProgressIndicator(
+                                    value: 0.75, // 75% progress
+                                    minHeight: 8,
+                                    backgroundColor: Color(0xFFE0E5EF),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Color(0xFFD4AF37), // Gold
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 10),  
+                              Text(
+                                '62%',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white.withValues(alpha: 0.8),
+                                ),
+                              ),                            
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -143,6 +349,80 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 ///--------------------------PRIVATE METHOD-----------------------///
+  Widget _getBottomButtons(){
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      currentIndex: _selectedIndex,
+      onTap: (index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      },
+      selectedItemColor: const Color(0xFFD4AF37),
+      unselectedItemColor: Colors.blueGrey,
+      backgroundColor: const Color.fromARGB(255, 18, 9, 9),
+      showUnselectedLabels: true,
+      selectedFontSize: 12,
+      unselectedFontSize: 12,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home_rounded),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.map_rounded),
+          label: 'Map',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.route_rounded),
+          label: 'Routes',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.collections_bookmark_rounded),
+          label: 'Collections',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_rounded),
+          label: 'Profile',
+        ),
+      ],
+    );
+  }
+
+  Widget _getCollection(IconData icon, String count, String text){
+    return Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: Color(0xFFD4AF37),
+            size: 28,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            count,
+            style: const TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFD4AF37),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w300,
+              color: Colors.white.withValues(alpha: 0.8),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _loadUserData() async {
     try {
       final data = await _userProfileCtrl.getUserData();
@@ -151,6 +431,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         userData = data;
+        _firstName = userData!["firstName"];
         _profileImage = AssetImage(userData!["sex"] == "F" ? "assets/avatar_women.png" : "assets/avatar_man.png");
         _profileImageUrl = userData?['profileImageUrl'];
         isLoading = false;
