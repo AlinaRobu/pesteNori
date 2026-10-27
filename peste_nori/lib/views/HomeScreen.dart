@@ -1,9 +1,12 @@
 import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peste_nori/globals.dart';
+import 'package:peste_nori/services/LevelService.dart';
 import 'package:peste_nori/views/StartupScreen.dart';
+
 import 'ProfilePicture.dart';
 import 'FullScreenImage.dart';
 import '../controllers/UserProfileCtrl.dart';
@@ -18,7 +21,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
- _HomeScreenState();
+  _HomeScreenState();
   Map<String, dynamic>? userData;
   bool isLoading = true;
   final ImagePicker _picker = ImagePicker();
@@ -29,6 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _profileImageUrl;
   AssetImage? _profileImage;
   String _firstName = "";
+  Map<String, dynamic> _level = {"xp": 0, "level": 1, "title": "", "image": "novice.png"};
+  int _maxXP = LevelService.MAX_XP;
 
   double get widgetsTop => 100;
   String get imageBackground => "assets/appBackground.png";
@@ -103,7 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       'Bun venit,', // Second line
                                       style: TextStyle(
                                         fontSize: 24,
-                                        color: Colors.white.withValues(alpha: 0.8),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.8,
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(height: 4),
@@ -126,11 +133,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                               const Image(
-                                  height: 100,
-                                  image: AssetImage(
-                                    'assets/gardianul_potecilor.png'),
-                                  fit: BoxFit.fill),
+                              Image(
+                                height: 100,
+                                image: AssetImage(
+                                  'assets/levelBadges/${this._level["image"]}',
+                                ),
+                                fit: BoxFit.fill,
+                              ),
 
                               const SizedBox(width: 14),
 
@@ -143,12 +152,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                       'Nivel actual', // Second line
                                       style: TextStyle(
                                         fontSize: 20,
-                                        color: Colors.white.withValues(alpha: 0.8),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.8,
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      "GARDIAN AL POTECILOR",
+                                      this._level["title"],
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -167,8 +178,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               Expanded(
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: const LinearProgressIndicator(
-                                    value: 0.75, // 75% progress
+                                  child: LinearProgressIndicator(
+                                    value: this._level["xp"] / 100,
                                     minHeight: 8,
                                     backgroundColor: Color(0xFFE0E5EF),
                                     valueColor: AlwaysStoppedAnimation<Color>(
@@ -176,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                 ),
-                              ),                              
+                              ),
                             ],
                           ),
                           const SizedBox(height: 10),
@@ -184,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                '1.850',
+                                '0',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w600,
@@ -192,23 +203,35 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                               Text(
-                                ' / 3.000 XP',
+                                ' / ${this._maxXP} XP',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w300,
                                   color: Colors.white.withValues(alpha: 0.8),
                                 ),
-                              )
+                              ),
                             ],
                           ),
-                        
+
                           const SizedBox(height: 50),
 
                           Row(
                             children: [
-                              _getCollection(Icons.star_rounded, '38', 'Varfuri cucerite'),
-                              _getCollection(Icons.home, '15', 'Cabane descoperite'),
-                              _getCollection(Icons.emoji_events_rounded, '6', 'Colectii complete'),
+                              _getCollection(
+                                Icons.star_rounded,
+                                '38',
+                                'Varfuri cucerite',
+                              ),
+                              _getCollection(
+                                Icons.home,
+                                '15',
+                                'Cabane descoperite',
+                              ),
+                              _getCollection(
+                                Icons.emoji_events_rounded,
+                                '6',
+                                'Colectii complete',
+                              ),
                             ],
                           ),
 
@@ -224,76 +247,82 @@ class _HomeScreenState extends State<HomeScreen> {
                                   color: Colors.white.withValues(alpha: 0.8),
                                 ),
                               ),
-                            ]
+                            ],
                           ),
 
                           //next progress
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                               const Image(
+                          if(this._level["nextLevel"] != null) ...[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image(
                                   height: 100,
                                   image: AssetImage(
-                                    'assets/cuceritor_de_creste.png'),
-                                  fit: BoxFit.fill),
-
-                              const SizedBox(width: 14),
-
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Cuceritor de Creste', // Second line
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white.withValues(alpha: 0.8),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      "3.000 XP",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w300,
-                                        color: Colors.white.withValues(alpha: 0.8),
-                                      ),
-                                    ),
-                                  ],
+                                    'assets/levelBadges/${this._level["nextLevel"]["image"]}',
+                                  ),
+                                  fit: BoxFit.fill,
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
 
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: const LinearProgressIndicator(
-                                    value: 0.75, // 75% progress
-                                    minHeight: 8,
-                                    backgroundColor: Color(0xFFE0E5EF),
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Color(0xFFD4AF37), // Gold
+                                const SizedBox(width: 14),
+
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text( this._level["nextLevel"]["title"],
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white.withValues(
+                                            alpha: 0.8,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text('${this._level["nextLevel"]["xp"]} XP',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.white.withValues(
+                                            alpha: 0.8,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: LinearProgressIndicator(
+                                      value: this._level["nextLevel"]["progress"],
+                                      minHeight: 8,
+                                      backgroundColor: Color(0xFFE0E5EF),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Color(0xFFD4AF37), // Gold
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(width: 10),  
-                              Text(
-                                '62%',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white.withValues(alpha: 0.8),
+                                SizedBox(width: 10),
+                                Text(
+                                  '${this._level["nextLevel"]["remainingPercent"] }%',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white.withValues(alpha: 0.8),
+                                  ),
                                 ),
-                              ),                            
-                            ],
-                          ),
+                              ],
+                            ),
+                          ]
                         ],
                       ),
                     ),
@@ -335,7 +364,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Icon(Icons.delete_forever, color: Colors.red),
                         SizedBox(width: 12),
-                        Text('Delete account', style: TextStyle(color: Colors.red)),
+                        Text(
+                          'Delete account',
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ],
                     ),
                   ),
@@ -348,8 +380,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-///--------------------------PRIVATE METHOD-----------------------///
-  Widget _getBottomButtons(){
+  ///--------------------------PRIVATE METHOD-----------------------///
+  Widget _getBottomButtons() {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       currentIndex: _selectedIndex,
@@ -365,14 +397,8 @@ class _HomeScreenState extends State<HomeScreen> {
       selectedFontSize: 12,
       unselectedFontSize: 12,
       items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_rounded),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.map_rounded),
-          label: 'Map',
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.map_rounded), label: 'Map'),
         BottomNavigationBarItem(
           icon: Icon(Icons.route_rounded),
           label: 'Routes',
@@ -389,7 +415,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _getCollection(IconData icon, String count, String text){
+  Widget _getCollection(IconData icon, String count, String text) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
@@ -411,11 +437,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              color: Color(0xFFD4AF37),
-              size: 28,
-            ),
+            Icon(icon, color: Color(0xFFD4AF37), size: 28),
             const SizedBox(height: 8),
             Text(
               count,
@@ -450,7 +472,12 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         userData = data;
         _firstName = userData!["firstName"];
-        _profileImage = AssetImage(userData!["sex"] == "F" ? "assets/avatar_women.png" : "assets/avatar_man.png");
+        _level = userData!["level"];
+        _profileImage = AssetImage(
+          userData!["sex"] == "F"
+              ? "assets/avatar_women.png"
+              : "assets/avatar_man.png",
+        );
         _profileImageUrl = userData?['profileImageUrl'];
         isLoading = false;
       });
@@ -470,9 +497,8 @@ class _HomeScreenState extends State<HomeScreen> {
       await _authCtrl.signOut();
 
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute<void>(
-          builder: (_) => const StartupScreen(),
-        ), (route) => false,
+        MaterialPageRoute<void>(builder: (_) => const StartupScreen()),
+        (route) => false,
       );
     } catch (e) {
       debugPrint('Error signing out: $e');
@@ -507,7 +533,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
 
-      if(e.code == 'requires-recent-login'){
+      if (e.code == 'requires-recent-login') {
         bool authenticated = await _reauthenticateUser();
 
         if (!authenticated) {
@@ -515,20 +541,18 @@ class _HomeScreenState extends State<HomeScreen> {
         }
 
         // Try deleting again after reauthentication.
-        await _authCtrl.deleteAccount();        
+        await _authCtrl.deleteAccount();
       } else {
         final message = 'Could not delete your account. Please try again.';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message)));
         return;
       }
     }
 
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute<void>(
-        builder: (_) => const StartupScreen(),
-      ), (route) => false,
+      MaterialPageRoute<void>(builder: (_) => const StartupScreen()),
+      (route) => false,
     );
   }
 
@@ -542,9 +566,7 @@ class _HomeScreenState extends State<HomeScreen> {
             content: TextField(
               controller: controller,
               obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-              ),
+              decoration: const InputDecoration(labelText: 'Password'),
             ),
             actions: [
               TextButton(
@@ -566,7 +588,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<bool> _reauthenticateUser() async{
+  Future<bool> _reauthenticateUser() async {
     if (currentUser == null) {
       return false;
     }
@@ -582,19 +604,21 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     bool authenticated = false;
-    try{  
-      authenticated = await _authCtrl.reauthenticateWithCredential(providers, password);
+    try {
+      authenticated = await _authCtrl.reauthenticateWithCredential(
+        providers,
+        password,
+      );
     } on FirebaseAuthException catch (e) {
       String message = "Cannot delete account";
-      if(e.code == "invalid-credential"){
+      if (e.code == "invalid-credential") {
         message = "Wrong password!";
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
     }
 
-    setState((){
+    setState(() {
       password = "";
     });
     return authenticated;

@@ -80,6 +80,17 @@ flutter:
     - assets/logo_welcome.png
     - assets/gardianul_potecilor.png
     - assets/cuceritor_de_creste.png
+    - assets/levelBadges/novice.png
+    - assets/levelBadges/explorer.png
+    - assets/levelBadges/pathfinder.png
+    - assets/levelBadges/wanderer.png
+    - assets/levelBadges/ridgewalker.png
+    - assets/levelBadges/summitHunter.png
+    - assets/levelBadges/mountaineer.png
+    - assets/levelBadges/peakConqueror.png
+    - assets/levelBadges/mountainGuardian.png
+    - assets/levelBadges/carpathianLegend.png
+    - assets/levelBadges/grandmaster.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
