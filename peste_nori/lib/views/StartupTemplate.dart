@@ -5,6 +5,7 @@ import 'dart:io' show Platform;
 import 'HomeScreen.dart';
 import '../controllers/AppLoginCtrl.dart';
 import 'WelcomeScreen.dart';
+import 'package:peste_nori/globals.dart';
 
 abstract class StartupTemplate extends StatefulWidget {
   const StartupTemplate({Key? key}) : super(key: key);
@@ -54,8 +55,8 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                                       image: AssetImage(
                                           'assets/pesteNori_logo.png'),
                                       fit: BoxFit.fill),
-                                      const Text(
-                                        'Colecționează experiențe.\nDescoperă munții.',
+                                      Text(
+                                        translations.titleStart,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           color: Colors.white,
@@ -108,10 +109,10 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                       color: Colors.white38,
                     ),
                   ),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'SAU',
+                      translations.or,
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 15,
@@ -143,7 +144,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                text: Platform.isIOS ? 'Continuă cu Apple' : 'Continuă cu Google',
+                text: Platform.isIOS ? '${translations.continueWith} Apple' : '${translations.continueWith} Google',
                 onPressed: () => Platform.isIOS ? _loginWithApple(context) : _loginWithGoogle(context)
               ),
           
@@ -256,8 +257,8 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  'Continua cu Facebook',
+                Text(
+                  '${translations.continueWith} Facebook',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -275,7 +276,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Login failed'),
+        title: Text(translations.loginFailed),
         content: Text(errorMessage),
         actions: [
           TextButton(

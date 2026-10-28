@@ -4,13 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peste_nori/globals.dart';
-import 'package:peste_nori/services/LevelService.dart';
 import 'package:peste_nori/views/StartupScreen.dart';
 
 import 'ProfilePicture.dart';
 import 'FullScreenImage.dart';
 import '../controllers/UserProfileCtrl.dart';
 import '../controllers/AppLoginCtrl.dart';
+import 'package:peste_nori/l10n/app_localizations.dart';
 
 enum _HomeMenuAction { deleteAccount, signOut }
 
@@ -22,7 +22,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   _HomeScreenState();
-  Map<String, dynamic>? userData;
+  Map<String, dynamic> _userData = {"peaks": [], "cabins": [], "collections": []};
   bool isLoading = true;
   final ImagePicker _picker = ImagePicker();
   final UserProfileCtrl _userProfileCtrl = UserProfileCtrl();
@@ -33,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
   AssetImage? _profileImage;
   String _firstName = "";
   Map<String, dynamic> _level = {"xp": 0, "level": 1, "title": "", "image": "novice.png"};
-  int _maxXP = LevelService.MAX_XP;
 
   double get widgetsTop => 100;
   String get imageBackground => "assets/appBackground.png";
@@ -52,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    translations = AppLocalizations.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       bottomNavigationBar: _getBottomButtons(),
@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      'Bun venit,', // Second line
+                                      '${translations.welcome},',
                                       style: TextStyle(
                                         fontSize: 24,
                                         color: Colors.white.withValues(
@@ -149,16 +149,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      'Nivel actual', // Second line
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.white.withValues(
-                                          alpha: 0.8,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
                                       this._level["title"],
                                       style: const TextStyle(
                                         fontSize: 20,
@@ -166,48 +156,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                         color: Color(0xFFD4AF37),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          //progress
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: LinearProgressIndicator(
-                                    value: this._level["xp"] / 100,
-                                    minHeight: 8,
-                                    backgroundColor: Color(0xFFE0E5EF),
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Color(0xFFD4AF37), // Gold
+                                    const SizedBox(height: 4),
+                                    Text('${this._level["xp"]} XP',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.white.withValues(
+                                          alpha: 0.8,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                '0',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white.withValues(alpha: 0.8),
-                                ),
-                              ),
-                              Text(
-                                ' / ${this._maxXP} XP',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w300,
-                                  color: Colors.white.withValues(alpha: 0.8),
+                                  ],
                                 ),
                               ),
                             ],
@@ -219,18 +178,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               _getCollection(
                                 Icons.star_rounded,
-                                '38',
-                                'Varfuri cucerite',
+                                this._userData["peaks"].length,
+                                translations.peaksConquered
                               ),
                               _getCollection(
                                 Icons.home,
-                                '15',
-                                'Cabane descoperite',
+                                this._userData["cabins"].length,
+                                translations.cabinsConquered
                               ),
                               _getCollection(
                                 Icons.emoji_events_rounded,
-                                '6',
-                                'Colectii complete',
+                                this._userData["collections"].length,
+                                translations.collectionsCompleted
                               ),
                             ],
                           ),
@@ -240,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Row(
                             children: [
                               Text(
-                                'Urmatorul Nivel',
+                                translations.nextLevel,
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w600,
@@ -347,14 +306,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       _signOut();
                   }
                 },
-                itemBuilder: (context) => const [
+                itemBuilder: (context) => [
                   PopupMenuItem(
                     value: _HomeMenuAction.signOut,
                     child: Row(
                       children: [
                         Icon(Icons.logout),
                         SizedBox(width: 12),
-                        Text('Sign out'),
+                        Text(translations.signOut),
                       ],
                     ),
                   ),
@@ -365,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icon(Icons.delete_forever, color: Colors.red),
                         SizedBox(width: 12),
                         Text(
-                          'Delete account',
+                          translations.deleteAccount,
                           style: TextStyle(color: Colors.red),
                         ),
                       ],
@@ -396,34 +355,34 @@ class _HomeScreenState extends State<HomeScreen> {
       showUnselectedLabels: true,
       selectedFontSize: 12,
       unselectedFontSize: 12,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.map_rounded), label: 'Map'),
+      items: [
+        BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: translations.home),
+        BottomNavigationBarItem(icon: Icon(Icons.map_rounded), label: translations.map),
         BottomNavigationBarItem(
           icon: Icon(Icons.route_rounded),
-          label: 'Routes',
+          label: translations.routes,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.collections_bookmark_rounded),
-          label: 'Collections',
+          label: translations.collections,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_rounded),
-          label: 'Profile',
+          label: translations.profile,
         ),
       ],
     );
   }
 
-  Widget _getCollection(IconData icon, String count, String text) {
+  Widget _getCollection(IconData icon, int count, String text) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 26, 13, 55),
+          color: const Color.fromARGB(255, 26, 29, 69),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
+            color: const Color.fromARGB(255, 58, 58, 57).withValues(alpha: 0.5),
             width: 1,
           ),
           boxShadow: [
@@ -440,7 +399,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Icon(icon, color: Color(0xFFD4AF37), size: 28),
             const SizedBox(height: 8),
             Text(
-              count,
+              count.toString(),
               style: const TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
@@ -452,7 +411,7 @@ class _HomeScreenState extends State<HomeScreen> {
               text,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 12,
                 fontWeight: FontWeight.w300,
                 color: Colors.white.withValues(alpha: 0.8),
               ),
@@ -470,15 +429,15 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!mounted) return;
 
       setState(() {
-        userData = data;
-        _firstName = userData!["firstName"];
-        _level = userData!["level"];
+        _userData = data!;
+        _firstName = _userData["firstName"];
+        _level = _userData["level"];
         _profileImage = AssetImage(
-          userData!["sex"] == "F"
+          _userData["sex"] == "F"
               ? "assets/avatar_women.png"
               : "assets/avatar_man.png",
         );
-        _profileImageUrl = userData?['profileImageUrl'];
+        _profileImageUrl = _userData['profileImageUrl'];
         isLoading = false;
       });
     } catch (e) {

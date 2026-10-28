@@ -43,28 +43,6 @@ class ProfilePicture extends StatelessWidget {
                   )
                 : null,
           ),
-
-          /*Positioned(
-            right: -2,
-            bottom: -2,
-            child: Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  width: 2,
-                ),
-              ),
-              child: const Icon(
-                Icons.edit,
-                size: 17,
-                color: Colors.white,
-              ),
-            ),
-          ),*/
         ],
       ),
     );

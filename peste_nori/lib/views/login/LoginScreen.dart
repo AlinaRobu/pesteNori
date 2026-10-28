@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../StartupTemplate.dart';
 import 'ResetPassword.dart';
 import 'RegisterScreen.dart';
+import 'package:peste_nori/globals.dart';
 
 class LoginScreen extends StartupTemplate {
   const LoginScreen({super.key});
@@ -41,10 +42,10 @@ class _LoginScreen extends StartupStateTemplate {
           icon: Icons.email_outlined,
         ),
         const SizedBox(height: 14),
-        // PASSWORD
+
         buildTextField(
           controller: myPswCtrl,
-          hint: 'Parolă',
+          hint: translations.password,
           icon: Icons.lock_outline,
           obscureText: obscurePassword,
           suffixIcon: IconButton(
@@ -78,11 +79,11 @@ class _LoginScreen extends StartupStateTemplate {
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Login',
+                  translations.login,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
@@ -106,8 +107,8 @@ class _LoginScreen extends StartupStateTemplate {
               ),
             );
           },
-          child: const Text(
-            'Am uitat parola',
+          child: Text(
+            translations.forgotPass,
             style: TextStyle(
               color: Color(0xFF168BFF),
               fontSize: 16,
@@ -116,8 +117,8 @@ class _LoginScreen extends StartupStateTemplate {
           ),
         ),
         
-        const Text(
-          'Nu ai cont? Nu-ti face griji!',
+        Text(
+          translations.noAccount,
           style: TextStyle(
             color: Colors.white70,
             fontSize: 16,
@@ -133,8 +134,8 @@ class _LoginScreen extends StartupStateTemplate {
               ),
             );
           },
-          child: const Text(
-            'Poti crea rapid unul aici!',
+          child: Text(
+            translations.createOneHere,
             style: TextStyle(
               color: Color(0xFF168BFF),
               fontSize: 16,

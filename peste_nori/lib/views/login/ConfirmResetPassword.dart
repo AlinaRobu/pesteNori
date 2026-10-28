@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:peste_nori/views/Login/LoginScreen.dart';
 import '../StartupTemplate.dart';
+import 'package:peste_nori/globals.dart';
 
 class ConfirmResetPassword extends StartupTemplate {
   final String email;
@@ -38,8 +39,8 @@ class _ConfirmResetPassword extends StartupStateTemplate {
   Widget topWidgets(BuildContext context) {
     return Column(
       children: [
-        const Text(
-          'Introduceti codule primit pe adresa de email pentru a reseta parola.',
+        Text(
+          translations.addEmailCode + '.',
           style: TextStyle(
             color: Colors.white70,
             fontSize: 16,
@@ -48,18 +49,16 @@ class _ConfirmResetPassword extends StartupStateTemplate {
 
         const SizedBox(height: 14),
 
-        // EMAIL
         buildTextField(
           controller: myCodeCtrl,
-          hint: 'Cod',
+          hint: translations.code,
           icon: null,
         ),
         const SizedBox(height: 14),
 
-        // PASSWORD
         buildTextField(
           controller: myPswCtrl,
-          hint: 'Parolă',
+          hint: translations.password,
           icon: Icons.lock_outline,
           obscureText: obscurePassword,
           suffixIcon: IconButton(
@@ -92,11 +91,11 @@ class _ConfirmResetPassword extends StartupStateTemplate {
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Resetare parola',
+                  translations.passReset,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
@@ -124,11 +123,11 @@ class _ConfirmResetPassword extends StartupStateTemplate {
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Trimite din nou codul pe mail',
+                  translations.sendAgain,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
@@ -160,8 +159,8 @@ class _ConfirmResetPassword extends StartupStateTemplate {
       showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Reset password'),
-        content: Text('Parola Resetata!'),
+        title: Text(translations.forgotPass),
+        content: Text(translations.passReset),
         actions: [
           TextButton(
             onPressed: () => Navigator.push(
@@ -202,8 +201,8 @@ class _ConfirmResetPassword extends StartupStateTemplate {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Reset password'),
-          content: Text('A fost trimis un link de resetare a parolei pe adresa de email: ${email}'),
+          title: Text(translations.passReset),
+          content: Text('${translations.emailSent}: ${email}'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:peste_nori/l10n/app_localizations.dart';
 import 'dart:ui';
 import 'login/LoginScreen.dart';
 import 'login/RegisterScreen.dart';
+import 'package:peste_nori/globals.dart';
 
 class StartupScreen extends StatefulWidget {
   const StartupScreen({Key? key}) : super(key: key);
@@ -14,6 +16,7 @@ class _StartupScreen extends State<StartupScreen> {
  _StartupScreen();
 
   Widget build(BuildContext context) {
+    translations = AppLocalizations.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Column(
@@ -105,8 +108,8 @@ class _StartupScreen extends State<StartupScreen> {
             width: 200,
             height: 45,
             alignment: Alignment.center,
-            child: const Text(
-              'Conectează-te',
+            child: Text(
+              translations.connect,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -139,8 +142,8 @@ class _StartupScreen extends State<StartupScreen> {
               ),
             );
           },
-          child: const Text(
-            'Creează cont',
+          child: Text(
+            translations.createAccount,
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,

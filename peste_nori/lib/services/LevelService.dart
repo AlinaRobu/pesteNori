@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LevelService {
   final FirebaseFirestore _auth = FirebaseFirestore.instance;
-  static const int MAX_XP = 100000;
   static const int MAX_LEVEL = 11;
   final imageUrls = {
     1: "novice.png", 

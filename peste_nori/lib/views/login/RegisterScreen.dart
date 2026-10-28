@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../controllers/AppLoginCtrl.dart';
 import 'LoginScreen.dart';
 import '../StartupTemplate.dart';
+import 'package:peste_nori/globals.dart';
 
 class RegisterScreen extends StartupTemplate {
   const RegisterScreen({super.key});
@@ -41,7 +42,7 @@ class _RegisterScreen extends StartupStateTemplate {
       crossAxisAlignment: CrossAxisAlignment.start,
         children: [
             Text(
-              'Creează-ti contul',
+              translations.createTheAccount,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
@@ -58,7 +59,7 @@ class _RegisterScreen extends StartupStateTemplate {
           // PASSWORD
           buildTextField(
             controller: myPswCtrl,
-            hint: 'Parolă',
+            hint: translations.password,
             icon: Icons.lock_outline,
             obscureText: obscurePassword,
             suffixIcon: IconButton(
@@ -79,7 +80,7 @@ class _RegisterScreen extends StartupStateTemplate {
           // CONFIRM PASSWORD
           buildTextField(
             controller: myConfirmPswCtrl,
-            hint: 'Confirmă parola',
+            hint: translations.confirmPassword,
             icon: Icons.lock_outline,
             obscureText: obscureConfirmPassword,
             suffixIcon: IconButton(
@@ -114,11 +115,11 @@ class _RegisterScreen extends StartupStateTemplate {
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Creează cont',
+                    translations.createAccount,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -140,8 +141,8 @@ class _RegisterScreen extends StartupStateTemplate {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox(height: 55),
-        const Text(
-          'Ai deja cont? ',
+        Text(
+          '${translations.accountExists}? ',
           style: TextStyle(
             color: Colors.white70,
             fontSize: 16,
@@ -156,8 +157,8 @@ class _RegisterScreen extends StartupStateTemplate {
               ),
             );
           },
-          child: const Text(
-            'Autentificare',
+          child: Text(
+            translations.authentication,
             style: TextStyle(
               color: Color(0xFF168BFF),
               fontSize: 16,
@@ -179,7 +180,7 @@ class _RegisterScreen extends StartupStateTemplate {
         confirmPassword.isEmpty) {
       showError(
         context,
-        new FirebaseAuthException(code: "", message: "Te rugăm să completezi toate câmpurile."),
+        new FirebaseAuthException(code: "", message: translations.fillAll + "."),
       );
       return;
     }
@@ -187,14 +188,14 @@ class _RegisterScreen extends StartupStateTemplate {
     if (password != confirmPassword) {
       showError(
         context,
-        new FirebaseAuthException(code: "", message: "Parolele nu coincid."),
+        new FirebaseAuthException(code: "", message: translations.diffPasswords + "."),
       );
       return;
     }
 
     if (password.length < 6) {
       showError(context,
-        new FirebaseAuthException(code: "", message: "Parola trebuie să conțină cel puțin 6 caractere."),
+        new FirebaseAuthException(code: "", message: translations.passLengthReq + "."),
       );
       return;
     }
@@ -230,23 +231,23 @@ class _RegisterScreen extends StartupStateTemplate {
 
     switch (error.code) {
       case 'email-already-in-use':
-        message = 'Există deja un cont cu această adresă de email.';
+        message = translations.emailAlreadyInUse + '.';
         break;
 
       case 'invalid-email':
-        message = 'Adresa de email nu este validă.';
+        message = translations.invalidEmail + '.';
         break;
 
       case 'weak-password':
-        message = 'Parola este prea slabă.';
+        message = translations.weakPass + '.';
         break;
 
       case 'operation-not-allowed':
-        message = 'Înregistrarea cu email nu este activată.';
+        message = translations.emailRegNotAllowed + '.';
         break;
 
       default:
-        message = error.message ?? 'A apărut o eroare.';
+        message = error.message ?? translations.unknownError + '.';
     }
 
     showError(context, new FirebaseAuthException(code: message));

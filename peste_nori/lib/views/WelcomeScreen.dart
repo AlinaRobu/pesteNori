@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'HomeScreen.dart';
 import '../controllers/UserProfileCtrl.dart';
+import 'package:peste_nori/globals.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -16,7 +17,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
-  final UserProfileCtrl _userProfileCtrl = UserProfileCtrl();
 
   DateTime? _dateOfBirth;
   String? _sex;
@@ -74,8 +74,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     Transform.translate(
                       offset: const Offset(0, -10),
                       child: 
-                        const Text(
-                          'Peste Nori',
+                        Text(
+                          translations.title,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 25,
@@ -86,8 +86,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                     const SizedBox(height: 10),
 
-                    const Text(
-                      'Bun venit in comunitate',
+                    Text(
+                      translations.welcomeTo,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 20,
@@ -97,9 +97,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                     const SizedBox(height: 10),
 
-                    const Text(
-                      "Creaza-ti profilul pentru a\n"
-                      'decoperi oameni si amintiri.',
+                    Text(
+                      translations.createProfileFor,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 15,
@@ -110,34 +109,34 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     const SizedBox(height: 32),
 
                     // First name
-                    const Text(
-                      'Prenume',
+                    Text(
+                      translations.firstName,
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
                     buildTextField(
                       controller: _firstNameController,
-                      hint: 'Introdu prenumele',
+                      hint: translations.addFirstName,
                       icon: Icons.person_outline_rounded,
                     ),
                     const SizedBox(height: 18),
 
                     // Last name
-                    const Text('Nume',
+                    Text(translations.name,
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
 
                     buildTextField(
                       controller: _lastNameController,
-                      hint: 'Introdu numele',
+                      hint: translations.addName,
                       icon: Icons.person_outline_rounded,
                     ),
                     const SizedBox(height: 18),
 
                     // Date of birth
-                    const Text(
-                      'Data nasterii',
+                    Text(
+                      translations.dateOfBirth,
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
@@ -149,7 +148,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         height: 50,
                         child: InputDecorator(
                           decoration: _inputDecoration(
-                            hint: 'Select your date of birth',
+                            hint: translations.selectDateOfBirth,
                             icon: Icons.calendar_today_outlined,
                             suffixIcon: const Icon(
                               Icons.calendar_month_rounded,
@@ -185,13 +184,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       children: [
                         _buildSexOption(
                           value: 'M',
-                          label: 'Masculin',
+                          label: translations.male,
                           icon: Icons.male_rounded,
                         ),
                         const SizedBox(width: 12),
                         _buildSexOption(
                           value: 'F',
-                          label: 'Feminin',
+                          label: translations.female,
                           icon: Icons.female_rounded,
                         ),
                       ],
@@ -247,7 +246,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                'Arata badge aniversar.',
+                                translations.showBirthdayBadge,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
@@ -269,8 +268,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       child: ElevatedButton.icon(
                         onPressed: _submit,
                         icon: const Icon(Icons.cloud),
-                        label: const Text(
-                          'Continua',
+                        label: Text(
+                          translations["continue"],
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -306,7 +305,7 @@ Future<void> _selectDateOfBirth() async {
       initialDate: DateTime(now.year - 18, now.month, now.day),
       firstDate: DateTime(1900),
       lastDate: now,
-      helpText: 'Select your date of birth',
+      helpText: translations.selectDateOfBirth,
     );
 
     if (date != null && mounted) {
@@ -318,22 +317,22 @@ Future<void> _selectDateOfBirth() async {
     if (!_formKey.currentState!.validate()) return;
 
     if (_firstNameController.text == "") {
-      _showMessage('Numele nu este completat!');
+      _showMessage(translations.emptyFirstName);
       return;
     }
 
     if (_lastNameController.text == "") {
-      _showMessage('Data nasterii nu este completata!');
+      _showMessage(translations.emptyName);
       return;
     }
 
     if (_dateOfBirth == null) {
-      _showMessage('Data nasterii nu este completata!');
+      _showMessage(translations.emptyDateOfBirth);
       return;
     }
 
     if (_sex == null) {
-      _showMessage('Sex-ul nu este completat.');
+      _showMessage(translations.emptySex);
       return;
     }
 
