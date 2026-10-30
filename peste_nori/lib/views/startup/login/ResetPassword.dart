@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../StartupTemplate.dart';
-import 'ConfirmResetPassword.dart';
 
 class ResetPassword extends StartupTemplate {
   const ResetPassword({super.key});

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'dart:io' show Platform;
 import 'HomeScreen.dart';
-import '../controllers/AppLoginCtrl.dart';
+import '../../controllers/AppLoginCtrl.dart';
 import 'WelcomeScreen.dart';
 import 'package:peste_nori/globals.dart';
 

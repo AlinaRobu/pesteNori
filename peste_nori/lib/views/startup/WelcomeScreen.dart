@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'HomeScreen.dart';
-import '../controllers/UserProfileCtrl.dart';
+import '../../controllers/UserProfileCtrl.dart';
 import 'package:peste_nori/globals.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -269,7 +269,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         onPressed: _submit,
                         icon: const Icon(Icons.cloud),
                         label: Text(
-                          translations["continue"],
+                          translations.contin,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

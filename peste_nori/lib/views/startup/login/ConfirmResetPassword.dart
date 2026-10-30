@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:peste_nori/views/Login/LoginScreen.dart';
+import 'LoginScreen.dart';
 import '../StartupTemplate.dart';
 import 'package:peste_nori/globals.dart';
 

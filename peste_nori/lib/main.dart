@@ -8,9 +8,9 @@ import '/l10n/app_localizations.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:overlay_support/overlay_support.dart';
 
-import 'package:peste_nori/views/StartupScreen.dart';
+import 'package:peste_nori/views/startup/StartupScreen.dart';
 import 'package:peste_nori/services/AuthService.dart';
-import '/views/HomeScreen.dart';
+import 'views/startup/HomeScreen.dart';
 import 'utils/ThemeNotifier.dart';
 import 'package:peste_nori/globals.dart';
 
