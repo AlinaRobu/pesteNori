@@ -15,13 +15,13 @@ class AppLocalizationsRo extends AppLocalizations {
   String get welcome => 'Bun venit';
 
   @override
-  String get peaksConquered => 'Varfuri cucerite';
+  String get peaksConquered => 'Varfuri\ncucerite';
 
   @override
-  String get cabinsConquered => 'Cabane descoperite';
+  String get cabinsConquered => 'Cabane\ndescoperite';
 
   @override
-  String get collectionsCompleted => 'Colectii complete';
+  String get collectionsCompleted => 'Colectii\ncomplete';
 
   @override
   String get nextLevel => 'Urmatorul Nivel';

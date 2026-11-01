@@ -30,7 +30,6 @@ class HomeScreenState extends State<HomeScreen> {
     ProfilePage()
   ];
 
-
   @override
   Widget build(BuildContext context) {
     translations = AppLocalizations.of(context);
@@ -53,7 +52,7 @@ class HomeScreenState extends State<HomeScreen> {
       },
       selectedItemColor: const Color(0xFFD4AF37),
       unselectedItemColor: Colors.blueGrey,
-      backgroundColor: const Color.fromARGB(255, 18, 9, 9),
+      backgroundColor: const Color.fromARGB(255, 9, 10, 18),
       showUnselectedLabels: true,
       selectedFontSize: 12,
       unselectedFontSize: 12,

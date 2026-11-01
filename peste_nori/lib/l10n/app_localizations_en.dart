@@ -15,13 +15,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcome => 'Welcome';
 
   @override
-  String get peaksConquered => 'Conquered Peaks';
+  String get peaksConquered => 'Conquered\nPeaks';
 
   @override
-  String get cabinsConquered => 'Conquered Cabins';
+  String get cabinsConquered => 'Conquered\nCabins';
 
   @override
-  String get collectionsCompleted => 'Complete collections';
+  String get collectionsCompleted => 'Complete\ncollections';
 
   @override
   String get nextLevel => 'Next Level';

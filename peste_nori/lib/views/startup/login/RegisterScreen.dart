@@ -49,6 +49,7 @@ class _RegisterScreen extends StartupStateTemplate {
                 fontFamily: 'Calibri',
               ),
             ),
+            SizedBox(height: 10),
           // EMAIL
           buildTextField(
             controller: myUsrCtrl,
@@ -140,34 +141,37 @@ class _RegisterScreen extends StartupStateTemplate {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox(height: 55),
-        Text(
-          '${translations.accountExists}? ',
-          style: TextStyle(
-            color: Colors.white70,
-            fontSize: 16,
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-             Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => LoginScreen(),
-              ),
-            );
-          },
-          child: Text(
-            translations.authentication,
+        Column(
+        children: [
+          const SizedBox(height: 10),
+          Text(
+            '${translations.accountExists}? ',
             style: TextStyle(
-              color: Color(0xFF168BFF),
+              color: Colors.white70,
               fontSize: 16,
-              fontWeight: FontWeight.w500,
             ),
           ),
-        ),
-      ],
-    );
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => LoginScreen(),
+                ),
+              );
+            },
+            child: Text(
+              translations.authentication,
+              style: TextStyle(
+                color: Color(0xFF168BFF),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ]);
   }
 /// -----------------------PRIVATE METHODS -----------------------------///
  Future<void> _registerWithEmail(BuildContext context) async {

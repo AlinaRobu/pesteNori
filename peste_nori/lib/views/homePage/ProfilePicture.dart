@@ -33,13 +33,13 @@ class ProfilePicture extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: radius,
-            backgroundColor: Colors.grey.shade200,
+            backgroundColor: const Color.fromARGB(255, 238, 238, 238),
             backgroundImage: imageProvider,
             child: imageProvider == null
                 ? Icon(
                     Icons.person,
                     size: radius,
-                    color: Colors.grey.shade500,
+                    color: const Color.fromARGB(255, 158, 158, 158),
                   )
                 : null,
           ),

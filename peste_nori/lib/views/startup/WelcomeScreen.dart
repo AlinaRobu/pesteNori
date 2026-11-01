@@ -75,7 +75,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       offset: const Offset(0, -10),
                       child: 
                         Text(
-                          translations.title,
+                          translations.appTitle,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 25,

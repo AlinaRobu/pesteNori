@@ -50,8 +50,9 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
+                                    SizedBox(height: 50),
                                     const Image(
-                                      height: 200,
+                                      height: 100,
                                       image: AssetImage(
                                           'assets/pesteNori_logo.png'),
                                       fit: BoxFit.fill),
@@ -60,7 +61,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 18,
+                                          fontSize: 15,
                                           height: 1.35,
                                           fontFamily: 'Calibri',
                                           fontWeight: FontWeight.w400,

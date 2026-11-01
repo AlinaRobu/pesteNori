@@ -76,7 +76,10 @@ class UserService {
         'dateOfBirth': userData["dateOfBirth"] ?? 0,
         'sex': userData["sex"] ?? 'F',
         'showBirthdayBadge': userData["showBirthdayBadge"] ?? false,
-        'level': 0,
+        'level': 1,
+        'cabins': [],
+        'peaks': [],
+        'collections': []
       }, SetOptions(merge: true));
     }
   }

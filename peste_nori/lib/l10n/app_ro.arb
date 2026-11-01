@@ -1,9 +1,9 @@
 {
     "appTitle": "Peste Nori",
     "welcome": "Bun venit",
-    "peaksConquered": "Varfuri cucerite",
-    "cabinsConquered": "Cabane descoperite",
-    "collectionsCompleted": "Colectii complete",
+    "peaksConquered": "Varfuri\ncucerite",
+    "cabinsConquered": "Cabane\ndescoperite",
+    "collectionsCompleted": "Colectii\ncomplete",
     "nextLevel": "Urmatorul Nivel",
     "signOut": "Iesire din cont",
     "deleteAccount": "Sterge contul",

@@ -110,19 +110,19 @@ abstract class AppLocalizations {
   /// No description provided for @peaksConquered.
   ///
   /// In en, this message translates to:
-  /// **'Conquered Peaks'**
+  /// **'Conquered\nPeaks'**
   String get peaksConquered;
 
   /// No description provided for @cabinsConquered.
   ///
   /// In en, this message translates to:
-  /// **'Conquered Cabins'**
+  /// **'Conquered\nCabins'**
   String get cabinsConquered;
 
   /// No description provided for @collectionsCompleted.
   ///
   /// In en, this message translates to:
-  /// **'Complete collections'**
+  /// **'Complete\ncollections'**
   String get collectionsCompleted;
 
   /// No description provided for @nextLevel.

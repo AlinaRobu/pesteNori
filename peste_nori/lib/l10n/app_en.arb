@@ -1,9 +1,9 @@
 {
     "appTitle": "Peste Nori",
     "welcome": "Welcome",
-    "peaksConquered": "Conquered Peaks",
-    "cabinsConquered": "Conquered Cabins",
-    "collectionsCompleted": "Complete collections",
+    "peaksConquered": "Conquered\nPeaks",
+    "cabinsConquered": "Conquered\nCabins",
+    "collectionsCompleted": "Complete\ncollections",
     "nextLevel": "Next Level",
     "signOut": "Sign out",
     "deleteAccount": "Delete account",

@@ -20,7 +20,7 @@ class _LoginScreen extends StartupStateTemplate {
   bool obscurePassword = true;
 
   @override
-  double get widgetsTop => 100;
+  double get widgetsTop => 50;
   @override
   String get imageBackground => "assets/loginBackground.jpg";
 

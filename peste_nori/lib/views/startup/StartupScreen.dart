@@ -34,7 +34,7 @@ class _StartupScreen extends State<StartupScreen> {
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: AssetImage("assets/startBackground.jpg"),
-                              fit: BoxFit.cover,
+                              fit: BoxFit.fill,
                             ),
                           ),
                           child: SingleChildScrollView(
@@ -46,8 +46,9 @@ class _StartupScreen extends State<StartupScreen> {
                                 child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
+                                      SizedBox(height: 50),
                                       const Image(
-                                          height: 250,
+                                          height: 150,
                                           image: AssetImage(
                                               'assets/pesteNori_logo.png'),
                                           fit: BoxFit.fill),

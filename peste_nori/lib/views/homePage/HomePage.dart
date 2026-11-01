@@ -66,7 +66,7 @@ class HomePageState extends State<HomePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 50),
 
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -103,7 +103,7 @@ class HomePageState extends State<HomePage> {
                           ],
                         ),
 
-                        const SizedBox(height: 100),
+                        const SizedBox(height: 50),
 
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -256,17 +256,12 @@ class HomePageState extends State<HomePage> {
   ///-------------------------------PRIVATE METHODS---------------------------------///
   Widget _getCollection(IconData icon, int count, String text) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 26, 29, 69),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color.fromARGB(255, 58, 58, 57).withValues(alpha: 0.5), width: 1),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 8, offset: const Offset(0, 4))],
-        ),
+      child: Card(
+        color: const Color.fromARGB(255, 11, 12, 73),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const SizedBox(height: 8),
             Icon(icon, color: Color(0xFFD4AF37), size: 28),
             const SizedBox(height: 8),
             Text(
@@ -279,6 +274,7 @@ class HomePageState extends State<HomePage> {
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300, color: Colors.white.withValues(alpha: 0.8)),
             ),
+            const SizedBox(height: 8),
           ],
         ),
       ),
