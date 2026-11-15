@@ -70,5 +70,7 @@
 	<string>This app needs access to your photos so you can choose a profile picture.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs access to your camera so you can take a profile picture.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location is used to show your position while following a hiking trail.</string>
 </dict>
 </plist>

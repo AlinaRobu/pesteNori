@@ -7,5 +7,5 @@ User? currentUser;
 var translations;
 ThemeNotifier themeNotifier = ThemeNotifier();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
+Map<String, dynamic> userData = {"peaks": [], "cabins": [], "collections": []};
 

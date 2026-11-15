@@ -165,15 +165,15 @@ class TrailShieldRenderer {
     );
 
     await controller.addLineLayer(
-      selectedSource,
-      selectedLayer,
-      const LineLayerProperties(
-        lineColor: '#FF6D00',
-        lineWidth: 5,
-        lineOpacity: 0.9,
-        lineCap: 'round',
-        lineJoin: 'round',
-      ),
+        selectedSource,
+        selectedLayer,
+        const LineLayerProperties(
+            lineColor: '#FF6D00',
+            lineWidth: 7,
+            lineOpacity: 1.0,
+            lineCap: 'round',
+            lineJoin: 'round',
+        ),
     );
 
     _selectionExists = true;

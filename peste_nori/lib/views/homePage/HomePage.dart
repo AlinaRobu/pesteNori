@@ -26,7 +26,6 @@ class HomePageState extends State<HomePage> {
   String? _profileImageUrl;
   AssetImage? _profileImage;
   String _firstName = "";
-  Map<String, dynamic> _userData = {"peaks": [], "cabins": [], "collections": []};
   Map<String, dynamic> _level = {"xp": 0, "level": 1, "title": "", "image": "novice.png"};
   final ImagePicker _picker = ImagePicker();
   bool isLoading = true;
@@ -134,9 +133,9 @@ class HomePageState extends State<HomePage> {
 
                       Row(
                         children: [
-                          _getCollection(Icons.star_rounded, this._userData["peaks"].length, translations.peaksConquered),
-                          _getCollection(Icons.home, this._userData["cabins"].length, translations.cabinsConquered),
-                          _getCollection(Icons.emoji_events_rounded, this._userData["collections"].length, translations.collectionsCompleted),
+                          _getCollection(Icons.star_rounded, userData["peaks"].length, translations.peaksConquered),
+                          _getCollection(Icons.home, userData["cabins"].length, translations.cabinsConquered),
+                          _getCollection(Icons.emoji_events_rounded, userData["collections"].length, translations.collectionsCompleted),
                         ],
                       ),
 
@@ -350,16 +349,20 @@ class HomePageState extends State<HomePage> {
 
   Future<void> _loadUserData() async {
     try {
-      final data = await _userProfileCtrl.getUserData();
-
+      var data;
+      if(userData["firstName"] != null){
+        data = userData;
+      } else {
+        data = await _userProfileCtrl.getUserData();
+      }
       if (!mounted) return;
 
       setState(() {
-        _userData = data!;
-        _firstName = _userData["firstName"];
-        _level = _userData["level"];
-        _profileImage = AssetImage(_userData["sex"] == "F" ? "assets/avatar_women.png" : "assets/avatar_man.png");
-        _profileImageUrl = _userData['profileImageUrl'];
+        userData = data!;
+        _firstName = userData["firstName"];
+        _level = userData["level"];
+        _profileImage = AssetImage(userData["sex"] == "F" ? "assets/avatar_women.png" : "assets/avatar_man.png");
+        _profileImageUrl = userData['profileImageUrl'];
         isLoading = false;
       });
     } catch (e) {

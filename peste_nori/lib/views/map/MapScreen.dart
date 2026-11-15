@@ -6,9 +6,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:maplibre_gl/maplibre_gl.dart';
+import 'package:geolocator/geolocator.dart';
 
 import './models/HikingRoute.dart';
 import './services/RouteDataService.dart';
+import './services/GpsNavigationService.dart';
+import './services/TrailEntryService.dart';
 import './map/TrailShieldRenderer.dart';
 
 class MapScreen extends StatefulWidget {
@@ -36,10 +39,80 @@ class _MapScreenState extends State<MapScreen> {
 
   HikingRoute? _selectedRoute;
 
+  final GpsNavigationService _gpsService = GpsNavigationService();
+
+  bool _isNavigating = false;
+  bool _startingNavigation = false;
+  bool _followCamera = true;
+
+  Position? _currentPosition;
+  TrailProgress? _trailProgress;
+  bool _navigationExpanded = false;
+
+  static const String _entrySourceId = 'trail-entry-source';
+  static const String _entryLayerId = 'trail-entry-line';
+
+  bool _entryLineVisible = false;
+
+  LatLng _initialMapLocation = const LatLng(45.65, 25.60);
+  bool _initialLocationLoaded = false;
+
   @override
   void initState() {
     super.initState();
+    _loadInitialLocation();
     _loadStyle();
+  }
+
+  @override
+  void dispose() {
+    _gpsService.stop();
+    super.dispose();
+  }
+
+  Future<void> _loadInitialLocation() async {
+    try {
+      final enabled = await Geolocator.isLocationServiceEnabled();
+
+      if (!enabled) {
+        return;
+      }
+
+      var permission = await Geolocator.checkPermission();
+
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 12),
+        ),
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        _initialMapLocation = LatLng(
+          position.latitude,
+          position.longitude,
+        );
+      });
+    } catch (e) {
+      debugPrint('Initial location error: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _initialLocationLoaded = true;
+        });
+      }
+    }
   }
 
   Future<void> _loadStyle() async {
@@ -193,6 +266,9 @@ class _MapScreenState extends State<MapScreen> {
 
       debugPrint('SELECTED ROUTE: ${route.name}');
 
+      if (_isNavigating) {
+        await _stopNavigation();
+      }
       await renderer.selectRoute(route);
 
       if (!mounted) return;
@@ -214,6 +290,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<void> _clearSelection() async {
+    await _stopNavigation();
     await _renderer?.clearSelection();
 
     if (!mounted) return;
@@ -280,16 +357,25 @@ class _MapScreenState extends State<MapScreen> {
 
             SizedBox(
               width: double.infinity,
-              child: FilledButton.icon(
-                icon: const Icon(Icons.navigation),
-                label: const Text('Follow this trail'),
-                onPressed: () {
-                  setState(() {
-                    _status =
-                        'Route highlighted. '
-                        'GPS navigation is not implemented yet.';
-                  });
-                },
+              child: SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  icon: Icon(
+                    _isNavigating ? Icons.stop : Icons.navigation,
+                  ),
+                  label: Text(
+                    _startingNavigation
+                        ? 'Starting GPS...'
+                        : _isNavigating
+                            ? 'Stop navigation'
+                            : 'Follow this trail',
+                  ),
+                  onPressed: _startingNavigation
+                      ? null
+                      : _isNavigating
+                          ? _stopNavigation
+                          : _startNavigation,
+                ),
               ),
             ),
           ],
@@ -373,8 +459,468 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  Future<void> _startNavigation() async {
+    final route = _selectedRoute;
+
+    if (route == null || _startingNavigation) return;
+
+    _followCamera = false;
+
+    //await _zoomToSelectedRoute();
+
+    setState(() {
+      _startingNavigation = true;
+      _status = 'Starting GPS tracking...';
+    });
+
+    try {
+      await _gpsService.start(
+        route: route,
+        onUpdate: (position, progress) {
+          if (!mounted) return;
+
+          setState(() {
+            _currentPosition = position;
+            _trailProgress = progress;
+            _isNavigating = true;
+            _status = progress.offTrail
+                ? 'Warning: You may be off the trail'
+                : 'Following ${route.name}';
+          });
+
+          if (!_entryLineVisible) {
+            _showConnectionToTrail(
+              LatLng(position.latitude, position.longitude),
+              route,
+            );
+          }
+          /*if (_followCamera) {
+            _controller?.animateCamera(
+              CameraUpdate.newLatLng(
+                LatLng(position.latitude, position.longitude),
+              ),
+            );
+          }*/
+        },
+        onError: (error) {
+          if (!mounted) return;
+
+          setState(() {
+            _status = 'GPS error: $error';
+          });
+        },
+      );
+
+      if (!mounted) {
+        await _gpsService.stop();
+        return;
+      }
+
+      setState(() {
+        _isNavigating = true;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _status = 'Cannot start navigation: $e';
+        _isNavigating = false;
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _startingNavigation = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _stopNavigation() async {
+    await _gpsService.stop();
+
+    if (!mounted) return;
+
+    if (_entryLineVisible && _controller != null) {
+      await _controller!.removeLayer(_entryLayerId);
+      await _controller!.removeSource(_entrySourceId);
+      _entryLineVisible = false;
+    }
+
+    setState(() {
+      _isNavigating = false;
+      _currentPosition = null;
+      _trailProgress = null;
+      _status = 'Navigation stopped';
+    });
+  }
+
+  Widget _navigationPanel() {
+    final progress = _trailProgress;
+
+    if (!_isNavigating) {
+      return const SizedBox.shrink();
+    }
+
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 4,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Always visible: compact navigation bar
+          InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+              setState(() {
+                _navigationExpanded = !_navigationExpanded;
+              });
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 6,
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.navigation,
+                    size: 18,
+                    color: Colors.deepOrange,
+                  ),
+                  const SizedBox(width: 8),
+
+                  const Expanded(
+                    child: Text(
+                      'Trail navigation',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+
+                  if (progress?.offTrail == true)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: Icon(
+                        Icons.warning_amber_rounded,
+                        size: 18,
+                        color: Colors.deepOrange,
+                      ),
+                    ),
+
+                  Icon(
+                    _navigationExpanded
+                        ? Icons.keyboard_arrow_down
+                        : Icons.keyboard_arrow_up,
+                    size: 22,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Only visible when expanded
+          if (_navigationExpanded) ...[
+            const Divider(height: 1),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                12, 8, 12, 8,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (progress == null)
+                    const Text(
+                      'Waiting for GPS...',
+                      style: TextStyle(fontSize: 12),
+                    )
+                  else ...[
+                    Text(
+                      'Distance from trail: '
+                      '${progress.distanceFromTrailMeters.toStringAsFixed(0)} m',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    Text(
+                      'GPS accuracy: '
+                      '±${progress.gpsAccuracyMeters.toStringAsFixed(0)} m',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    if (progress.remainingMeters != null)
+                      Text(
+                        'Estimated remaining: '
+                        '${(progress.remainingMeters! / 1000).toStringAsFixed(2)} km',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+
+                    if (progress.offTrail)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 6),
+                        child: Text(
+                          'Warning: You may be off the trail',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.deepOrange,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                  ],
+
+                  const SizedBox(height: 6),
+
+                  // Compact icon controls
+                  Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                        tooltip: 'Follow GPS',
+                        onPressed: () {
+                          setState(() {
+                            _followCamera = !_followCamera;
+                          });
+                        },
+                        icon: Icon(
+                          _followCamera
+                              ? Icons.gps_fixed
+                              : Icons.gps_not_fixed,
+                          size: 20,
+                        ),
+                        visualDensity: VisualDensity.compact,
+                      ),
+
+                      IconButton(
+                        tooltip: 'Show trail',
+                        onPressed: () {
+                          setState(() {
+                            _followCamera = false;
+                            _navigationExpanded = false;
+                          });
+                          _zoomToSelectedRoute();
+                        },
+                        icon: const Icon(
+                          Icons.route,
+                          size: 20,
+                        ),
+                        visualDensity: VisualDensity.compact,
+                      ),
+
+                      IconButton(
+                        tooltip: 'My location',
+                        onPressed: () {
+                          setState(() {
+                            _followCamera = false;
+                            _navigationExpanded = false;
+                          });
+                          _goToMyLocation();
+                        },
+                        icon: const Icon(
+                          Icons.my_location,
+                          size: 20,
+                        ),
+                        visualDensity: VisualDensity.compact,
+                      ),
+
+                      IconButton(
+                        tooltip: 'Stop navigation',
+                        onPressed: _stopNavigation,
+                        icon: const Icon(
+                          Icons.stop_circle_outlined,
+                          size: 20,
+                        ),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Future<void> _zoomToSelectedRoute() async {
+    final route = _selectedRoute;
+    final controller = _controller;
+
+    if (route == null || controller == null) return;
+
+    final geometry = route.geometry;
+    final type = geometry['type'];
+    final coordinates = geometry['coordinates'];
+
+    final List<dynamic> points = [];
+
+    if (type == 'LineString') {
+      points.addAll(coordinates as List);
+    } else if (type == 'MultiLineString') {
+      for (final line in coordinates as List) {
+        points.addAll(line as List);
+      }
+    }
+
+    if (points.isEmpty) return;
+
+    double minLat = 90;
+    double maxLat = -90;
+    double minLon = 180;
+    double maxLon = -180;
+
+    for (final point in points) {
+      if (point is! List || point.length < 2) continue;
+
+      final lon = (point[0] as num).toDouble();
+      final lat = (point[1] as num).toDouble();
+
+      if (lat < minLat) minLat = lat;
+      if (lat > maxLat) maxLat = lat;
+      if (lon < minLon) minLon = lon;
+      if (lon > maxLon) maxLon = lon;
+    }
+
+    if (minLat > maxLat || minLon > maxLon) return;
+
+    await controller.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          southwest: LatLng(minLat, minLon),
+          northeast: LatLng(maxLat, maxLon),
+        ),
+        left: 45,
+        top: 100,
+        right: 45,
+        bottom: 260,
+      ),
+    );
+  }
+
+  Future<void> _goToMyLocation() async {
+    final position = _currentPosition;
+
+    if (position == null || _controller == null) return;
+
+    await _controller!.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(
+            position.latitude,
+            position.longitude,
+          ),
+          zoom: 15,
+        ),
+      ),
+    );
+  }
+
+
+  Future<void> _showConnectionToTrail(LatLng userLocation,HikingRoute route) async {
+    final controller = _controller;
+    if (controller == null) return;
+
+    final entryPoint = TrailEntryService.nearestPoint(
+      route,
+      userLocation,
+    );
+
+    if (entryPoint == null) return;
+
+    if (_entryLineVisible) {
+      await controller.removeLayer(_entryLayerId);
+      await controller.removeSource(_entrySourceId);
+      _entryLineVisible = false;
+    }
+
+    await controller.addSource(
+      _entrySourceId,
+      GeojsonSourceProperties(
+        data: {
+          'type': 'FeatureCollection',
+          'features': [
+            {
+              'type': 'Feature',
+              'properties': {},
+              'geometry': {
+                'type': 'LineString',
+                'coordinates': [
+                  [
+                    userLocation.longitude,
+                    userLocation.latitude,
+                  ],
+                  [
+                    entryPoint.longitude,
+                    entryPoint.latitude,
+                  ],
+                ],
+              },
+            },
+          ],
+        },
+      ),
+    );
+
+    await controller.addLineLayer(
+      _entrySourceId,
+      _entryLayerId,
+      const LineLayerProperties(
+        lineColor: '#00BFFF',
+        lineWidth: 4,
+        lineDasharray: [2, 2],
+        lineOpacity: 0.9,
+      ),
+    );
+
+    _entryLineVisible = true;
+
+    await controller.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          southwest: LatLng(
+            math.min(userLocation.latitude, entryPoint.latitude),
+            math.min(userLocation.longitude, entryPoint.longitude),
+          ),
+          northeast: LatLng(
+            math.max(userLocation.latitude, entryPoint.latitude),
+            math.max(userLocation.longitude, entryPoint.longitude),
+          ),
+        ),
+        left: 45,
+        top: 80,
+        right: 45,
+        bottom: 130,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!_initialLocationLoaded) {
+      return const Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 12),
+              Text('Finding your location...'),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Romania Hiking Map'),
@@ -396,15 +942,18 @@ class _MapScreenState extends State<MapScreen> {
               children: [
                 MapLibreMap(
                   styleString: _styleJson!,
-                  initialCameraPosition: const CameraPosition(
-                    target: LatLng(45.40, 25.45),
-                    zoom: 11,
+                  initialCameraPosition: CameraPosition(
+                    target: _initialMapLocation,
+                    zoom: 14,
                   ),
                   onMapCreated: _onMapCreated,
                   onStyleLoadedCallback: _onStyleLoaded,
                   onMapClick: _onMapClick,
                   onMapLongClick: _onMapClick,
+                  myLocationEnabled: _isNavigating,
+                  myLocationTrackingMode: MyLocationTrackingMode.none,
                   compassEnabled: true,
+                  featureTapsTriggersMapClick: true,
                   rotateGesturesEnabled: false,
                   tiltGesturesEnabled: false,
                   zoomGesturesEnabled: true,
@@ -412,45 +961,13 @@ class _MapScreenState extends State<MapScreen> {
                 ),
 
                 Positioned(
-                  left: 12,
-                  right: 12,
-                  bottom: 16,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (_selectedRoute != null)
-                        _routePanel(_selectedRoute!),
-
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(_status),
-
-                              const SizedBox(height: 4),
-
-                              Text(
-                                '$_visibleRouteCount marked '
-                                'routes / $_routeCount total',
-                                style: Theme.of(context)
-                                    .textTheme.labelSmall,
-                              ),
-
-                              if (_downloading) ...[
-                                const SizedBox(height: 8),
-                                LinearProgressIndicator(
-                                  value: _downloadProgress > 0
-                                      ? _downloadProgress
-                                      : null,
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                  left: 8,
+                  right: 8,
+                  bottom: 12,
+                  child: SafeArea(
+                    top: false,
+                    child: _isNavigating ? _navigationPanel():
+                      _selectedRoute != null ? _routePanel(_selectedRoute!) : const SizedBox.shrink()
                   ),
                 ),
               ],
