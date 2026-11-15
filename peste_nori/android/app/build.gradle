@@ -30,7 +30,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.CSA.pesteNori"
-    compileSdkVersion 36
+    compileSdkVersion 37
     ndkVersion = "28.2.13676358"
 
     compileOptions {
@@ -45,7 +45,7 @@ android {
     defaultConfig {
         applicationId "com.CSA.pesteNori"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 36
+        targetSdkVersion 37
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

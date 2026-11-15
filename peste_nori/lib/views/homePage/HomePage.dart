@@ -54,35 +54,109 @@ class HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
-                child: Container(
-                  constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(image: AssetImage(imageBackground), fit: BoxFit.cover),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 50),
+              child: Container(
+                constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+                decoration: BoxDecoration(
+                  image: DecorationImage(image: AssetImage(imageBackground), fit: BoxFit.cover),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 70),
 
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ProfilePicture(
+                            imageUrl: _profileImageUrl,
+                            image: _profileImage,
+                            radius: 35,
+                            onTap: () {
+                              if (_profileImageUrl != null && _profileImageUrl != "") {
+                                _showFullScreenImage();
+                              } else {
+                                _showImageSourceDialog();
+                              }
+                            },
+                          ),
+
+                          const SizedBox(width: 14),
+
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('${translations.welcome},', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 249, 251, 252).withValues(alpha: 0.8))),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _firstName,
+                                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 40),
+
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image(height: 100, image: AssetImage('assets/levelBadges/${this._level["image"]}'), fit: BoxFit.fill),
+
+                          const SizedBox(width: 14),
+
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  this._level["title"],
+                                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37)),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${this._level["xp"]} XP',
+                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300, color: Colors.white.withValues(alpha: 0.8)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 50),
+
+                      Row(
+                        children: [
+                          _getCollection(Icons.star_rounded, this._userData["peaks"].length, translations.peaksConquered),
+                          _getCollection(Icons.home, this._userData["cabins"].length, translations.cabinsConquered),
+                          _getCollection(Icons.emoji_events_rounded, this._userData["collections"].length, translations.collectionsCompleted),
+                        ],
+                      ),
+
+                      const SizedBox(height: 50),
+
+                      Row(
+                        children: [
+                          Text(
+                            translations.nextLevel,
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white.withValues(alpha: 0.8)),
+                          ),
+                        ],
+                      ),
+
+                      //next progress
+                      if (this._level["nextLevel"] != null) ...[
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            ProfilePicture(
-                              imageUrl: _profileImageUrl,
-                              image: _profileImage,
-                              radius: 35,
-                              onTap: () {
-                                if (_profileImageUrl != null && _profileImageUrl != "") {
-                                  _showFullScreenImage();
-                                } else {
-                                  _showImageSourceDialog();
-                                }
-                              },
-                            ),
+                            Image(height: 100, image: AssetImage('assets/levelBadges/${this._level["nextLevel"]["image"]}'), fit: BoxFit.fill),
 
                             const SizedBox(width: 14),
 
@@ -91,39 +165,13 @@ class HomePageState extends State<HomePage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text('${translations.welcome},', style: TextStyle(fontSize: 24, color: Colors.white.withValues(alpha: 0.8))),
-                                  const SizedBox(height: 4),
                                   Text(
-                                    _firstName,
-                                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 50),
-
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image(height: 100, image: AssetImage('assets/levelBadges/${this._level["image"]}'), fit: BoxFit.fill),
-
-                            const SizedBox(width: 14),
-
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    this._level["title"],
-                                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37)),
+                                    this._level["nextLevel"]["title"],
+                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white.withValues(alpha: 0.8)),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    '${this._level["xp"]} XP',
+                                    '${this._level["nextLevel"]["xp"]} XP',
                                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300, color: Colors.white.withValues(alpha: 0.8)),
                                   ),
                                 ],
@@ -131,83 +179,32 @@ class HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
-
-                        const SizedBox(height: 50),
-
-                        Row(
-                          children: [
-                            _getCollection(Icons.star_rounded, this._userData["peaks"].length, translations.peaksConquered),
-                            _getCollection(Icons.home, this._userData["cabins"].length, translations.cabinsConquered),
-                            _getCollection(Icons.emoji_events_rounded, this._userData["collections"].length, translations.collectionsCompleted),
-                          ],
-                        ),
-
-                        const SizedBox(height: 50),
+                        const SizedBox(height: 10),
 
                         Row(
                           children: [
-                            Text(
-                              translations.nextLevel,
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white.withValues(alpha: 0.8)),
-                            ),
-                          ],
-                        ),
-
-                        //next progress
-                        if (this._level["nextLevel"] != null) ...[
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image(height: 100, image: AssetImage('assets/levelBadges/${this._level["nextLevel"]["image"]}'), fit: BoxFit.fill),
-
-                              const SizedBox(width: 14),
-
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      this._level["nextLevel"]["title"],
-                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white.withValues(alpha: 0.8)),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      '${this._level["nextLevel"]["xp"]} XP',
-                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300, color: Colors.white.withValues(alpha: 0.8)),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: LinearProgressIndicator(
-                                    value: this._level["nextLevel"]["progress"],
-                                    minHeight: 8,
-                                    backgroundColor: Color(0xFFE0E5EF),
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Color(0xFFD4AF37), // Gold
-                                    ),
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: LinearProgressIndicator(
+                                  value: this._level["nextLevel"]["progress"],
+                                  minHeight: 8,
+                                  backgroundColor: Color(0xFFE0E5EF),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Color(0xFFD4AF37), // Gold
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 10),
-                              Text(
-                                '${this._level["nextLevel"]["remainingPercent"]}%',
-                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white.withValues(alpha: 0.8)),
-                              ),
-                            ],
-                          ),
-                        ],
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              '${this._level["nextLevel"]["remainingPercent"]}%',
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white.withValues(alpha: 0.8)),
+                            ),
+                          ],
+                        ),
                       ],
-                    ),
+                    ],
                   ),
                 ),
               ),

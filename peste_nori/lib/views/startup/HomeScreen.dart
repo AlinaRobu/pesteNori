@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:peste_nori/globals.dart';
 import 'package:peste_nori/views/collections/CollectionsPage.dart';
 import 'package:peste_nori/views/homePage/HomePage.dart';
-import 'package:peste_nori/views/map/MapPage.dart';
+import 'package:peste_nori/views/map/MapScreen.dart';
 import 'package:peste_nori/views/profile/ProfilePage.dart';
 import 'package:peste_nori/views/routes/RoutesPage.dart';
 
@@ -24,7 +24,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _pages = [
     HomePage(),
-    MapPage(),
+    MapScreen(),
     RoutesPage(),
     CollectionsPage(),
     ProfilePage()
