@@ -49,3 +49,4 @@ app.*.map.json
 
 # graphify-axet
 .graphify/
+/functions/node_modules/

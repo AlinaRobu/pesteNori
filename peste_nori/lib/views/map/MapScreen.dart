@@ -52,7 +52,8 @@ class _MapScreenState extends State<MapScreen> {
   static const String _entrySourceId = 'trail-entry-source';
   static const String _entryLayerId = 'trail-entry-line';
 
-  bool _entryLineVisible = false;
+  int _navigationSession = 0;
+  int? _visibleApproachSession;
 
   bool _locationPermissionGranted = false;
   bool _centerOnFirstLocation = true;
@@ -121,7 +122,9 @@ class _MapScreenState extends State<MapScreen> {
     if (_isNavigating || _selectedRoute != null) return;
 
     try {
-      await controller.moveCamera(CameraUpdate.newLatLng(location.position));
+      await controller.moveCamera(
+        CameraUpdate.newLatLngZoom(location.position, 14),
+      );
     } catch (e) {
       debugPrint('Initial map camera move failed: $e');
     }
@@ -132,6 +135,7 @@ class _MapScreenState extends State<MapScreen> {
     if (controller == null) return;
 
     _renderer = TrailShieldRenderer(controller);
+    _visibleApproachSession = null;
 
     _routesLoaded = false;
     _selectedRoute = null;
@@ -450,6 +454,8 @@ class _MapScreenState extends State<MapScreen> {
     if (route == null || _startingNavigation) return;
 
     _followCamera = false;
+    final session = ++_navigationSession;
+    var approachRequested = false;
 
     //await _zoomToSelectedRoute();
 
@@ -462,7 +468,7 @@ class _MapScreenState extends State<MapScreen> {
       await _gpsService.start(
         route: route,
         onUpdate: (position, progress) {
-          if (!mounted) return;
+          if (!mounted || session != _navigationSession) return;
 
           setState(() {
             _currentPosition = position;
@@ -473,10 +479,12 @@ class _MapScreenState extends State<MapScreen> {
                 : 'Following ${route.name}';
           });
 
-          if (!_entryLineVisible) {
+          if (progress.offTrail && !approachRequested) {
+            approachRequested = true;
             _showConnectionToTrail(
               LatLng(position.latitude, position.longitude),
               route,
+              session,
             );
           }
           /*if (_followCamera) {
@@ -521,14 +529,16 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<void> _stopNavigation() async {
+    _navigationSession++;
+    final approachSession = _visibleApproachSession;
+    _visibleApproachSession = null;
     await _gpsService.stop();
 
     if (!mounted) return;
-
-    if (_entryLineVisible && _controller != null) {
-      await _controller!.removeLayer(_entryLayerId);
-      await _controller!.removeSource(_entrySourceId);
-      _entryLineVisible = false;
+    final controller = _controller;
+    if (approachSession != null && controller != null) {
+      await controller.removeLayer('$_entryLayerId-$approachSession');
+      await controller.removeSource('$_entrySourceId-$approachSession');
     }
 
     setState(() {
@@ -811,75 +821,107 @@ class _MapScreenState extends State<MapScreen> {
   }
 
 
-  Future<void> _showConnectionToTrail(LatLng userLocation,HikingRoute route) async {
+  Future<void> _showConnectionToTrail(
+    LatLng userLocation,
+    HikingRoute route,
+    int session,
+  ) async {
     final controller = _controller;
     if (controller == null) return;
+    final renderer = _renderer;
 
-    final entryPoint = TrailEntryService.nearestPoint(
-      route,
-      userLocation,
-    );
-
-    if (entryPoint == null) return;
-
-    if (_entryLineVisible) {
-      await controller.removeLayer(_entryLayerId);
-      await controller.removeSource(_entrySourceId);
-      _entryLineVisible = false;
-    }
-
-    await controller.addSource(
-      _entrySourceId,
-      GeojsonSourceProperties(
-        data: {
+    bool isCurrent() =>
+        mounted && session == _navigationSession && renderer == _renderer;
+    final source = '$_entrySourceId-$session';
+    final layer = '$_entryLayerId-$session';
+    var sourceAdded = false;
+    var layerAdded = false;
+    var approachShown = false;
+    try {
+      final approach = await TrailEntryService.walkingApproach(
+        route,
+        userLocation,
+      );
+      if (!isCurrent() || _trailProgress?.offTrail != true) return;
+      if (approach != null) {
+        await controller.addGeoJsonSource(source, {
           'type': 'FeatureCollection',
           'features': [
             {
               'type': 'Feature',
-              'properties': {},
+              'properties': <String, dynamic>{},
               'geometry': {
                 'type': 'LineString',
                 'coordinates': [
-                  [
-                    userLocation.longitude,
-                    userLocation.latitude,
-                  ],
-                  [
-                    entryPoint.longitude,
-                    entryPoint.latitude,
-                  ],
+                  for (final point in approach)
+                    [point.longitude, point.latitude],
                 ],
               },
             },
           ],
-        },
-      ),
-    );
+        });
+        sourceAdded = true;
+        if (!isCurrent()) return;
 
-    await controller.addLineLayer(
-      _entrySourceId,
-      _entryLayerId,
-      const LineLayerProperties(
-        lineColor: '#00BFFF',
-        lineWidth: 4,
-        lineDasharray: [2, 2],
-        lineOpacity: 0.9,
-      ),
-    );
+        await controller.addLineLayer(
+          source,
+          layer,
+          const LineLayerProperties(
+            lineColor: '#00BFFF',
+            lineWidth: 4,
+            lineOpacity: 0.9,
+          ),
+        );
+        layerAdded = true;
+        if (!isCurrent()) return;
+        _visibleApproachSession = session;
+        approachShown = true;
+        await _fitWalkingApproach(controller, approach);
+        return;
+      }
+    } catch (error) {
+      debugPrint('Trail approach error: $error');
+      if (approachShown) return;
+    } finally {
+      if (sourceAdded &&
+          !approachShown &&
+          mounted &&
+          renderer == _renderer) {
+        try {
+          if (layerAdded) await controller.removeLayer(layer);
+          await controller.removeSource(source);
+        } catch (error) {
+          debugPrint('Trail approach cleanup error: $error');
+        }
+      }
+    }
 
-    _entryLineVisible = true;
+    if (mounted && isCurrent()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Walking directions unavailable')),
+      );
+    }
+  }
 
+  Future<void> _fitWalkingApproach(
+    MapLibreMapController controller,
+    List<LatLng> points,
+  ) async {
+    var south = points.first.latitude;
+    var north = south;
+    var west = points.first.longitude;
+    var east = west;
+    for (final point in points.skip(1)) {
+      south = math.min(south, point.latitude);
+      north = math.max(north, point.latitude);
+      west = math.min(west, point.longitude);
+      east = math.max(east, point.longitude);
+    }
     await controller.animateCamera(
       CameraUpdate.newLatLngBounds(
         LatLngBounds(
-          southwest: LatLng(
-            math.min(userLocation.latitude, entryPoint.latitude),
-            math.min(userLocation.longitude, entryPoint.longitude),
-          ),
-          northeast: LatLng(
-            math.max(userLocation.latitude, entryPoint.latitude),
-            math.max(userLocation.longitude, entryPoint.longitude),
-          ),
+          southwest: LatLng(south, west),
+          northeast: LatLng(north, east),
         ),
         left: 45,
         top: 80,
@@ -913,8 +955,8 @@ class _MapScreenState extends State<MapScreen> {
                 MapLibreMap(
                   styleString: _styleJson!,
                   initialCameraPosition: const CameraPosition(
-                    target: LatLng(45.65, 25.60),
-                    zoom: 14,
+                    target: LatLng(0, 0),
+                    zoom: 1,
                   ),
                   onMapCreated: _onMapCreated,
                   onUserLocationUpdated: _onUserLocationUpdated,

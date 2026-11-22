@@ -1,0 +1,9 @@
+{
+  "name": "peste-nori-walking-directions",
+  "private": true,
+  "main": "index.js",
+  "engines": { "node": "22" },
+  "dependencies": {
+    "firebase-functions": "^7.0.0"
+  }
+}
