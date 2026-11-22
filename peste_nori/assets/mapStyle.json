@@ -4525,6 +4525,110 @@
             "rank"
           ],
           20
+        ],
+        [
+          "!",
+          [
+            "all",
+            [
+              "has",
+              "name"
+            ],
+            [
+              "match",
+              [
+                "coalesce",
+                [
+                  "get",
+                  "subclass"
+                ],
+                [
+                  "get",
+                  "class"
+                ]
+              ],
+              [
+                "alpine_hut",
+                "wilderness_hut",
+                "chalet",
+                "shelter",
+                "viewpoint",
+                "camp_site",
+                "picnic_site",
+                "drinking_water",
+                "waterfall",
+                "cave_entrance"
+              ],
+              true,
+              false
+            ],
+            [
+              "match",
+              [
+                "geometry-type"
+              ],
+              [
+                "Point",
+                "MultiPoint"
+              ],
+              true,
+              false
+            ]
+          ]
+        ],
+        [
+          "!",
+          [
+            "all",
+            [
+              "has",
+              "name"
+            ],
+            [
+              "match",
+              [
+                "coalesce",
+                [
+                  "get",
+                  "subclass"
+                ],
+                [
+                  "get",
+                  "class"
+                ]
+              ],
+              [
+                "attraction",
+                "castle"
+              ],
+              true,
+              false
+            ],
+            [
+              "<=",
+              [
+                "coalesce",
+                [
+                  "get",
+                  "rank"
+                ],
+                99
+              ],
+              5
+            ],
+            [
+              "match",
+              [
+                "geometry-type"
+              ],
+              [
+                "Point",
+                "MultiPoint"
+              ],
+              true,
+              false
+            ]
+          ]
         ]
       ],
       "layout": {
@@ -4630,6 +4734,110 @@
             "rank"
           ],
           20
+        ],
+        [
+          "!",
+          [
+            "all",
+            [
+              "has",
+              "name"
+            ],
+            [
+              "match",
+              [
+                "coalesce",
+                [
+                  "get",
+                  "subclass"
+                ],
+                [
+                  "get",
+                  "class"
+                ]
+              ],
+              [
+                "alpine_hut",
+                "wilderness_hut",
+                "chalet",
+                "shelter",
+                "viewpoint",
+                "camp_site",
+                "picnic_site",
+                "drinking_water",
+                "waterfall",
+                "cave_entrance"
+              ],
+              true,
+              false
+            ],
+            [
+              "match",
+              [
+                "geometry-type"
+              ],
+              [
+                "Point",
+                "MultiPoint"
+              ],
+              true,
+              false
+            ]
+          ]
+        ],
+        [
+          "!",
+          [
+            "all",
+            [
+              "has",
+              "name"
+            ],
+            [
+              "match",
+              [
+                "coalesce",
+                [
+                  "get",
+                  "subclass"
+                ],
+                [
+                  "get",
+                  "class"
+                ]
+              ],
+              [
+                "attraction",
+                "castle"
+              ],
+              true,
+              false
+            ],
+            [
+              "<=",
+              [
+                "coalesce",
+                [
+                  "get",
+                  "rank"
+                ],
+                99
+              ],
+              5
+            ],
+            [
+              "match",
+              [
+                "geometry-type"
+              ],
+              [
+                "Point",
+                "MultiPoint"
+              ],
+              true,
+              false
+            ]
+          ]
         ]
       ],
       "layout": {
@@ -4735,6 +4943,110 @@
             "rank"
           ],
           7
+        ],
+        [
+          "!",
+          [
+            "all",
+            [
+              "has",
+              "name"
+            ],
+            [
+              "match",
+              [
+                "coalesce",
+                [
+                  "get",
+                  "subclass"
+                ],
+                [
+                  "get",
+                  "class"
+                ]
+              ],
+              [
+                "alpine_hut",
+                "wilderness_hut",
+                "chalet",
+                "shelter",
+                "viewpoint",
+                "camp_site",
+                "picnic_site",
+                "drinking_water",
+                "waterfall",
+                "cave_entrance"
+              ],
+              true,
+              false
+            ],
+            [
+              "match",
+              [
+                "geometry-type"
+              ],
+              [
+                "Point",
+                "MultiPoint"
+              ],
+              true,
+              false
+            ]
+          ]
+        ],
+        [
+          "!",
+          [
+            "all",
+            [
+              "has",
+              "name"
+            ],
+            [
+              "match",
+              [
+                "coalesce",
+                [
+                  "get",
+                  "subclass"
+                ],
+                [
+                  "get",
+                  "class"
+                ]
+              ],
+              [
+                "attraction",
+                "castle"
+              ],
+              true,
+              false
+            ],
+            [
+              "<=",
+              [
+                "coalesce",
+                [
+                  "get",
+                  "rank"
+                ],
+                99
+              ],
+              5
+            ],
+            [
+              "match",
+              [
+                "geometry-type"
+              ],
+              [
+                "Point",
+                "MultiPoint"
+              ],
+              true,
+              false
+            ]
+          ]
         ]
       ],
       "layout": {
@@ -6192,6 +6504,366 @@
         "text-halo-blur": 1,
         "text-halo-color": "#fff",
         "text-halo-width": 1
+      }
+    },
+    {
+      "id": "major-attractions",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "poi",
+      "minzoom": 14,
+      "filter": [
+        "all",
+        [
+          "has",
+          "name"
+        ],
+        [
+          "match",
+          [
+            "coalesce",
+            [
+              "get",
+              "subclass"
+            ],
+            [
+              "get",
+              "class"
+            ]
+          ],
+          [
+            "attraction",
+            "castle"
+          ],
+          true,
+          false
+        ],
+        [
+          "<=",
+          [
+            "coalesce",
+            [
+              "get",
+              "rank"
+            ],
+            99
+          ],
+          5
+        ],
+        [
+          "match",
+          [
+            "geometry-type"
+          ],
+          [
+            "Point",
+            "MultiPoint"
+          ],
+          true,
+          false
+        ]
+      ],
+      "layout": {
+        "text-font": [
+          "Noto Sans Bold"
+        ],
+        "text-size": 13,
+        "text-padding": 4,
+        "text-max-width": 18,
+        "text-field": [
+          "coalesce",
+          [
+            "get",
+            "name"
+          ],
+          [
+            "get",
+            "name:latin"
+          ],
+          [
+            "get",
+            "name_en"
+          ]
+        ]
+      },
+      "paint": {
+        "text-color": "#23463a",
+        "text-halo-color": "#fffcf0",
+        "text-halo-width": 1.5
+      }
+    },
+    {
+      "id": "hiking-focus-landmarks",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "poi",
+      "minzoom": 12,
+      "filter": [
+        "all",
+        [
+          "has",
+          "name"
+        ],
+        [
+          "match",
+          [
+            "coalesce",
+            [
+              "get",
+              "subclass"
+            ],
+            [
+              "get",
+              "class"
+            ]
+          ],
+          [
+            "alpine_hut",
+            "wilderness_hut",
+            "chalet",
+            "shelter",
+            "viewpoint",
+            "camp_site",
+            "picnic_site",
+            "drinking_water",
+            "waterfall",
+            "cave_entrance"
+          ],
+          true,
+          false
+        ],
+        [
+          "match",
+          [
+            "geometry-type"
+          ],
+          [
+            "Point",
+            "MultiPoint"
+          ],
+          true,
+          false
+        ]
+      ],
+      "layout": {
+        "text-font": [
+          "Noto Sans Bold"
+        ],
+        "text-size": [
+          "interpolate",
+          [
+            "linear"
+          ],
+          [
+            "zoom"
+          ],
+          12,
+          12,
+          14,
+          14,
+          17,
+          16
+        ],
+        "text-padding": 4,
+        "text-max-width": 18,
+        "text-field": [
+          "coalesce",
+          [
+            "get",
+            "name"
+          ],
+          [
+            "get",
+            "name:latin"
+          ],
+          [
+            "get",
+            "name_en"
+          ]
+        ],
+        "symbol-sort-key": [
+          "match",
+          [
+            "coalesce",
+            [
+              "get",
+              "subclass"
+            ],
+            [
+              "get",
+              "class"
+            ]
+          ],
+          [
+            "alpine_hut",
+            "wilderness_hut",
+            "chalet",
+            "viewpoint",
+            "waterfall",
+            "cave_entrance"
+          ],
+          0,
+          1
+        ]
+      },
+      "paint": {
+        "text-color": "#23463a",
+        "text-halo-color": "#fffcf0",
+        "text-halo-width": 1.5
+      }
+    },
+    {
+      "id": "hiking-focus-summits",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "mountain_peak",
+      "minzoom": 10,
+      "filter": [
+        "all",
+        [
+          "has",
+          "name"
+        ],
+        [
+          "match",
+          [
+            "geometry-type"
+          ],
+          [
+            "Point",
+            "MultiPoint"
+          ],
+          true,
+          false
+        ]
+      ],
+      "layout": {
+        "text-font": [
+          "Noto Sans Bold"
+        ],
+        "text-size": [
+          "interpolate",
+          [
+            "linear"
+          ],
+          [
+            "zoom"
+          ],
+          12,
+          12,
+          14,
+          14,
+          17,
+          16
+        ],
+        "text-padding": 4,
+        "text-max-width": 18,
+        "symbol-sort-key": [
+          "coalesce",
+          [
+            "get",
+            "rank"
+          ],
+          99
+        ],
+        "text-field": [
+          "concat",
+          [
+            "coalesce",
+            [
+              "get",
+              "name"
+            ],
+            [
+              "get",
+              "name:latin"
+            ],
+            [
+              "get",
+              "name_en"
+            ]
+          ],
+          [
+            "case",
+            [
+              "has",
+              "ele"
+            ],
+            [
+              "concat",
+              "  ",
+              [
+                "to-string",
+                [
+                  "get",
+                  "ele"
+                ]
+              ],
+              " m"
+            ],
+            ""
+          ]
+        ]
+      },
+      "paint": {
+        "text-color": "#23463a",
+        "text-halo-color": "#fffcf0",
+        "text-halo-width": 1.5
+      }
+    },
+    {
+      "id": "hiking-focus-ridges",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "mountain_peak",
+      "minzoom": 12,
+      "filter": [
+        "all",
+        [
+          "has",
+          "name"
+        ],
+        [
+          "match",
+          [
+            "geometry-type"
+          ],
+          [
+            "LineString",
+            "MultiLineString"
+          ],
+          true,
+          false
+        ]
+      ],
+      "layout": {
+        "text-font": [
+          "Noto Sans Regular"
+        ],
+        "text-size": 13,
+        "text-padding": 4,
+        "text-max-width": 11,
+        "symbol-placement": "line",
+        "text-field": [
+          "coalesce",
+          [
+            "get",
+            "name"
+          ],
+          [
+            "get",
+            "name:latin"
+          ],
+          [
+            "get",
+            "name_en"
+          ]
+        ]
+      },
+      "paint": {
+        "text-color": "#23463a",
+        "text-halo-color": "#fffcf0",
+        "text-halo-width": 1.5
       }
     }
   ]

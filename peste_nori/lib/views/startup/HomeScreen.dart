@@ -20,7 +20,9 @@ class HomeScreenState extends State<HomeScreen> {
 
   double get widgetsTop => 100;
 
+  static const _mapIndex = 1;
   int _selectedIndex = 0;
+  bool _mapTabOpened = false;
 
   final List<Widget> _pages = [
     HomePage(),
@@ -33,8 +35,27 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     translations = AppLocalizations.of(context);
+    final showingMap = _selectedIndex == _mapIndex;
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          if (!showingMap)
+            KeyedSubtree(
+              key: ValueKey(_selectedIndex),
+              child: _pages[_selectedIndex],
+            ),
+          if (_mapTabOpened)
+            Offstage(
+              key: const ValueKey(_mapIndex),
+              offstage: !showingMap,
+              child: TickerMode(
+                enabled: showingMap,
+                child: _pages[_mapIndex],
+              ),
+            ),
+        ],
+      ),
       resizeToAvoidBottomInset: true,
       bottomNavigationBar: _getBottomButtons(),
     );
@@ -48,6 +69,7 @@ class HomeScreenState extends State<HomeScreen> {
       onTap: (index) {
         setState(() {
           _selectedIndex = index;
+          if (index == _mapIndex) _mapTabOpened = true;
         });
       },
       selectedItemColor: const Color(0xFFD4AF37),

@@ -28,8 +28,12 @@ class _MapScreenState extends State<MapScreen> {
 
   String? _styleJson;
   String _status = 'Loading map...';
+  final _cityLayerIds = <String>{};
+  bool _hikingView = false;
+  Future<void> _hikingViewUpdate = Future<void>.value();
 
   bool _loadingRoutes = false;
+  late final Future<List<HikingRoute>> _routes;
   bool _routesLoaded = false;
   bool _downloading = false;
 
@@ -39,6 +43,14 @@ class _MapScreenState extends State<MapScreen> {
   int _visibleRouteCount = 0;
 
   HikingRoute? _selectedRoute;
+  ({String name, double distanceMeters})? _selectedLandmark;
+  bool _selectingMapFeature = false;
+  static const _landmarkLayerIds = [
+    'hiking-focus-landmarks',
+    'hiking-focus-summits',
+    'hiking-focus-ridges',
+    'major-attractions',
+  ];
 
   final GpsNavigationService _gpsService = GpsNavigationService();
 
@@ -63,12 +75,15 @@ class _MapScreenState extends State<MapScreen> {
 
   bool _locationPermissionGranted = false;
   bool _centerOnFirstLocation = true;
+  CameraPosition? _initialMapCamera;
 
   @override
   void initState() {
     super.initState();
-    _requestMapLocationPermission();
+    _initializeMapLocation();
     _loadStyle();
+    _routes = RouteDataService().loadRoutes();
+    _routes.ignore();
   }
 
   @override
@@ -78,7 +93,9 @@ class _MapScreenState extends State<MapScreen> {
     super.dispose();
   }
 
-  Future<void> _requestMapLocationPermission() async {
+  Future<void> _initializeMapLocation() async {
+    var locationGranted = false;
+    Position? position;
     try {
       var permission = await Geolocator.checkPermission();
       if (!mounted) return;
@@ -86,12 +103,47 @@ class _MapScreenState extends State<MapScreen> {
         permission = await Geolocator.requestPermission();
       }
       if (!mounted) return;
-      if (permission == LocationPermission.whileInUse ||
-          permission == LocationPermission.always) {
-        setState(() => _locationPermissionGranted = true);
+      locationGranted = permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always;
+      if (!locationGranted) return;
+
+      if (!kIsWeb) {
+        try {
+          position = await Geolocator.getLastKnownPosition();
+        } catch (error) {
+          debugPrint('Cached map location unavailable: $error');
+        }
+      }
+      if (!mounted) return;
+      if (position == null ||
+          DateTime.now().difference(position.timestamp) >
+              const Duration(minutes: 10) ||
+          position.accuracy > 100) {
+        position = null;
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            timeLimit: Duration(seconds: 5),
+          ),
+        );
+        _centerOnFirstLocation = false;
       }
     } catch (e) {
-      debugPrint('Map location permission error: $e');
+      debugPrint('Initial map location unavailable: $e');
+    } finally {
+      if (mounted) {
+        final fix = position;
+        setState(() {
+          _locationPermissionGranted = locationGranted;
+          _initialMapCamera = fix == null
+              ? const CameraPosition(target: LatLng(0, 0), zoom: 1)
+              : CameraPosition(
+                  target: LatLng(fix.latitude, fix.longitude),
+                  zoom: 14,
+                  tilt: 35,
+                );
+        });
+      }
     }
   }
 
@@ -101,7 +153,28 @@ class _MapScreenState extends State<MapScreen> {
         'assets/mapStyle.json',
       );
 
-      jsonDecode(text);
+      final style = jsonDecode(text) as Map<String, dynamic>;
+      for (final layer in style['layers'] as List) {
+        final id = layer['id'] as String;
+        final sourceLayer = layer['source-layer'];
+        final hiddenByDefault = layer['layout']?['visibility'] == 'none';
+        if (!hiddenByDefault &&
+            !id.startsWith('hiking-focus-') &&
+            !id.contains('path_pedestrian') &&
+            id != 'highway-name-path' &&
+            const {
+              'place',
+              'poi',
+              'building',
+              'landuse',
+              'transportation',
+              'transportation_name',
+              'aeroway',
+              'aerodrome_label',
+            }.contains(sourceLayer)) {
+          _cityLayerIds.add(id);
+        }
+      }
 
       if (!mounted) return;
 
@@ -147,8 +220,8 @@ class _MapScreenState extends State<MapScreen> {
     _visibleApproachSession = null;
 
     _routesLoaded = false;
-    _selectedRoute = null;
 
+    if (_hikingView) _applyHikingView();
     await _loadRoutes();
   }
 
@@ -166,11 +239,19 @@ class _MapScreenState extends State<MapScreen> {
     }
 
     try {
-      final routes = await RouteDataService().loadRoutes();
+      final routes = await _routes;
+      if (!mounted || renderer != _renderer) return;
 
       final rendered = await renderer.displayRoutes(routes);
 
-      if (!mounted) return;
+      if (!mounted || renderer != _renderer) return;
+      final selectedRoute = _selectedRoute;
+      if (selectedRoute != null) {
+        await renderer.selectRoute(selectedRoute);
+        if (!mounted || renderer != _renderer) return;
+        if (_selectedRoute != selectedRoute) await renderer.clearSelection();
+      }
+      if (!mounted || renderer != _renderer) return;
 
       setState(() {
         _routeCount = routes.length;
@@ -192,104 +273,158 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  Future<void> _onMapClick( math.Point<double> point,LatLng coordinates) async {
+  Future<void> _onMapClick(
+    math.Point<double> point,
+    LatLng coordinates,
+  ) async {
     final controller = _controller;
     final renderer = _renderer;
-
-    debugPrint('MAP TAPPED: $coordinates');
-    debugPrint('SCREEN POINT: $point');
-
-    if (controller == null || renderer == null || !_routesLoaded) {
-      debugPrint('Map or routes not ready');
+    if (controller == null ||
+        renderer == null ||
+        _selectingMapFeature ||
+        _startingNavigation) {
       return;
     }
 
+    final session = _navigationSession;
+    _selectingMapFeature = true;
     try {
-      final layers = renderer.interactiveLayers;
-
-      debugPrint('INTERACTIVE LAYERS: ${layers.length}');
-
-      if (layers.isEmpty) {
-        debugPrint('No interactive shield layers registered');
-        return;
+      HikingRoute? route;
+      ({String name, double distanceMeters})? landmark;
+      final shieldLayers = renderer.interactiveLayers;
+      if (_routesLoaded && shieldLayers.isNotEmpty) {
+        final shields = await controller.queryRenderedFeatures(
+          point,
+          shieldLayers,
+          null,
+        );
+        for (final feature in shields.whereType<Map>()) {
+          final properties = feature['properties'];
+          final id = properties is Map ? properties['route_id']?.toString() : null;
+          if (id == null) continue;
+          route = renderer.routeForId(id);
+          if (route != null) break;
+        }
       }
-
-      final features = await controller.queryRenderedFeatures(
-        point,
-        layers,
-        null,
-      );
-
-      debugPrint('FEATURES FOUND: ${features.length}');
-
-      if (features.isEmpty) {
-        debugPrint('No shield detected at tap position');
-        return;
-      }
-
-      for (final feature in features.take(3)) {
-        debugPrint('TAPPED FEATURE: $feature');
-      }
-
-      final feature = features.first;
-
-      if (feature is! Map) {
-        debugPrint('Unexpected feature type: ${feature.runtimeType}');
-        return;
-      }
-
-      final rawProperties = feature['properties'];
-
-      if (rawProperties is! Map) {
-        debugPrint('Feature has no properties: $feature');
-        return;
-      }
-
-      final properties = Map<String, dynamic>.from(rawProperties);
-      final id = properties['route_id']?.toString();
-
-      debugPrint('ROUTE ID: $id');
-
-      if (id == null || id.isEmpty) {
-        debugPrint('Feature has no route_id');
-        return;
-      }
-
-      final route = renderer.routeForId(id);
 
       if (route == null) {
-        debugPrint('Route not found for ID: $id');
+        final features = await controller.queryRenderedFeaturesInRect(
+          Rect.fromCenter(center: Offset(point.x, point.y), width: 20, height: 20),
+          _landmarkLayerIds,
+          null,
+        );
+        if (!mounted || renderer != _renderer) return;
+        for (final feature in features.whereType<Map>()) {
+          final properties = feature['properties'];
+          if (properties is! Map) continue;
+          final name = properties['name']?.toString().trim();
+          if (name == null || name.isEmpty) continue;
+
+          if (!_routesLoaded) {
+            _showMapMessage('Hiking trails are still loading. Try again shortly.');
+            return;
+          }
+
+          final geometry = feature['geometry'];
+          final position = geometry is Map && geometry['type'] == 'Point'
+              ? geometry['coordinates']
+              : null;
+          final target = position is List &&
+                  position.length >= 2 &&
+                  position[0] is num &&
+                  position[1] is num
+              ? LatLng(
+                  (position[1] as num).toDouble(),
+                  (position[0] as num).toDouble(),
+                )
+              : coordinates;
+          final nearby = TrailEntryService.trailNearLandmark(
+            renderer.routesById.values,
+            target,
+          );
+          if (nearby == null) {
+            _showMapMessage('No marked hiking trail found near $name.');
+            return;
+          }
+          route = nearby.route;
+          landmark = (name: name, distanceMeters: nearby.distanceMeters);
+          break;
+        }
+      }
+
+      final selectedRoute = route;
+      if (selectedRoute == null ||
+          !mounted ||
+          renderer != _renderer ||
+          session != _navigationSession) {
         return;
       }
 
-      debugPrint('SELECTED ROUTE: ${route.name}');
-
       if (_isNavigating) {
-        await _stopNavigation();
+        if (selectedRoute != _selectedRoute || landmark != null) {
+          await _showTrailPreview(selectedRoute, landmark?.name);
+        }
+        return;
       }
-      await renderer.selectRoute(route);
 
-      if (!mounted) return;
-
+      await renderer.selectRoute(selectedRoute);
+      if (!mounted || renderer != _renderer) return;
       setState(() {
-        _selectedRoute = route;
-        _status = 'Selected: ${route.name}';
+        _selectedRoute = selectedRoute;
+        _selectedLandmark = landmark;
+        _status = 'Selected: ${selectedRoute.name}';
       });
-    } catch (e, stackTrace) {
-      debugPrint('MAP TAP ERROR: $e');
+    } catch (error, stackTrace) {
+      debugPrint('Map tap error: $error');
       debugPrintStack(stackTrace: stackTrace);
-
-      if (!mounted) return;
-
-      setState(() {
-        _status = 'Tap error: $e';
-      });
+    } finally {
+      _selectingMapFeature = false;
     }
+  }
+
+  Future<void> _showTrailPreview(HikingRoute route, String? landmark) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) {
+        return SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  route.name,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 8),
+                if (landmark != null) Text('Near $landmark'),
+                if (route.to != null) Text('Destination: ${route.to}'),
+                if (route.distanceKm != null)
+                  Text('Trail length: ${route.distanceKm} km'),
+                if (route.symbol != null) Text('Marking: ${route.symbol}'),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showMapMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   Future<void> _clearSelection() async {
     if (_selectedRoute == null) return;
-    setState(() => _selectedRoute = null);
+    setState(() {
+      _selectedRoute = null;
+      _selectedLandmark = null;
+    });
     await _stopNavigation();
 
     if (!mounted || _selectedRoute != null) return;
@@ -300,6 +435,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _routePanel(HikingRoute route) {
+    final landmark = _selectedLandmark;
     return Card(
       elevation: 5,
       child: Padding(
@@ -318,11 +454,16 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ),
                 IconButton(
-                  onPressed: _clearSelection,
+                  onPressed: _startingNavigation ? null : _clearSelection,
                   icon: const Icon(Icons.close),
                 ),
               ],
             ),
+
+            if (landmark != null)
+              Text(
+                'Near ${landmark.name} ? ${landmark.distanceMeters.round()} m from the trail',
+              ),
 
             if (route.symbol != null)
               Text('Marking: ${route.symbol}'),
@@ -460,7 +601,7 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _startNavigation() async {
     final route = _selectedRoute;
 
-    if (route == null || _startingNavigation) return;
+    if (route == null || _startingNavigation || _selectingMapFeature) return;
 
     _followCamera = true;
     _navigationExpanded = false;
@@ -495,6 +636,12 @@ class _MapScreenState extends State<MapScreen> {
               route,
               session,
             );
+          }
+          if (progress.offTrail) {
+            _setHikingView(false);
+          } else if (progress.gpsAccuracyMeters <= 25 &&
+              progress.distanceFromTrailMeters <= 25) {
+            _setHikingView(true);
           }
           _scheduleNavigationCamera();
         },
@@ -533,11 +680,13 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _stopNavigation() async {
     _navigationSession++;
+    final restoreMap = _setHikingView(false);
     _followCamera = false;
     _walkingApproach = null;
     final approachSession = _visibleApproachSession;
     _visibleApproachSession = null;
     await _gpsService.stop();
+    await restoreMap;
 
     if (!mounted) return;
     await _clearNavigationInsets();
@@ -555,6 +704,40 @@ class _MapScreenState extends State<MapScreen> {
       _trailProgress = null;
       _status = 'Navigation stopped';
     });
+  }
+
+  Future<void> _setHikingView(bool enabled) {
+    if (_hikingView == enabled) return _hikingViewUpdate;
+    _hikingView = enabled;
+    return _applyHikingView();
+  }
+
+  Future<void> _applyHikingView() {
+    final controller = _controller;
+    final renderer = _renderer;
+    final hikingView = _hikingView;
+    if (controller == null || renderer == null) return _hikingViewUpdate;
+
+    _hikingViewUpdate = _hikingViewUpdate.then((_) async {
+      if (!mounted || renderer != _renderer || hikingView != _hikingView) {
+        return;
+      }
+      try {
+        final approach = _visibleApproachSession;
+        await Future.wait([
+          for (final layer in _cityLayerIds)
+            controller.setLayerVisibility(layer, !hikingView),
+          if (approach != null)
+            controller.setLayerVisibility(
+              '$_entryLayerId-$approach',
+              !hikingView,
+            ),
+        ]);
+      } catch (error) {
+        debugPrint('Hiking map layer update failed: $error');
+      }
+    });
+    return _hikingViewUpdate;
   }
 
   Widget _navigationPanel() {
@@ -893,6 +1076,7 @@ class _MapScreenState extends State<MapScreen> {
         if (!isCurrent()) return;
         _visibleApproachSession = session;
         approachShown = true;
+        if (_hikingView) _applyHikingView();
         _walkingApproach = approach;
         _scheduleNavigationCamera();
         return;
@@ -1100,19 +1284,18 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ],
       ),
-      body: _styleJson == null
+      body: _styleJson == null || _initialMapCamera == null
           ? Center(
-              child: Text(_status),
+              child: Text(
+                _styleJson == null ? _status : 'Finding your location…',
+              ),
             )
           : Stack(
               children: [
                 MapLibreMap(
                   key: _mapKey,
                   styleString: _styleJson!,
-                  initialCameraPosition: const CameraPosition(
-                    target: LatLng(0, 0),
-                    zoom: 1,
-                  ),
+                  initialCameraPosition: _initialMapCamera!,
                   onMapCreated: _onMapCreated,
                   onUserLocationUpdated: _onUserLocationUpdated,
                   onCameraMoveStarted: (reason) {

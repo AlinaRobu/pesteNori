@@ -31,7 +31,34 @@ class TrailEntryService {
     }).toList();
   }
 
-  static List<LatLng> _nearbyPoints(HikingRoute route, LatLng userLocation) {
+  static const _earthRadius = 6371000.0;
+
+  static ({HikingRoute route, double distanceMeters})? trailNearLandmark(
+    Iterable<HikingRoute> routes,
+    LatLng landmark,
+  ) {
+    const maximumDistance = 300.0;
+    var closestDistanceSquared = maximumDistance * maximumDistance;
+    HikingRoute? closestRoute;
+
+    for (final route in routes) {
+      if (!route.hasSymbol) continue;
+      for (final point in _segmentProjections(route, landmark)) {
+        if (point.distanceSquared >= closestDistanceSquared) continue;
+        closestDistanceSquared = point.distanceSquared;
+        closestRoute = route;
+      }
+    }
+
+    if (closestRoute == null) return null;
+    return (
+      route: closestRoute,
+      distanceMeters: math.sqrt(closestDistanceSquared),
+    );
+  }
+
+  static Iterable<({double x, double y, double distanceSquared})>
+  _segmentProjections(HikingRoute route, LatLng userLocation) sync* {
     final geometry = route.geometry;
     final type = geometry['type'];
     final coordinates = geometry['coordinates'];
@@ -48,16 +75,13 @@ class TrailEntryService {
       }
     }
 
-    const earthRadius = 6371000.0;
     final cosLat = math.cos(userLocation.latitude * math.pi / 180);
 
     double x(double lon) =>
-        (lon - userLocation.longitude) * math.pi / 180 * earthRadius * cosLat;
+        (lon - userLocation.longitude) * math.pi / 180 * _earthRadius * cosLat;
 
     double y(double lat) =>
-        (lat - userLocation.latitude) * math.pi / 180 * earthRadius;
-
-    final projections = <({double x, double y, double distanceSquared})>[];
+        (lat - userLocation.latitude) * math.pi / 180 * _earthRadius;
 
     for (final line in lines) {
       for (var i = 0; i < line.length - 1; i++) {
@@ -91,10 +115,14 @@ class TrailEntryService {
         final px = ax + t * dx;
         final py = ay + t * dy;
 
-        projections.add((x: px, y: py, distanceSquared: px * px + py * py));
+        yield (x: px, y: py, distanceSquared: px * px + py * py);
       }
     }
+  }
 
+  static List<LatLng> _nearbyPoints(HikingRoute route, LatLng userLocation) {
+    final cosLat = math.cos(userLocation.latitude * math.pi / 180);
+    final projections = _segmentProjections(route, userLocation).toList();
     projections.sort((a, b) => a.distanceSquared.compareTo(b.distanceSquared));
     final candidates = <({double x, double y})>[];
     for (final point in projections) {
@@ -110,10 +138,10 @@ class TrailEntryService {
 
     return candidates.map((point) {
       final latitude =
-          userLocation.latitude + point.y / earthRadius * 180 / math.pi;
+          userLocation.latitude + point.y / _earthRadius * 180 / math.pi;
       final longitude =
           userLocation.longitude +
-          point.x / (earthRadius * cosLat) * 180 / math.pi;
+          point.x / (_earthRadius * cosLat) * 180 / math.pi;
       return LatLng(latitude, longitude);
     }).toList();
   }
