@@ -24,6 +24,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   MapLibreMapController? _controller;
   TrailShieldRenderer? _renderer;
+  final _mapBearing = ValueNotifier<double>(0);
 
   String? _styleJson;
   String _status = 'Loading map...';
@@ -73,6 +74,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void dispose() {
     _gpsService.stop();
+    _mapBearing.dispose();
     super.dispose();
   }
 
@@ -1032,6 +1034,57 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  Future<void> _resetMapNorth() async {
+    final controller = _controller;
+    if (controller == null) return;
+    if (_isNavigating && _followCamera) {
+      setState(() => _followCamera = false);
+    }
+    await _clearNavigationInsets();
+    if (!mounted || controller != _controller) return;
+    try {
+      await controller.animateCamera(CameraUpdate.bearingTo(0));
+    } catch (error) {
+      debugPrint('Map compass reset failed: $error');
+    }
+  }
+
+  Widget _mapCompass() {
+    final colors = Theme.of(context).colorScheme;
+    return Material(
+      color: colors.surface,
+      elevation: 3,
+      shape: const CircleBorder(),
+      child: IconButton(
+        tooltip: 'Reset map to north',
+        onPressed: _resetMapNorth,
+        icon: ValueListenableBuilder<double>(
+          valueListenable: _mapBearing,
+          builder: (context, bearing, _) {
+            return Transform.rotate(
+              angle: -bearing * math.pi / 180,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'N',
+                    style: TextStyle(
+                      color: colors.onSurface,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      height: 1,
+                    ),
+                  ),
+                  const Icon(Icons.navigation, color: Colors.redAccent, size: 18),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1073,18 +1126,28 @@ class _MapScreenState extends State<MapScreen> {
                   onCameraIdle: () {
                     if (!_followCamera) _clearNavigationInsets();
                   },
+                  onCameraMove: (camera) {
+                    if (mounted) _mapBearing.value = camera.bearing;
+                  },
+                  trackCameraPosition: true,
                   onStyleLoadedCallback: _onStyleLoaded,
                   onMapClick: _onMapClick,
                   onMapLongClick: _onMapClick,
                   myLocationEnabled:
                       _locationPermissionGranted || _isNavigating,
                   myLocationTrackingMode: MyLocationTrackingMode.none,
-                  compassEnabled: true,
+                  compassEnabled: false,
                   featureTapsTriggersMapClick: true,
                   rotateGesturesEnabled: false,
                   tiltGesturesEnabled: true,
                   zoomGesturesEnabled: true,
                   scrollGesturesEnabled: true,
+                ),
+
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: SafeArea(bottom: false, child: _mapCompass()),
                 ),
 
                 Positioned(
