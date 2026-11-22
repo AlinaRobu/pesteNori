@@ -1374,7 +1374,7 @@ class _MapScreenState extends State<MapScreen> {
                   myLocationTrackingMode: MyLocationTrackingMode.none,
                   compassEnabled: false,
                   featureTapsTriggersMapClick: true,
-                  rotateGesturesEnabled: false,
+                  rotateGesturesEnabled: true,
                   tiltGesturesEnabled: true,
                   zoomGesturesEnabled: true,
                   scrollGesturesEnabled: true,
