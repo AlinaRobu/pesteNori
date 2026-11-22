@@ -13,6 +13,7 @@ class TrailProgress {
   final double gpsAccuracyMeters;
   final bool offTrail;
   final bool progressAvailable;
+  final double? forwardBearing;
 
   const TrailProgress({
     required this.distanceFromTrailMeters,
@@ -21,6 +22,7 @@ class TrailProgress {
     required this.gpsAccuracyMeters,
     required this.offTrail,
     required this.progressAvailable,
+    this.forwardBearing,
   });
 }
 
@@ -150,6 +152,8 @@ class GpsNavigationService {
     double bestDistance = double.infinity;
     double bestAlong = 0;
     double totalLength = 0;
+    double? trailBearing;
+    double? approachBearing;
 
     // Progress is only unambiguous for a single ordered line.
     final canEstimateProgress = parts.length == 1;
@@ -184,6 +188,8 @@ class GpsNavigationService {
         if (distance < bestDistance) {
           bestDistance = distance;
           bestAlong = partLength + length * t;
+          trailBearing = math.atan2(dx, dy) * 180 / math.pi;
+          approachBearing = math.atan2(closestX, closestY) * 180 / math.pi;
         }
 
         partLength += length;
@@ -211,6 +217,7 @@ class GpsNavigationService {
       gpsAccuracyMeters: accuracy,
       offTrail: offTrail,
       progressAvailable: canEstimateProgress,
+      forwardBearing: offTrail ? approachBearing : trailBearing,
     );
   }
 }

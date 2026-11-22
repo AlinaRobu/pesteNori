@@ -44,6 +44,11 @@ class _MapScreenState extends State<MapScreen> {
   bool _isNavigating = false;
   bool _startingNavigation = false;
   bool _followCamera = true;
+  final _mapKey = GlobalKey();
+  final _navigationPanelKey = GlobalKey();
+  EdgeInsets _navigationInsets = EdgeInsets.zero;
+  List<LatLng>? _walkingApproach;
+  bool _navigationCameraScheduled = false;
 
   Position? _currentPosition;
   TrailProgress? _trailProgress;
@@ -281,15 +286,15 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<void> _clearSelection() async {
+    if (_selectedRoute == null) return;
+    setState(() => _selectedRoute = null);
     await _stopNavigation();
+
+    if (!mounted || _selectedRoute != null) return;
     await _renderer?.clearSelection();
 
-    if (!mounted) return;
-
-    setState(() {
-      _selectedRoute = null;
-      _status = 'Tap a hiking trail symbol';
-    });
+    if (!mounted || _selectedRoute != null) return;
+    setState(() => _status = 'Tap a hiking trail symbol');
   }
 
   Widget _routePanel(HikingRoute route) {
@@ -364,7 +369,7 @@ class _MapScreenState extends State<MapScreen> {
                   onPressed: _startingNavigation
                       ? null
                       : _isNavigating
-                          ? _stopNavigation
+                          ? _clearSelection
                           : _startNavigation,
                 ),
               ),
@@ -455,11 +460,11 @@ class _MapScreenState extends State<MapScreen> {
 
     if (route == null || _startingNavigation) return;
 
-    _followCamera = false;
+    _followCamera = true;
+    _navigationExpanded = false;
+    _walkingApproach = null;
     final session = ++_navigationSession;
     var approachRequested = false;
-
-    //await _zoomToSelectedRoute();
 
     setState(() {
       _startingNavigation = true;
@@ -489,16 +494,10 @@ class _MapScreenState extends State<MapScreen> {
               session,
             );
           }
-          /*if (_followCamera) {
-            _controller?.animateCamera(
-              CameraUpdate.newLatLng(
-                LatLng(position.latitude, position.longitude),
-              ),
-            );
-          }*/
+          _scheduleNavigationCamera();
         },
         onError: (error) {
-          if (!mounted) return;
+          if (!mounted || session != _navigationSession) return;
 
           setState(() {
             _status = 'GPS error: $error';
@@ -506,7 +505,7 @@ class _MapScreenState extends State<MapScreen> {
         },
       );
 
-      if (!mounted) {
+      if (!mounted || session != _navigationSession) {
         await _gpsService.stop();
         return;
       }
@@ -515,7 +514,7 @@ class _MapScreenState extends State<MapScreen> {
         _isNavigating = true;
       });
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || session != _navigationSession) return;
 
       setState(() {
         _status = 'Cannot start navigation: $e';
@@ -532,10 +531,14 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _stopNavigation() async {
     _navigationSession++;
+    _followCamera = false;
+    _walkingApproach = null;
     final approachSession = _visibleApproachSession;
     _visibleApproachSession = null;
     await _gpsService.stop();
 
+    if (!mounted) return;
+    await _clearNavigationInsets();
     if (!mounted) return;
     final controller = _controller;
     if (approachSession != null && controller != null) {
@@ -543,6 +546,7 @@ class _MapScreenState extends State<MapScreen> {
       await controller.removeSource('$_entrySourceId-$approachSession');
     }
 
+    if (!mounted) return;
     setState(() {
       _isNavigating = false;
       _currentPosition = null;
@@ -559,6 +563,7 @@ class _MapScreenState extends State<MapScreen> {
     }
 
     return Card(
+      key: _navigationPanelKey,
       elevation: 4,
       margin: const EdgeInsets.symmetric(
         horizontal: 8,
@@ -577,6 +582,7 @@ class _MapScreenState extends State<MapScreen> {
               setState(() {
                 _navigationExpanded = !_navigationExpanded;
               });
+              _scheduleNavigationCamera();
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(
@@ -687,6 +693,11 @@ class _MapScreenState extends State<MapScreen> {
                           setState(() {
                             _followCamera = !_followCamera;
                           });
+                          if (_followCamera) {
+                            _scheduleNavigationCamera();
+                          } else {
+                            _clearNavigationInsets();
+                          }
                         },
                         icon: Icon(
                           _followCamera
@@ -699,12 +710,13 @@ class _MapScreenState extends State<MapScreen> {
 
                       IconButton(
                         tooltip: 'Show trail',
-                        onPressed: () {
+                        onPressed: () async {
                           setState(() {
                             _followCamera = false;
                             _navigationExpanded = false;
                           });
-                          _zoomToSelectedRoute();
+                          await _clearNavigationInsets();
+                          if (mounted) await _zoomToSelectedRoute();
                         },
                         icon: const Icon(
                           Icons.route,
@@ -715,12 +727,13 @@ class _MapScreenState extends State<MapScreen> {
 
                       IconButton(
                         tooltip: 'My location',
-                        onPressed: () {
+                        onPressed: () async {
                           setState(() {
                             _followCamera = false;
                             _navigationExpanded = false;
                           });
-                          _goToMyLocation();
+                          await _clearNavigationInsets();
+                          if (mounted) await _goToMyLocation();
                         },
                         icon: const Icon(
                           Icons.my_location,
@@ -731,7 +744,7 @@ class _MapScreenState extends State<MapScreen> {
 
                       IconButton(
                         tooltip: 'Stop navigation',
-                        onPressed: _stopNavigation,
+                        onPressed: _clearSelection,
                         icon: const Icon(
                           Icons.stop_circle_outlined,
                           size: 20,
@@ -878,7 +891,8 @@ class _MapScreenState extends State<MapScreen> {
         if (!isCurrent()) return;
         _visibleApproachSession = session;
         approachShown = true;
-        await _fitWalkingApproach(controller, approach);
+        _walkingApproach = approach;
+        _scheduleNavigationCamera();
         return;
       }
     } catch (error) {
@@ -905,32 +919,117 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  Future<void> _fitWalkingApproach(
-    MapLibreMapController controller,
-    List<LatLng> points,
-  ) async {
-    var south = points.first.latitude;
-    var north = south;
-    var west = points.first.longitude;
-    var east = west;
-    for (final point in points.skip(1)) {
-      south = math.min(south, point.latitude);
-      north = math.max(north, point.latitude);
-      west = math.min(west, point.longitude);
-      east = math.max(east, point.longitude);
+  void _scheduleNavigationCamera() {
+    if (!_followCamera || _navigationCameraScheduled) return;
+    _navigationCameraScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _navigationCameraScheduled = false;
+      if (mounted) _updateNavigationCamera();
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
+  Future<void> _updateNavigationCamera() async {
+    final controller = _controller;
+    final position = _currentPosition;
+    final progress = _trailProgress;
+    final mapHeight = _mapKey.currentContext?.size?.height;
+    if (!_followCamera ||
+        !_isNavigating ||
+        controller == null ||
+        position == null ||
+        progress == null ||
+        mapHeight == null) {
+      return;
     }
-    await controller.animateCamera(
-      CameraUpdate.newLatLngBounds(
-        LatLngBounds(
-          southwest: LatLng(south, west),
-          northeast: LatLng(north, east),
-        ),
-        left: 45,
-        top: 80,
-        right: 45,
-        bottom: 130,
-      ),
+
+    final session = _navigationSession;
+    final panelHeight = _navigationPanelKey.currentContext?.size?.height ?? 0;
+    final bottom = math.min(panelHeight + 24, mapHeight * 0.55);
+    final insets = EdgeInsets.only(
+      top: (mapHeight - bottom) * 0.55,
+      bottom: bottom,
     );
+
+    final target = LatLng(position.latitude, position.longitude);
+    final approachBearing = progress.offTrail ? _walkingBearing(target) : null;
+    final bearing =
+        approachBearing ??
+        progress.forwardBearing ??
+        controller.cameraPosition?.bearing ??
+        0.0;
+    try {
+      if (_navigationInsets != insets) {
+        _navigationInsets = insets;
+        await controller.updateContentInsets(insets, false);
+      }
+      if (!mounted ||
+          !_followCamera ||
+          session != _navigationSession ||
+          controller != _controller) {
+        return;
+      }
+      await controller.moveCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: target,
+            bearing: bearing % 360,
+            zoom: 16,
+            tilt: 35,
+          ),
+        ),
+      );
+    } catch (error) {
+      debugPrint('Navigation camera update failed: $error');
+    }
+  }
+
+  double? _walkingBearing(LatLng position) {
+    final approach = _walkingApproach;
+    if (approach == null) return null;
+
+    var closestIndex = 0;
+    var closestDistance = double.infinity;
+    for (var i = 0; i < approach.length; i++) {
+      final point = approach[i];
+      final distance = Geolocator.distanceBetween(
+        position.latitude,
+        position.longitude,
+        point.latitude,
+        point.longitude,
+      );
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = i;
+      }
+    }
+
+    for (final point in approach.skip(closestIndex)) {
+      if (Geolocator.distanceBetween(
+        position.latitude,
+        position.longitude,
+        point.latitude,
+        point.longitude,
+      ) < 20) continue;
+      return Geolocator.bearingBetween(
+        position.latitude,
+        position.longitude,
+        point.latitude,
+        point.longitude,
+      );
+    }
+    return null;
+  }
+
+  Future<void> _clearNavigationInsets() async {
+    final controller = _controller;
+    if (controller == null || _navigationInsets == EdgeInsets.zero) return;
+    _navigationInsets = EdgeInsets.zero;
+    try {
+      await controller.updateContentInsets(EdgeInsets.zero, false);
+    } catch (error) {
+      debugPrint('Navigation camera reset failed: $error');
+    }
   }
 
   @override
@@ -955,6 +1054,7 @@ class _MapScreenState extends State<MapScreen> {
           : Stack(
               children: [
                 MapLibreMap(
+                  key: _mapKey,
                   styleString: _styleJson!,
                   initialCameraPosition: const CameraPosition(
                     target: LatLng(0, 0),
@@ -965,7 +1065,13 @@ class _MapScreenState extends State<MapScreen> {
                   onCameraMoveStarted: (reason) {
                     if (reason == CameraMoveReason.gesture) {
                       _centerOnFirstLocation = false;
+                      if (_isNavigating && _followCamera) {
+                        setState(() => _followCamera = false);
+                      }
                     }
+                  },
+                  onCameraIdle: () {
+                    if (!_followCamera) _clearNavigationInsets();
                   },
                   onStyleLoadedCallback: _onStyleLoaded,
                   onMapClick: _onMapClick,
