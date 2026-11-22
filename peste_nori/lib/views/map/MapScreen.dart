@@ -54,13 +54,13 @@ class _MapScreenState extends State<MapScreen> {
 
   bool _entryLineVisible = false;
 
-  LatLng _initialMapLocation = const LatLng(45.65, 25.60);
-  bool _initialLocationLoaded = false;
+  bool _locationPermissionGranted = false;
+  bool _centerOnFirstLocation = true;
 
   @override
   void initState() {
     super.initState();
-    _loadInitialLocation();
+    _requestMapLocationPermission();
     _loadStyle();
   }
 
@@ -70,48 +70,20 @@ class _MapScreenState extends State<MapScreen> {
     super.dispose();
   }
 
-  Future<void> _loadInitialLocation() async {
+  Future<void> _requestMapLocationPermission() async {
     try {
-      final enabled = await Geolocator.isLocationServiceEnabled();
-
-      if (!enabled) {
-        return;
-      }
-
       var permission = await Geolocator.checkPermission();
-
+      if (!mounted) return;
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
-
-      if (permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever) {
-        return;
-      }
-
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          timeLimit: Duration(seconds: 12),
-        ),
-      );
-
       if (!mounted) return;
-
-      setState(() {
-        _initialMapLocation = LatLng(
-          position.latitude,
-          position.longitude,
-        );
-      });
-    } catch (e) {
-      debugPrint('Initial location error: $e');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _initialLocationLoaded = true;
-        });
+      if (permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always) {
+        setState(() => _locationPermissionGranted = true);
       }
+    } catch (e) {
+      debugPrint('Map location permission error: $e');
     }
   }
 
@@ -140,6 +112,19 @@ class _MapScreenState extends State<MapScreen> {
 
   void _onMapCreated(MapLibreMapController controller) {
     _controller = controller;
+  }
+
+  Future<void> _onUserLocationUpdated(UserLocation location) async {
+    final controller = _controller;
+    if (controller == null || !_centerOnFirstLocation) return;
+    _centerOnFirstLocation = false;
+    if (_isNavigating || _selectedRoute != null) return;
+
+    try {
+      await controller.moveCamera(CameraUpdate.newLatLng(location.position));
+    } catch (e) {
+      debugPrint('Initial map camera move failed: $e');
+    }
   }
 
   Future<void> _onStyleLoaded() async {
@@ -906,21 +891,6 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_initialLocationLoaded) {
-      return const Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 12),
-              Text('Finding your location...'),
-            ],
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Romania Hiking Map'),
@@ -942,15 +912,22 @@ class _MapScreenState extends State<MapScreen> {
               children: [
                 MapLibreMap(
                   styleString: _styleJson!,
-                  initialCameraPosition: CameraPosition(
-                    target: _initialMapLocation,
+                  initialCameraPosition: const CameraPosition(
+                    target: LatLng(45.65, 25.60),
                     zoom: 14,
                   ),
                   onMapCreated: _onMapCreated,
+                  onUserLocationUpdated: _onUserLocationUpdated,
+                  onCameraMoveStarted: (reason) {
+                    if (reason == CameraMoveReason.gesture) {
+                      _centerOnFirstLocation = false;
+                    }
+                  },
                   onStyleLoadedCallback: _onStyleLoaded,
                   onMapClick: _onMapClick,
                   onMapLongClick: _onMapClick,
-                  myLocationEnabled: _isNavigating,
+                  myLocationEnabled:
+                      _locationPermissionGranted || _isNavigating,
                   myLocationTrackingMode: MyLocationTrackingMode.none,
                   compassEnabled: true,
                   featureTapsTriggersMapClick: true,
