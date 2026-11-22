@@ -2,6 +2,7 @@
 <network-security-config>
     <domain-config>
         <domain>tiles.openfreemap.org</domain>
+        <domain>elevation-tiles-prod.s3.amazonaws.com</domain>
         <domain>europe-west1-pestenori-bc7a8.cloudfunctions.net</domain>
         <domain>firebaseappcheck.googleapis.com</domain>
         <trust-anchors>

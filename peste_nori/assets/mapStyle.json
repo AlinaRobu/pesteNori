@@ -12,6 +12,16 @@
     "openmaptiles": {
       "type": "vector",
       "url": "https://tiles.openfreemap.org/planet"
+    },
+    "terrain-elevation": {
+      "type": "raster-dem",
+      "tiles": [
+        "https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png"
+      ],
+      "encoding": "terrarium",
+      "tileSize": 256,
+      "maxzoom": 14,
+      "attribution": "<a href=\"https://registry.opendata.aws/terrain-tiles/\">Mapzen Terrain Tiles</a> ? <a href=\"https://github.com/tilezen/joerd/blob/master/docs/attribution.md\">Elevation data credits</a>"
     }
   },
   "sprite": "https://tiles.openfreemap.org/sprites/ofm_f384/ofm",
@@ -139,8 +149,8 @@
       ],
       "paint": {
         "fill-antialias": false,
-        "fill-color": "hsla(98,61%,72%,0.7)",
-        "fill-opacity": 0.4
+        "fill-color": "#a9c39b",
+        "fill-opacity": 0.56
       }
     },
     {
@@ -158,8 +168,8 @@
       ],
       "paint": {
         "fill-antialias": false,
-        "fill-color": "rgba(176, 213, 154, 1)",
-        "fill-opacity": 0.3
+        "fill-color": "#d7dfb4",
+        "fill-opacity": 0.48
       }
     },
     {
@@ -285,6 +295,20 @@
       ],
       "paint": {
         "fill-color": "rgb(236,238,204)"
+      }
+    },
+    {
+      "id": "terrain-hillshade",
+      "type": "hillshade",
+      "source": "terrain-elevation",
+      "minzoom": 7,
+      "paint": {
+        "hillshade-illumination-anchor": "map",
+        "hillshade-illumination-direction": 315,
+        "hillshade-exaggeration": 0.65,
+        "hillshade-shadow-color": "#3b382d",
+        "hillshade-highlight-color": "#fff4de",
+        "hillshade-accent-color": "#665d4c"
       }
     },
     {
@@ -1017,7 +1041,7 @@
         ]
       ],
       "paint": {
-        "line-color": "hsl(0,0%,100%)",
+        "line-color": "#8c8375",
         "line-dasharray": [
           1,
           0.75
@@ -1035,7 +1059,8 @@
           0.5,
           20,
           10
-        ]
+        ],
+        "line-opacity": 0.6
       }
     },
     {
@@ -2093,11 +2118,11 @@
       }
     },
     {
-      "id": "road_path_pedestrian",
+      "id": "road_path_pedestrian_casing",
       "type": "line",
       "source": "openmaptiles",
       "source-layer": "transportation",
-      "minzoom": 14,
+      "minzoom": 13,
       "filter": [
         "all",
         [
@@ -2140,27 +2165,113 @@
         ]
       ],
       "layout": {
-        "line-join": "round"
+        "line-join": "round",
+        "line-cap": "round"
       },
       "paint": {
-        "line-color": "hsl(0,0%,100%)",
-        "line-dasharray": [
-          1,
-          0.7
-        ],
+        "line-color": "#fff4dc",
+        "line-opacity": 0.86,
         "line-width": [
           "interpolate",
           [
-            "exponential",
-            1.2
+            "linear"
           ],
           [
             "zoom"
           ],
-          14,
-          1,
+          13,
+          1.8,
+          15,
+          3.2,
+          17,
+          4.8,
           20,
-          10
+          7
+        ]
+      }
+    },
+    {
+      "id": "road_path_pedestrian",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+      "minzoom": 13,
+      "filter": [
+        "all",
+        [
+          "match",
+          [
+            "geometry-type"
+          ],
+          [
+            "LineString",
+            "MultiLineString"
+          ],
+          true,
+          false
+        ],
+        [
+          "match",
+          [
+            "get",
+            "brunnel"
+          ],
+          [
+            "bridge",
+            "tunnel"
+          ],
+          false,
+          true
+        ],
+        [
+          "match",
+          [
+            "get",
+            "class"
+          ],
+          [
+            "path",
+            "pedestrian"
+          ],
+          true,
+          false
+        ]
+      ],
+      "layout": {
+        "line-join": "round",
+        "line-cap": "round"
+      },
+      "paint": {
+        "line-color": [
+          "match",
+          [
+            "get",
+            "class"
+          ],
+          "path",
+          "#88613b",
+          "#77756a"
+        ],
+        "line-dasharray": [
+          1.4,
+          1.1
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "linear"
+          ],
+          [
+            "zoom"
+          ],
+          13,
+          0.8,
+          15,
+          1.5,
+          17,
+          2.3,
+          20,
+          4
         ]
       }
     },
@@ -3126,7 +3237,7 @@
         ]
       ],
       "paint": {
-        "line-color": "hsl(35,6%,80%)",
+        "line-color": "#f9edda",
         "line-dasharray": [
           1,
           0
@@ -3134,16 +3245,17 @@
         "line-width": [
           "interpolate",
           [
-            "exponential",
-            1.2
+            "linear"
           ],
           [
             "zoom"
           ],
           14,
-          1.5,
+          2,
+          17,
+          4.8,
           20,
-          18
+          7
         ]
       }
     },
@@ -3350,7 +3462,16 @@
         ]
       ],
       "paint": {
-        "line-color": "hsl(0,0%,100%)",
+        "line-color": [
+          "match",
+          [
+            "get",
+            "class"
+          ],
+          "path",
+          "#88613b",
+          "#77756a"
+        ],
         "line-dasharray": [
           1,
           0.3
@@ -3358,16 +3479,17 @@
         "line-width": [
           "interpolate",
           [
-            "exponential",
-            1.2
+            "linear"
           ],
           [
             "zoom"
           ],
           14,
-          0.5,
+          1,
+          17,
+          2.3,
           20,
-          10
+          4
         ]
       }
     },

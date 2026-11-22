@@ -123,7 +123,9 @@ class _MapScreenState extends State<MapScreen> {
 
     try {
       await controller.moveCamera(
-        CameraUpdate.newLatLngZoom(location.position, 14),
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: location.position, zoom: 14, tilt: 35),
+        ),
       );
     } catch (e) {
       debugPrint('Initial map camera move failed: $e');
@@ -974,7 +976,7 @@ class _MapScreenState extends State<MapScreen> {
                   compassEnabled: true,
                   featureTapsTriggersMapClick: true,
                   rotateGesturesEnabled: false,
-                  tiltGesturesEnabled: false,
+                  tiltGesturesEnabled: true,
                   zoomGesturesEnabled: true,
                   scrollGesturesEnabled: true,
                 ),
