@@ -8,9 +8,6 @@
             "name": "peste_nori",
             "request": "launch",
             "type": "dart",
-            "toolArgs": [
-                "--quiet"
-            ]
         },
         {
             "name": "peste_nori (profile mode)",

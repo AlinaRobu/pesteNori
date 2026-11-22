@@ -61,6 +61,8 @@ class _MapScreenState extends State<MapScreen> {
   final _navigationPanelKey = GlobalKey();
   EdgeInsets _navigationInsets = EdgeInsets.zero;
   List<LatLng>? _walkingApproach;
+  bool _loadingWalkingApproach = false;
+  bool _walkingApproachUnavailable = false;
   bool _navigationCameraScheduled = false;
 
   Position? _currentPosition;
@@ -607,7 +609,6 @@ class _MapScreenState extends State<MapScreen> {
     _navigationExpanded = false;
     _walkingApproach = null;
     final session = ++_navigationSession;
-    var approachRequested = false;
 
     setState(() {
       _startingNavigation = true;
@@ -629,19 +630,19 @@ class _MapScreenState extends State<MapScreen> {
                 : 'Following ${route.name}';
           });
 
-          if (progress.offTrail && !approachRequested) {
-            approachRequested = true;
-            _showConnectionToTrail(
-              LatLng(position.latitude, position.longitude),
-              route,
-              session,
-            );
-          }
           if (progress.offTrail) {
             _setHikingView(false);
           } else if (progress.gpsAccuracyMeters <= 25 &&
               progress.distanceFromTrailMeters <= 25) {
+            _walkingApproachUnavailable = false;
             _setHikingView(true);
+          }
+          if (!_hikingView &&
+              progress.gpsAccuracyMeters <= 50 &&
+              progress.distanceFromTrailMeters >
+                  math.max(25, progress.gpsAccuracyMeters) &&
+              !_walkingApproachUnavailable) {
+            _requestWalkingApproach();
           }
           _scheduleNavigationCamera();
         },
@@ -683,6 +684,8 @@ class _MapScreenState extends State<MapScreen> {
     final restoreMap = _setHikingView(false);
     _followCamera = false;
     _walkingApproach = null;
+    _loadingWalkingApproach = false;
+    _walkingApproachUnavailable = false;
     final approachSession = _visibleApproachSession;
     _visibleApproachSession = null;
     await _gpsService.stop();
@@ -813,6 +816,31 @@ class _MapScreenState extends State<MapScreen> {
               ),
             ),
           ),
+
+          if (!_hikingView && _loadingWalkingApproach)
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Text('Finding walking directions?'),
+            )
+          else if (!_hikingView && _walkingApproachUnavailable)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Flexible(child: Text('Walking directions unavailable')),
+                TextButton(
+                  onPressed: _requestWalkingApproach,
+                  child: const Text('Retry'),
+                ),
+              ],
+            )
+          else if (_walkingApproach == null &&
+              progress != null &&
+              progress.distanceFromTrailMeters > 25 &&
+              progress.gpsAccuracyMeters > 50)
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Text('Waiting for a more accurate GPS fix…'),
+            ),
 
           // Only visible when expanded
           if (_navigationExpanded) ...[
@@ -1021,13 +1049,45 @@ class _MapScreenState extends State<MapScreen> {
   }
 
 
-  Future<void> _showConnectionToTrail(
+  Future<void> _requestWalkingApproach() async {
+    final position = _currentPosition;
+    final route = _selectedRoute;
+    if (_loadingWalkingApproach ||
+        _walkingApproach != null ||
+        _hikingView ||
+        !_isNavigating ||
+        position == null ||
+        route == null) {
+      return;
+    }
+
+    final session = _navigationSession;
+    setState(() {
+      _loadingWalkingApproach = true;
+      _walkingApproachUnavailable = false;
+    });
+    _scheduleNavigationCamera();
+
+    final shown = await _showConnectionToTrail(
+      LatLng(position.latitude, position.longitude),
+      route,
+      session,
+    );
+    if (!mounted || session != _navigationSession) return;
+    setState(() {
+      _loadingWalkingApproach = false;
+      _walkingApproachUnavailable = !shown && !_hikingView;
+    });
+    _scheduleNavigationCamera();
+  }
+
+  Future<bool> _showConnectionToTrail(
     LatLng userLocation,
     HikingRoute route,
     int session,
   ) async {
     final controller = _controller;
-    if (controller == null) return;
+    if (controller == null) return false;
     final renderer = _renderer;
 
     bool isCurrent() =>
@@ -1042,7 +1102,7 @@ class _MapScreenState extends State<MapScreen> {
         route,
         userLocation,
       );
-      if (!isCurrent() || _trailProgress?.offTrail != true) return;
+      if (!isCurrent() || _hikingView) return false;
       if (approach != null) {
         await controller.addGeoJsonSource(source, {
           'type': 'FeatureCollection',
@@ -1061,7 +1121,7 @@ class _MapScreenState extends State<MapScreen> {
           ],
         });
         sourceAdded = true;
-        if (!isCurrent()) return;
+        if (!isCurrent() || _hikingView) return false;
 
         await controller.addLineLayer(
           source,
@@ -1073,17 +1133,14 @@ class _MapScreenState extends State<MapScreen> {
           ),
         );
         layerAdded = true;
-        if (!isCurrent()) return;
+        if (!isCurrent() || _hikingView) return false;
         _visibleApproachSession = session;
         approachShown = true;
-        if (_hikingView) _applyHikingView();
         _walkingApproach = approach;
-        _scheduleNavigationCamera();
-        return;
+        return true;
       }
     } catch (error) {
       debugPrint('Trail approach error: $error');
-      if (approachShown) return;
     } finally {
       if (sourceAdded &&
           !approachShown &&
@@ -1098,11 +1155,7 @@ class _MapScreenState extends State<MapScreen> {
       }
     }
 
-    if (mounted && isCurrent()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Walking directions unavailable')),
-      );
-    }
+    return false;
   }
 
   void _scheduleNavigationCamera() {
@@ -1138,7 +1191,7 @@ class _MapScreenState extends State<MapScreen> {
     );
 
     final target = LatLng(position.latitude, position.longitude);
-    final approachBearing = progress.offTrail ? _walkingBearing(target) : null;
+    final approachBearing = _hikingView ? null : _walkingBearing(target);
     final bearing =
         approachBearing ??
         progress.forwardBearing ??
