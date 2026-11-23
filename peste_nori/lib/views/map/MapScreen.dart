@@ -13,9 +13,12 @@ import './services/RouteDataService.dart';
 import './services/GpsNavigationService.dart';
 import './services/TrailEntryService.dart';
 import './map/TrailShieldRenderer.dart';
+import './TrailSearchDelegate.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  const MapScreen({super.key, this.isVisible = true});
+
+  final bool isVisible;
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -78,6 +81,7 @@ class _MapScreenState extends State<MapScreen> {
   bool _locationPermissionGranted = false;
   bool _centerOnFirstLocation = true;
   CameraPosition? _initialMapCamera;
+  bool _initializingMapLocation = false;
 
   @override
   void initState() {
@@ -89,6 +93,14 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   @override
+  void didUpdateWidget(covariant MapScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isVisible && !oldWidget.isVisible && _initialMapCamera == null) {
+      _initializeMapLocation();
+    }
+  }
+
+  @override
   void dispose() {
     _gpsService.stop();
     _mapBearing.dispose();
@@ -96,12 +108,19 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<void> _initializeMapLocation() async {
+    if (_initializingMapLocation) return;
+    _initializingMapLocation = true;
+    var waitingForMapTab = false;
     var locationGranted = false;
     Position? position;
     try {
       var permission = await Geolocator.checkPermission();
       if (!mounted) return;
       if (permission == LocationPermission.denied) {
+        if (!widget.isVisible) {
+          waitingForMapTab = true;
+          return;
+        }
         permission = await Geolocator.requestPermission();
       }
       if (!mounted) return;
@@ -133,7 +152,8 @@ class _MapScreenState extends State<MapScreen> {
     } catch (e) {
       debugPrint('Initial map location unavailable: $e');
     } finally {
-      if (mounted) {
+      _initializingMapLocation = false;
+      if (mounted && !waitingForMapTab) {
         final fix = position;
         setState(() {
           _locationPermissionGranted = locationGranted;
@@ -369,16 +389,50 @@ class _MapScreenState extends State<MapScreen> {
         return;
       }
 
-      await renderer.selectRoute(selectedRoute);
-      if (!mounted || renderer != _renderer) return;
-      setState(() {
-        _selectedRoute = selectedRoute;
-        _selectedLandmark = landmark;
-        _status = 'Selected: ${selectedRoute.name}';
-      });
+      await _selectTrail(renderer, selectedRoute, landmark: landmark);
     } catch (error, stackTrace) {
       debugPrint('Map tap error: $error');
       debugPrintStack(stackTrace: stackTrace);
+    } finally {
+      _selectingMapFeature = false;
+    }
+  }
+
+  Future<void> _selectTrail(
+    TrailShieldRenderer renderer,
+    HikingRoute route, {
+    ({String name, double distanceMeters})? landmark,
+  }) async {
+    await renderer.selectRoute(route);
+    if (!mounted || renderer != _renderer) return;
+    setState(() {
+      _selectedRoute = route;
+      _selectedLandmark = landmark;
+      _status = 'Selected: ${route.name}';
+    });
+  }
+
+  Future<void> _searchTrails() async {
+    final renderer = _renderer;
+    if (renderer == null || !_routesLoaded || _selectingMapFeature) return;
+
+    _selectingMapFeature = true;
+    try {
+      final route = await showSearch<HikingRoute>(
+        context: context,
+        delegate: TrailSearchDelegate(renderer.routesById.values),
+      );
+      if (!mounted || route == null || renderer != _renderer) return;
+
+      if (_isNavigating) {
+        await _showTrailPreview(route, null);
+      } else {
+        await _selectTrail(renderer, route);
+        if (mounted && _selectedRoute == route) await _zoomToSelectedRoute();
+      }
+    } catch (error) {
+      debugPrint('Trail search selection failed: $error');
+      if (mounted) _showMapMessage('Could not show the selected trail');
     } finally {
       _selectingMapFeature = false;
     }
@@ -1328,6 +1382,13 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         title: const Text('Romania Hiking Map'),
         actions: [
+          IconButton(
+            tooltip: 'Search trails',
+            onPressed: _routesLoaded && !_startingNavigation
+                ? _searchTrails
+                : null,
+            icon: const Icon(Icons.search),
+          ),
           IconButton(
             tooltip: 'Download Bucegi offline',
             onPressed: _downloading

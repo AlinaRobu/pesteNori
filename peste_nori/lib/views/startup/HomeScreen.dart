@@ -22,20 +22,28 @@ class HomeScreenState extends State<HomeScreen> {
 
   static const _mapIndex = 1;
   int _selectedIndex = 0;
-  bool _mapTabOpened = false;
+  bool _mapTabMounted = false;
 
-  final List<Widget> _pages = [
-    HomePage(),
-    MapScreen(),
-    RoutesPage(),
-    CollectionsPage(),
-    ProfilePage()
-  ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _mapTabMounted) return;
+      setState(() => _mapTabMounted = true);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     translations = AppLocalizations.of(context);
     final showingMap = _selectedIndex == _mapIndex;
+    final pages = [
+      HomePage(),
+      MapScreen(isVisible: showingMap),
+      RoutesPage(),
+      CollectionsPage(),
+      ProfilePage(),
+    ];
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -43,15 +51,15 @@ class HomeScreenState extends State<HomeScreen> {
           if (!showingMap)
             KeyedSubtree(
               key: ValueKey(_selectedIndex),
-              child: _pages[_selectedIndex],
+              child: pages[_selectedIndex],
             ),
-          if (_mapTabOpened)
+          if (_mapTabMounted)
             Offstage(
               key: const ValueKey(_mapIndex),
               offstage: !showingMap,
               child: TickerMode(
                 enabled: showingMap,
-                child: _pages[_mapIndex],
+                child: pages[_mapIndex],
               ),
             ),
         ],
@@ -69,7 +77,7 @@ class HomeScreenState extends State<HomeScreen> {
       onTap: (index) {
         setState(() {
           _selectedIndex = index;
-          if (index == _mapIndex) _mapTabOpened = true;
+          if (index == _mapIndex) _mapTabMounted = true;
         });
       },
       selectedItemColor: const Color(0xFFD4AF37),

@@ -66,7 +66,8 @@ class GpsNavigationService {
 
     final settings = LocationSettings(
       accuracy: LocationAccuracy.high,
-      distanceFilter: 5,
+      // Accept improved fixes while the hiker is standing still.
+      distanceFilter: 0,
     );
 
     _subscription = Geolocator.getPositionStream(
