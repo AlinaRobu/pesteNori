@@ -1,0 +1,102 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Hike history: owner, trail name and ID, and start time are immutable.
+    // End time is recorded once. Weather and Celsius temperature are optional.
+    function validHike(data) {
+      return data.keys().hasAll(['ownerId', 'trailId', 'trailName', 'startedAt'])
+        && data.keys().hasOnly([
+          'ownerId', 'trailId', 'trailName', 'startedAt',
+          'endedAt', 'weather', 'temperatureC'
+        ])
+        && data.ownerId is string
+        && data.trailId is string && data.trailId.size() <= 200
+        && data.trailName is string
+        && data.trailName.size() > 0 && data.trailName.size() <= 512
+        && data.startedAt is timestamp
+        && (!('endedAt' in data) ||
+          (data.endedAt is timestamp && data.endedAt >= data.startedAt))
+        && (data.get('weather', null) == null ||
+          data.weather in ['Sunny', 'Cloudy', 'Rain', 'Snow', 'Fog', 'Mixed'])
+        && (data.get('temperatureC', null) == null ||
+          (data.temperatureC is number &&
+            data.temperatureC >= -90 && data.temperatureC <= 65));
+    }
+
+    match /routes/{hikeId} {
+      allow get, list: if request.auth != null
+        && resource.data.ownerId == request.auth.uid;
+      allow create: if request.auth != null
+        && request.resource.data.ownerId == request.auth.uid
+        && !request.resource.data.keys().hasAny(['endedAt', 'weather', 'temperatureC'])
+        && validHike(request.resource.data);
+      allow update: if request.auth != null
+        && resource.data.ownerId == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['endedAt', 'weather', 'temperatureC'])
+        && (!('endedAt' in resource.data) ||
+          request.resource.data.get('endedAt', null) == resource.data.endedAt)
+        && validHike(request.resource.data);
+    }
+
+    // User profiles are keyed by their Firebase Auth UID. Onboarding and
+    // profile image updates merge partial fields into these documents.
+    function validProfile(data, uid) {
+      return (!('uid' in data) || data.uid == uid)
+        && optionalProfileText(data, 'email', 320)
+        && optionalProfileText(data, 'username', 200)
+        && optionalProfileText(data, 'firstName', 200)
+        && optionalProfileText(data, 'lastName', 200)
+        && optionalProfileText(data, 'sex', 20)
+        && optionalProfileText(data, 'avatarUrl', 4096)
+        && optionalProfileText(data, 'profileImageUrl', 4096)
+        && (!('joinedAt' in data) || data.joinedAt is timestamp)
+        && (!('dateOfBirth' in data) ||
+          data.dateOfBirth is timestamp || data.dateOfBirth == 0)
+        && (!('showBirthdayBadge' in data) || data.showBirthdayBadge is bool)
+        && (!('level' in data) ||
+          (data.level is int && data.level >= 1 && data.level <= 11))
+        && (!('cabins' in data) || data.cabins is list)
+        && (!('peaks' in data) || data.peaks is list)
+        && (!('collections' in data) || data.collections is list);
+    }
+
+    function optionalProfileText(data, field, maxLength) {
+      return data.get(field, null) == null ||
+        (data[field] is string && data[field].size() <= maxLength);
+    }
+
+    function profileFields() {
+      return [
+        'uid', 'email', 'username', 'avatarUrl', 'joinedAt', 'profileImageUrl',
+        'firstName', 'lastName', 'dateOfBirth', 'sex', 'showBirthdayBadge',
+        'level', 'cabins', 'peaks', 'collections'
+      ];
+    }
+
+    match /users/{uid} {
+      allow get, delete: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(profileFields())
+        && validProfile(request.resource.data, uid);
+      allow update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(profileFields())
+        && request.resource.data.get('uid', null) == resource.data.get('uid', null)
+        && validProfile(request.resource.data, uid);
+    }
+
+    // The shared level catalog is read by signed-in users. Writes use IAM.
+    match /levels/{levelId} {
+      allow get, list: if request.auth != null;
+    }
+
+    // Preserve the previously deployed policy for unrelated collections.
+    // Match rules are additive, so the legacy rule must exclude protected paths.
+    match /{collection}/{document=**} {
+      allow read, write: if !(collection in ['routes', 'users', 'levels'])
+        && request.time < timestamp.date(9999, 11, 8);
+    }
+  }
+}

@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../services/HikeHistoryService.dart';
 
 import './models/HikingRoute.dart';
 import './services/RouteDataService.dart';
@@ -62,6 +64,8 @@ class _MapScreenState extends State<MapScreen> {
   ];
 
   final GpsNavigationService _gpsService = GpsNavigationService();
+  final _hikeHistory = HikeHistoryService();
+  DocumentReference<Map<String, dynamic>>? _activeHike;
 
   bool _isNavigating = false;
   bool _startingNavigation = false;
@@ -848,6 +852,7 @@ class _MapScreenState extends State<MapScreen> {
         return;
       }
 
+      _saveHikeStart(route, DateTime.now());
       setState(() {
         _isNavigating = true;
       });
@@ -867,8 +872,38 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  Future<void> _saveHikeStart(HikingRoute route, DateTime startedAt) async {
+    final record = _hikeHistory.newHike();
+    _activeHike = record;
+    try {
+      await _hikeHistory.start(record, route, startedAt);
+    } catch (error) {
+      debugPrint('Could not record hike start: $error');
+      if (mounted && widget.isVisible) {
+        _showMapMessage('Could not save this hike to your history.');
+      }
+    }
+  }
+
+  Future<void> _saveHikeEnd(
+    DocumentReference<Map<String, dynamic>> record,
+    DateTime endedAt,
+  ) async {
+    try {
+      await _hikeHistory.finish(record, endedAt);
+    } catch (error) {
+      debugPrint('Could not record hike end: $error');
+      if (mounted && widget.isVisible) {
+        _showMapMessage('Could not save the hike end time.');
+      }
+    }
+  }
+
   Future<void> _stopNavigation() async {
     _navigationSession++;
+    final hike = _activeHike;
+    _activeHike = null;
+    if (hike != null) _saveHikeEnd(hike, DateTime.now());
     final restoreMap = _setHikingView(false);
     _followCamera = false;
     _walkingApproach = null;
