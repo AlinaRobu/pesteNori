@@ -14,6 +14,7 @@ import './services/GpsNavigationService.dart';
 import './services/TrailEntryService.dart';
 import './map/TrailShieldRenderer.dart';
 import './TrailSearchDelegate.dart';
+import './SavedOfflineMapsSheet.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key, this.isVisible = true});
@@ -39,6 +40,11 @@ class _MapScreenState extends State<MapScreen> {
   late final Future<List<HikingRoute>> _routes;
   bool _routesLoaded = false;
   bool _downloading = false;
+  bool _pickingOfflineArea = false;
+  static const _offlineMinZoom = 9.0;
+  static const _offlineMaxZoom = 15.0;
+  static const _offlineTileLimit = 3000;
+  static const _offlineStyleUrl = 'https://tiles.openfreemap.org/styles/liberty';
 
   double _downloadProgress = 0;
 
@@ -304,6 +310,7 @@ class _MapScreenState extends State<MapScreen> {
     if (controller == null ||
         renderer == null ||
         _selectingMapFeature ||
+        _pickingOfflineArea ||
         _startingNavigation) {
       return;
     }
@@ -579,79 +586,206 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Future<void> _downloadBucegiRegion() async {
+  Future<void> _openOfflineMaps() async {
     if (kIsWeb) {
-      setState(() {
-        _status =
-            'Offline regions require Android or iOS.';
-      });
+      _showMapMessage('Offline downloads are available on Android and iOS.');
       return;
     }
 
-    if (_downloading || _styleJson == null) return;
+    final choice = await showModalBottomSheet<OfflineMapChoice>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => const SavedOfflineMapsSheet(),
+    );
+    if (!mounted || choice == null) return;
+    if (choice.downloadNew) {
+      await _pickOfflineArea();
+      return;
+    }
 
+    final region = choice.region;
+    final controller = _controller;
+    if (region == null || controller == null) return;
     setState(() {
-      _downloading = true;
-      _downloadProgress = 0;
-      _status = 'Starting offline map download...';
+      _followCamera = false;
+      _centerOnFirstLocation = false;
+    });
+    await _clearNavigationInsets();
+    if (!mounted || controller != _controller) return;
+    try {
+      await controller.animateCamera(
+        CameraUpdate.newLatLngBounds(
+          region.definition.bounds,
+          left: 24,
+          top: 24,
+          right: 24,
+          bottom: 48,
+        ),
+      );
+    } catch (error) {
+      debugPrint('Could not show offline map: $error');
+      if (mounted) _showMapMessage('Could not show the saved map area.');
+    }
+  }
+
+  Future<void> _pickOfflineArea() async {
+    final controller = _controller;
+    if (controller == null || _downloading || _pickingOfflineArea) return;
+    setState(() {
+      _pickingOfflineArea = true;
+      _followCamera = false;
+      _centerOnFirstLocation = false;
     });
 
     try {
-      final definition = OfflineRegionDefinition(
-        bounds: LatLngBounds(
-          southwest: const LatLng(45.25, 25.35),
-          northeast: const LatLng(45.55, 25.65),
-        ),
-        minZoom: 9,
-        maxZoom: 15,
-        mapStyleUrl: _styleJson!,
-        includeIdeographs: false,
+      await _clearNavigationInsets();
+      if (!mounted || !_pickingOfflineArea || controller != _controller) return;
+      await controller.moveCamera(CameraUpdate.bearingTo(0));
+      if (!mounted || !_pickingOfflineArea || controller != _controller) return;
+      await controller.moveCamera(CameraUpdate.tiltTo(0));
+    } catch (error) {
+      debugPrint('Could not reset the offline area camera: $error');
+    }
+  }
+
+  int _estimatedOfflineTiles(LatLngBounds bounds) {
+    int tileX(double longitude, int gridSize) =>
+        ((longitude + 180) / 360 * gridSize).floor().clamp(0, gridSize - 1);
+
+    int tileY(double latitude, int gridSize) {
+      final radians = latitude.clamp(-85.05112878, 85.05112878) * math.pi / 180;
+      final mercator = math.log(math.tan(math.pi / 4 + radians / 2));
+      return ((1 - mercator / math.pi) / 2 * gridSize)
+          .floor()
+          .clamp(0, gridSize - 1);
+    }
+
+    var count = 0;
+    for (var zoom = _offlineMinZoom.toInt(); zoom <= _offlineMaxZoom; zoom++) {
+      final gridSize = 1 << zoom;
+      final west = tileX(bounds.southwest.longitude, gridSize);
+      final east = tileX(bounds.northeast.longitude, gridSize);
+      final north = tileY(bounds.northeast.latitude, gridSize);
+      final south = tileY(bounds.southwest.latitude, gridSize);
+      final width = east >= west ? east - west + 1 : gridSize - west + east + 1;
+      count += width * (south - north + 1);
+    }
+    return count;
+  }
+
+  Future<void> _downloadRegion() async {
+    final controller = _controller;
+    if (controller == null || _downloading || !_pickingOfflineArea) return;
+    setState(() {
+      _downloading = true;
+      _downloadProgress = 0;
+    });
+
+    try {
+      final bounds = await controller.getVisibleRegion();
+      if (!mounted) return;
+      if (_estimatedOfflineTiles(bounds) > _offlineTileLimit) {
+        _finishOfflineDownload('Zoom in to download a smaller area.');
+        return;
+      }
+
+      final name = await showOfflineMapTitleDialog(
+        context,
+        initialTitle: _selectedRoute?.name ?? '',
       );
+      if (!mounted) return;
+      if (name == null) {
+        setState(() => _downloading = false);
+        return;
+      }
+      setState(() => _pickingOfflineArea = false);
+      await setHttpHeaders({'User-Agent': 'PesteNori/1.0'});
+      await setOfflineMaxConcurrentRequests(
+        maxRequests: 4,
+        maxRequestsPerHost: 4,
+      );
+      await setOfflineTileCountLimit(_offlineTileLimit);
 
       await downloadOfflineRegion(
-        definition,
-        metadata: {
-          'name': 'Bucegi',
-          'country': 'Romania',
-          'version': 1,
-        },
-        onEvent: (DownloadRegionStatus status) {
-          if (!mounted) return;
+        OfflineRegionDefinition(
+          bounds: bounds,
+          minZoom: _offlineMinZoom,
+          maxZoom: _offlineMaxZoom,
+          mapStyleUrl: _offlineStyleUrl,
+        ),
+        metadata: {'name': name},
+        onEvent: (status) {
+          if (!mounted || !_downloading) return;
 
           if (status is InProgress) {
             final total = status.requiredResourceCount;
-            final completed = status.completedResourceCount;
-
             setState(() {
-              _downloadProgress =
-                  total > 0 ? completed / total : 0;
-
-              _status =
-                  'Downloading $completed / $total resources';
+              _downloadProgress = total > 0
+                  ? (status.completedResourceCount / total).clamp(0.0, 1.0)
+                  : 0;
             });
           } else if (status is Success) {
-            setState(() {
-              _downloadProgress = 1;
-              _downloading = false;
-              _status = 'Bucegi offline map downloaded';
-            });
+            _finishOfflineDownload('Map area downloaded.');
           } else if (status is Error) {
-            setState(() {
-              _downloading = false;
-              _status =
-                  'Download failed: ${status.cause.message}';
-            });
+            _finishOfflineDownload(
+              status.cause.code == 'TILE_COUNT_LIMIT_EXCEEDED'
+                  ? 'Zoom in to download a smaller area.'
+                  : 'Offline download failed. Check your connection and try again.',
+            );
+            debugPrint('Offline download failed: ${status.cause}');
           }
         },
       );
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {
-        _downloading = false;
-        _status = 'Offline download error: $e';
-      });
+    } catch (error) {
+      if (!mounted || !_downloading) return;
+      debugPrint('Offline download failed: $error');
+      _finishOfflineDownload(
+        'Offline download failed. Check your connection and try again.',
+      );
     }
+  }
+
+  void _finishOfflineDownload(String message) {
+    if (!mounted) return;
+    setState(() => _downloading = false);
+    if (widget.isVisible) _showMapMessage(message);
+  }
+
+  Widget _offlineAreaPanel() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 12, 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Choose an offline area',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const Text('Pan and zoom to frame the area you want to save.'),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: _downloading
+                      ? null
+                      : () => setState(() => _pickingOfflineArea = false),
+                  child: const Text('Cancel'),
+                ),
+                FilledButton.icon(
+                  onPressed: _downloading ? null : _downloadRegion,
+                  icon: const Icon(Icons.download),
+                  label: const Text('Download area'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _startNavigation() async {
@@ -1384,19 +1518,28 @@ class _MapScreenState extends State<MapScreen> {
         actions: [
           IconButton(
             tooltip: 'Search trails',
-            onPressed: _routesLoaded && !_startingNavigation
+            onPressed: _routesLoaded && !_startingNavigation && !_pickingOfflineArea
                 ? _searchTrails
                 : null,
             icon: const Icon(Icons.search),
           ),
           IconButton(
-            tooltip: 'Download Bucegi offline',
-            onPressed: _downloading
+            tooltip: 'Saved offline maps',
+            onPressed: _controller == null || _downloading || _pickingOfflineArea
                 ? null
-                : _downloadBucegiRegion,
+                : _openOfflineMaps,
             icon: const Icon(Icons.download),
           ),
         ],
+        bottom: _downloading && !_pickingOfflineArea
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(4),
+                child: LinearProgressIndicator(
+                  value: _downloadProgress > 0 ? _downloadProgress : null,
+                  semanticsLabel: 'Downloading offline map',
+                ),
+              )
+            : null,
       ),
       body: _styleJson == null || _initialMapCamera == null
           ? Center(
@@ -1435,11 +1578,25 @@ class _MapScreenState extends State<MapScreen> {
                   myLocationTrackingMode: MyLocationTrackingMode.none,
                   compassEnabled: false,
                   featureTapsTriggersMapClick: true,
-                  rotateGesturesEnabled: true,
-                  tiltGesturesEnabled: true,
+                  rotateGesturesEnabled: !_pickingOfflineArea,
+                  tiltGesturesEnabled: !_pickingOfflineArea,
                   zoomGesturesEnabled: true,
                   scrollGesturesEnabled: true,
                 ),
+
+                if (_pickingOfflineArea)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
 
                 Positioned(
                   top: 12,
@@ -1453,8 +1610,13 @@ class _MapScreenState extends State<MapScreen> {
                   bottom: 12,
                   child: SafeArea(
                     top: false,
-                    child: _isNavigating ? _navigationPanel():
-                      _selectedRoute != null ? _routePanel(_selectedRoute!) : const SizedBox.shrink()
+                    child: _pickingOfflineArea
+                        ? _offlineAreaPanel()
+                        : _isNavigating
+                        ? _navigationPanel()
+                        : _selectedRoute != null
+                        ? _routePanel(_selectedRoute!)
+                        : const SizedBox.shrink(),
                   ),
                 ),
               ],
