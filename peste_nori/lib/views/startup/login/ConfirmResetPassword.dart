@@ -169,7 +169,7 @@ class _ConfirmResetPassword extends StartupStateTemplate {
                 builder: (_) => LoginScreen(),
               ),
             ),
-            child: const Text('OK'),
+            child: Text(translations.ok),
           ),
         ],
       ),
@@ -202,11 +202,11 @@ class _ConfirmResetPassword extends StartupStateTemplate {
         context: context,
         builder: (context) => AlertDialog(
           title: Text(translations.passReset),
-          content: Text('${translations.emailSent}: ${email}'),
+          content: Text(translations.resetLinkSentTo(email)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
+              child: Text(translations.ok),
             ),
           ],
         ),

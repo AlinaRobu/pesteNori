@@ -157,7 +157,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           ),
                           child: Text(
                             _dateOfBirth == null
-                                ? 'DD / MM / YYYY'
+                                ? translations.birthDateFormat
                                 : '${_dateOfBirth!.day.toString().padLeft(2, '0')} / '
                                   '${_dateOfBirth!.month.toString().padLeft(2, '0')} / '
                                   '${_dateOfBirth!.year}',
@@ -174,8 +174,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     const SizedBox(height: 8),
 
                     // Sex
-                    const Text(
-                      'Sex',
+                    Text(
+                      translations.sexLabel,
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),

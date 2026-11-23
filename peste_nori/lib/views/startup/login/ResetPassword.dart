@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../StartupTemplate.dart';
+import 'package:peste_nori/globals.dart';
 
 class ResetPassword extends StartupTemplate {
   const ResetPassword({super.key});
@@ -29,9 +30,9 @@ class _ResetPassword extends StartupStateTemplate {
   Widget topWidgets(BuildContext context) {
     return Column(
       children: [
-        const Text(
-          'Introduceti adresa de email pentru a reseta parola.',
-          style: TextStyle(
+        Text(
+          translations.resetPasswordInstructions,
+          style: const TextStyle(
             color: Colors.white70,
             fontSize: 16,
           ),
@@ -42,7 +43,7 @@ class _ResetPassword extends StartupStateTemplate {
         // EMAIL
         buildTextField(
           controller: myUsrCtrl,
-          hint: 'Email',
+          hint: translations.email,
           icon: Icons.email_outlined,
         ),
         const SizedBox(height: 14),
@@ -60,18 +61,18 @@ class _ResetPassword extends StartupStateTemplate {
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Trimite mail',
-                  style: TextStyle(
+                  translations.sendEmail,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(width: 12),
-                Icon(Icons.arrow_forward, size: 23),
+                const SizedBox(width: 12),
+                const Icon(Icons.arrow_forward, size: 23),
               ],
             ),
           ),
@@ -98,12 +99,12 @@ class _ResetPassword extends StartupStateTemplate {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Reset password'),
-          content: Text('A fost trimis un link de resetare a parolei pe adresa de email: ${myUsrCtrl.text}'),
+          title: Text(translations.passReset),
+          content: Text(translations.resetLinkSentTo(myUsrCtrl.text)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
+              child: Text(translations.ok),
             ),
           ],
         ),

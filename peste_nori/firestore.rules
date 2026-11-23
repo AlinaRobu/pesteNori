@@ -83,7 +83,8 @@ service cloud.firestore {
       allow update: if request.auth != null && request.auth.uid == uid
         && request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly(profileFields())
-        && request.resource.data.get('uid', null) == resource.data.get('uid', null)
+        && (!('uid' in resource.data) ||
+          request.resource.data.get('uid', null) == resource.data.uid)
         && validProfile(request.resource.data, uid);
     }
 

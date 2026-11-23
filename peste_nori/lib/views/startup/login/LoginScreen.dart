@@ -38,7 +38,7 @@ class _LoginScreen extends StartupStateTemplate {
         // EMAIL
         buildTextField(
           controller: myUsrCtrl,
-          hint: 'Email',
+          hint: translations.email,
           icon: Icons.email_outlined,
         ),
         const SizedBox(height: 14),

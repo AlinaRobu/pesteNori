@@ -53,7 +53,7 @@ class _RegisterScreen extends StartupStateTemplate {
           // EMAIL
           buildTextField(
             controller: myUsrCtrl,
-            hint: 'Email',
+            hint: translations.email,
             icon: Icons.email_outlined,
           ),
           const SizedBox(height: 14),
@@ -251,7 +251,7 @@ class _RegisterScreen extends StartupStateTemplate {
         break;
 
       default:
-        message = error.message ?? translations.unknownError + '.';
+        message = translations.unknownError + '.';
     }
 
     showError(context, new FirebaseAuthException(code: message));

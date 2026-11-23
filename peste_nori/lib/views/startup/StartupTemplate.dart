@@ -145,7 +145,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                text: Platform.isIOS ? '${translations.continueWith} Apple' : '${translations.continueWith} Google',
+                text: translations.continueWithProvider(Platform.isIOS ? 'Apple' : 'Google'),
                 onPressed: () => Platform.isIOS ? _loginWithApple(context) : _loginWithGoogle(context)
               ),
           
@@ -259,7 +259,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  '${translations.continueWith} Facebook',
+                  translations.continueWithProvider('Facebook'),
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -273,7 +273,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
   }
 
   void showError(BuildContext context, FirebaseAuthException error) {
-    String errorMessage = error.message ?? "Error";
+    String errorMessage = translations.unknownError;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -282,7 +282,7 @@ abstract class StartupStateTemplate extends State<StartupTemplate> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: Text(translations.ok),
           ),
         ],
       ),

@@ -20,13 +20,13 @@
     "accountExists": "Already have an account",
     "authentication": "Authentication",
     "fillAll": "Please fill in all the fields",
-    "diffPasswords": "Parolele nu coincid",
+    "diffPasswords": "The passwords do not match",
     "passLengthReq": "The password must contain at least 6 characters",
     "emailAlreadyInUse": "There is already an account with this email address",
     "invalidEmail": "The email address is not valid",
     "weakPass": "Password too weak",
     "emailRegNotAllowed": "Email registration is not enabled",
-    "unknownError": "A apărut o eroare",
+    "unknownError": "Something went wrong",
     "login": "Login",
     "forgotPass": "I forgot my password",
     "noAccount": "Don't have an account? Don't worry!",
@@ -41,6 +41,8 @@
     "or": "OR",
     "contin": "Continue",
     "continueWith": "Continue with",
+    "continueWithProvider": "Continue with {provider}",
+    "@continueWithProvider": { "placeholders": { "provider": { "type": "String" } } },
     "loginFailed": "Login failed",
     "welcomeTo": "Welcome to the community",
     "createProfileFor": "Create your profile to \ndiscover people and memories.",
@@ -57,7 +59,7 @@
     "emptyName": "The name is not filled in!",
     "emptyDateOfBirth": "Date of birth is not filled in!",
     "emptySex": "Sex is not filled in.",
-    "deleteAccountConfirm": "Aceasta îți șterge definitiv contul. S-ar putea să fie nevoie să te autentifici din nou mai întâi.",
+    "deleteAccountConfirm": "This permanently deletes your account. You may need to sign in again first.",
     "cancel": "Cancel",
     "deleteAccountError": "Could not delete your account. Please try again.",
     "confirmYourPassword": "Confirm your password",
@@ -68,5 +70,295 @@
     "wrongPassword": "Wrong password!",
     "gallery": "Gallery",
     "selImageError": "Error selecting image",
-    "saveProfileImageError": "Profile image saving failed"
+    "saveProfileImageError": "Profile image saving failed",
+    "loadingMap": "Loading map…",
+    "mapStyleLoaded": "Map style loaded",
+    "mapStyleError": "Could not load the map style",
+    "loadingHikingTrails": "Loading hiking routes and symbols…",
+    "tapTrailSymbol": "Tap a hiking trail symbol",
+    "routeLoadingFailed": "Could not load hiking trails",
+    "trailsStillLoading": "Hiking trails are still loading. Try again shortly.",
+    "selectedTrailError": "Could not show the selected trail",
+    "startingGps": "Starting GPS…",
+    "stopNavigation": "Stop navigation",
+    "followTrail": "Follow this trail",
+    "offlineAvailability": "Offline downloads are available on Android and iOS.",
+    "savedAreaOpenError": "Could not show the saved map area.",
+    "smallerOfflineArea": "Zoom in to download a smaller area.",
+    "mapAreaDownloaded": "Map area downloaded.",
+    "offlineDownloadError": "Offline download failed. Check your connection and try again.",
+    "chooseOfflineArea": "Choose an offline area",
+    "frameOfflineArea": "Pan and zoom to frame the area you want to save.",
+    "downloadArea": "Download area",
+    "startingGpsTracking": "Starting GPS tracking…",
+    "gpsError": "GPS error",
+    "navigationStartError": "Could not start navigation",
+    "hikeSaveError": "Could not save this hike to your history.",
+    "hikeEndSaveError": "Could not save the hike end time.",
+    "navigationStopped": "Navigation stopped",
+    "trailNavigation": "Trail navigation",
+    "findingWalkingDirections": "Finding walking directions…",
+    "walkingDirectionsUnavailable": "Walking directions unavailable",
+    "retry": "Retry",
+    "waitingForAccurateGps": "Waiting for a more accurate GPS fix…",
+    "waitingForGps": "Waiting for GPS…",
+    "offTrailWarning": "Warning: You may be off the trail",
+    "followGps": "Follow GPS",
+    "showTrail": "Show trail",
+    "myLocation": "My location",
+    "resetMapNorth": "Reset map to north",
+    "hikingMapTitle": "Romania Hiking Map",
+    "searchTrails": "Search trails",
+    "savedOfflineMaps": "Saved offline maps",
+    "downloadingOfflineMap": "Downloading offline map",
+    "findingLocation": "Finding your location…",
+    "locationServicesRequired": "Enable location services on your phone.",
+    "locationPermissionRequired": "Location permission is required.",
+    "invalidTrailGeometry": "The selected trail has no usable geometry.",
+    "renameOfflineMap": "Rename offline map",
+    "nameOfflineMap": "Name your offline map",
+    "offlineMapTitle": "Title",
+    "optionalOfflineMapTitle": "Title (optional)",
+    "enterOfflineMapTitle": "Enter a title",
+    "save": "Save",
+    "download": "Download",
+    "offlineRenameError": "Could not rename this map. Try again.",
+    "downloadStatusUnavailable": "Download status unavailable",
+    "readyOffline": "Ready offline",
+    "downloadIncomplete": "Download incomplete",
+    "deleteOfflineMapQuestion": "Delete offline map?",
+    "delete": "Delete",
+    "offlineDeleteError": "Could not delete this map. Try again.",
+    "savedMapsLoadError": "Could not load saved maps. Retry",
+    "noOfflineMaps": "No offline maps saved yet",
+    "offlineMapOptions": "Offline map options",
+    "rename": "Rename",
+    "downloadNewArea": "Download new area",
+    "clearSearch": "Clear search",
+    "trailSearchHint": "Enter a trail name, place, or reference",
+    "noMatchingTrails": "No matching trails",
+    "weatherNotes": "Weather notes",
+    "weatherConditions": "Conditions",
+    "weatherUnspecified": "Unspecified",
+    "weatherSunny": "Sunny",
+    "weatherCloudy": "Cloudy",
+    "weatherRain": "Rain",
+    "weatherSnow": "Snow",
+    "weatherFog": "Fog",
+    "weatherMixed": "Mixed",
+    "temperatureCelsius": "Temperature (°C)",
+    "temperatureRange": "Enter a temperature from -90 to 65",
+    "weatherSaveError": "Could not save weather notes.",
+    "hikeHistory": "Hike history",
+    "hikeHistoryLoadError": "Could not load hike history",
+    "hikeHistoryEmpty": "Start a trail on the Map to see it here.",
+    "hikeEndNotRecorded": "End time not recorded",
+    "editWeatherNotes": "Edit weather notes",
+    "unnamedTrail": "Unnamed trail",
+    "camera": "Camera",
+    "ok": "OK",
+    "email": "Email",
+    "resetPasswordInstructions": "Enter your email address to reset your password.",
+    "sendEmail": "Send email",
+    "birthDateFormat": "DD / MM / YYYY",
+    "noTrailNear": "No marked hiking trail found near {name}.",
+    "@noTrailNear": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "selectedTrail": "Selected: {name}",
+    "@selectedTrail": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "nearLandmark": "Near {name}",
+    "@nearLandmark": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "trailDestination": "Destination: {name}",
+    "@trailDestination": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "trailLength": "Trail length: {distance} km",
+    "@trailLength": {
+        "placeholders": {
+            "distance": {
+                "type": "String"
+            }
+        }
+    },
+    "trailDistanceOsm": "OSM distance: {distance} km",
+    "@trailDistanceOsm": {
+        "placeholders": {
+            "distance": {
+                "type": "String"
+            }
+        }
+    },
+    "trailMarking": "Marking: {symbol}",
+    "@trailMarking": {
+        "placeholders": {
+            "symbol": {
+                "type": "String"
+            }
+        }
+    },
+    "trailStart": "Start: {name}",
+    "@trailStart": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "trailNetwork": "Network: {network}",
+    "@trailNetwork": {
+        "placeholders": {
+            "network": {
+                "type": "String"
+            }
+        }
+    },
+    "landmarkDistanceFromTrail": "Near {name} · {distance} m from the trail",
+    "@landmarkDistanceFromTrail": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            },
+            "distance": {
+                "type": "String"
+            }
+        }
+    },
+    "followingTrail": "Following {name}",
+    "@followingTrail": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "distanceFromTrail": "Distance from trail: {distance} m",
+    "@distanceFromTrail": {
+        "placeholders": {
+            "distance": {
+                "type": "String"
+            }
+        }
+    },
+    "gpsAccuracy": "GPS accuracy: ±{accuracy} m",
+    "@gpsAccuracy": {
+        "placeholders": {
+            "accuracy": {
+                "type": "String"
+            }
+        }
+    },
+    "estimatedRemaining": "Estimated remaining: {distance} km",
+    "@estimatedRemaining": {
+        "placeholders": {
+            "distance": {
+                "type": "String"
+            }
+        }
+    },
+    "offlineAreaNumber": "Offline area {id}",
+    "@offlineAreaNumber": {
+        "placeholders": {
+            "id": {
+                "type": "String"
+            }
+        }
+    },
+    "removeOfflineMap": "Remove “{name}” from this device?",
+    "@removeOfflineMap": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "fileSizeMb": "{size} MB",
+    "@fileSizeMb": {
+        "placeholders": {
+            "size": {
+                "type": "String"
+            }
+        }
+    },
+    "fileSizeKb": "{size} KB",
+    "@fileSizeKb": {
+        "placeholders": {
+            "size": {
+                "type": "String"
+            }
+        }
+    },
+    "distanceKm": "{distance} km",
+    "@distanceKm": {
+        "placeholders": {
+            "distance": {
+                "type": "String"
+            }
+        }
+    },
+    "hikeStartedAt": "Started {time}",
+    "@hikeStartedAt": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "hikeEndedAt": "Ended {time}",
+    "@hikeEndedAt": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "hikeDuration": "Duration: {hours} h {minutes} min",
+    "@hikeDuration": {
+        "placeholders": {
+            "hours": {
+                "type": "String"
+            },
+            "minutes": {
+                "type": "String"
+            }
+        }
+    },
+    "temperatureValue": "{temperature} °C",
+    "@temperatureValue": {
+        "placeholders": {
+            "temperature": {
+                "type": "String"
+            }
+        }
+    },
+    "resetLinkSentTo": "A password reset link was sent to {email}.",
+    "@resetLinkSentTo": {
+        "placeholders": {
+            "email": {
+                "type": "String"
+            }
+        }
+    },
+    "@@locale": "en",
+    "sexLabel": "Sex"
 }

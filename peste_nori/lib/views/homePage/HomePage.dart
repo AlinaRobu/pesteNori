@@ -296,7 +296,7 @@ class HomePageState extends State<HomePage> {
             children: [
               ListTile(
                 leading: const Icon(Icons.camera_alt),
-                title: const Text('Camera'),
+                title: Text(translations.camera),
                 onTap: () {
                   Navigator.pop(context, ImageSource.camera);
                 },

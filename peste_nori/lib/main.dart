@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
       builder: (context, themeMode, _) {
         return OverlaySupport(
           child: MaterialApp(
-            title: "PESTE NORI",
+            onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             theme: AppTheme.light(),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
+import 'package:peste_nori/globals.dart';
 
 typedef OfflineMapChoice = ({OfflineRegion? region, bool downloadNew});
 typedef _SavedMap = ({OfflineRegion region, OfflineRegionStatus? status});
@@ -23,18 +24,18 @@ Future<String?> showOfflineMapTitleDialog(
       }
 
       return AlertDialog(
-        title: Text(renaming ? 'Rename offline map' : 'Name your offline map'),
+        title: Text(renaming ? translations.renameOfflineMap : translations.nameOfflineMap),
         content: Form(
           key: formKey,
           child: TextFormField(
             initialValue: initialTitle,
             decoration: InputDecoration(
-              labelText: renaming ? 'Title' : 'Title (optional)',
+              labelText: renaming ? translations.offlineMapTitle : translations.optionalOfflineMapTitle,
             ),
             onChanged: (value) => title = value,
             onFieldSubmitted: (_) => submit(),
             validator: (value) => renaming && value?.trim().isNotEmpty != true
-                ? 'Enter a title'
+                ? translations.enterOfflineMapTitle
                 : null,
             maxLength: 80,
           ),
@@ -42,11 +43,11 @@ Future<String?> showOfflineMapTitleDialog(
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(translations.cancel),
           ),
           FilledButton(
             onPressed: submit,
-            child: Text(renaming ? 'Save' : 'Download'),
+            child: Text(renaming ? translations.save : translations.download),
           ),
         ],
       );
@@ -84,7 +85,7 @@ class _SavedOfflineMapsSheetState extends State<SavedOfflineMapsSheet> {
 
   String _name(OfflineRegion region) {
     final name = region.metadata['name']?.toString().trim();
-    return name == null || name.isEmpty ? 'Offline area ${region.id}' : name;
+    return name == null || name.isEmpty ? translations.offlineAreaNumber(region.id.toString()) : name;
   }
 
   Future<void> _rename(OfflineRegion region) async {
@@ -100,32 +101,32 @@ class _SavedOfflineMapsSheetState extends State<SavedOfflineMapsSheet> {
         ...region.metadata,
         'name': title,
       });
-    }, 'Could not rename this map. Try again.');
+    }, translations.offlineRenameError);
   }
 
   String _description(OfflineRegionStatus? status) {
-    if (status == null) return 'Download status unavailable';
+    if (status == null) return translations.downloadStatusUnavailable;
     final bytes = status.completedResourceSize;
     final size = bytes >= 1000000
-        ? '${(bytes / 1000000).toStringAsFixed(1)} MB'
-        : '${(bytes / 1000).toStringAsFixed(0)} KB';
-    return '${status.isComplete ? 'Ready offline' : 'Download incomplete'} · $size';
+        ? translations.fileSizeMb((bytes / 1000000).toStringAsFixed(1))
+        : translations.fileSizeKb((bytes / 1000).toStringAsFixed(0));
+    return '${status.isComplete ? translations.readyOffline : translations.downloadIncomplete} · $size';
   }
 
   Future<void> _delete(OfflineRegion region) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete offline map?'),
-        content: Text('Remove “${_name(region)}” from this device?'),
+        title: Text(translations.deleteOfflineMapQuestion),
+        content: Text(translations.removeOfflineMap(_name(region))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(translations.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
+            child: Text(translations.delete),
           ),
         ],
       ),
@@ -134,7 +135,7 @@ class _SavedOfflineMapsSheetState extends State<SavedOfflineMapsSheet> {
 
     await _updateArea(
       () => deleteOfflineRegion(region.id),
-      'Could not delete this map. Try again.',
+      translations.offlineDeleteError,
     );
   }
 
@@ -175,7 +176,7 @@ class _SavedOfflineMapsSheetState extends State<SavedOfflineMapsSheet> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                'Saved offline maps',
+                translations.savedOfflineMaps,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
@@ -200,14 +201,14 @@ class _SavedOfflineMapsSheetState extends State<SavedOfflineMapsSheet> {
                             _areas = _loadAreas();
                           });
                         },
-                        child: const Text('Could not load saved maps. Retry'),
+                        child: Text(translations.savedMapsLoadError),
                       ),
                     );
                   }
                   final areas = snapshot.data!;
                   if (areas.isEmpty) {
-                    return const Center(
-                      child: Text('No offline maps saved yet'),
+                    return Center(
+                      child: Text(translations.noOfflineMaps),
                     );
                   }
                   return ListView.builder(
@@ -225,7 +226,7 @@ class _SavedOfflineMapsSheetState extends State<SavedOfflineMapsSheet> {
                                 downloadNew: false,
                               )),
                         trailing: PopupMenuButton<_OfflineMapAction>(
-                          tooltip: 'Offline map options',
+                          tooltip: translations.offlineMapOptions,
                           enabled: !_updatingArea,
                           onSelected: (action) {
                             switch (action) {
@@ -235,14 +236,14 @@ class _SavedOfflineMapsSheetState extends State<SavedOfflineMapsSheet> {
                                 _delete(area.region);
                             }
                           },
-                          itemBuilder: (_) => const [
+                          itemBuilder: (_) => [
                             PopupMenuItem(
                               value: _OfflineMapAction.rename,
-                              child: Text('Rename'),
+                              child: Text(translations.rename),
                             ),
                             PopupMenuItem(
                               value: _OfflineMapAction.delete,
-                              child: Text('Delete'),
+                              child: Text(translations.delete),
                             ),
                           ],
                         ),
@@ -262,7 +263,7 @@ class _SavedOfflineMapsSheetState extends State<SavedOfflineMapsSheet> {
                         downloadNew: true,
                       )),
                 icon: const Icon(Icons.download),
-                label: const Text('Download new area'),
+                label: Text(translations.downloadNewArea),
               ),
             ),
           ],

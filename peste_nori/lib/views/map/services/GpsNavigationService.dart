@@ -33,6 +33,12 @@ class _Point {
   const _Point(this.lat, this.lon);
 }
 
+enum GpsNavigationStartError implements Exception {
+  servicesDisabled,
+  permissionRequired,
+  invalidTrail,
+}
+
 class GpsNavigationService {
   StreamSubscription<Position>? _subscription;
 
@@ -44,7 +50,7 @@ class GpsNavigationService {
     await stop();
 
     if (!await Geolocator.isLocationServiceEnabled()) {
-      throw StateError('Enable location services on your phone.');
+      throw GpsNavigationStartError.servicesDisabled;
     }
 
     var permission = await Geolocator.checkPermission();
@@ -55,13 +61,13 @@ class GpsNavigationService {
 
     if (permission == LocationPermission.denied ||
         permission == LocationPermission.deniedForever) {
-      throw StateError('Location permission is required.');
+      throw GpsNavigationStartError.permissionRequired;
     }
 
     final parts = _extractParts(route.geometry);
 
     if (parts.isEmpty) {
-      throw StateError('The selected route has no usable geometry.');
+      throw GpsNavigationStartError.invalidTrail;
     }
 
     final settings = LocationSettings(

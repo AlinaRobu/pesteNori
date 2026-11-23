@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../services/HikeHistoryService.dart';
+import 'package:peste_nori/globals.dart';
+import '../map/models/HikingRoute.dart';
 
 class RoutesPage extends StatefulWidget {
   const RoutesPage({super.key});
@@ -23,6 +25,16 @@ class _RoutesPageState extends State<RoutesPage> {
     'Mixed',
   ];
 
+  String _weatherLabel(String condition) => switch (condition) {
+    'Sunny' => translations.weatherSunny,
+    'Cloudy' => translations.weatherCloudy,
+    'Rain' => translations.weatherRain,
+    'Snow' => translations.weatherSnow,
+    'Fog' => translations.weatherFog,
+    'Mixed' => translations.weatherMixed,
+    _ => translations.weatherUnspecified,
+  };
+
   Future<void> _editWeather(HikeRecord hike) async {
     final form = GlobalKey<FormState>();
     var weather = hike.weather ?? '';
@@ -33,7 +45,7 @@ class _RoutesPageState extends State<RoutesPage> {
     final result = await showDialog<({String? weather, double? temperature})>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Weather notes'),
+        title: Text(translations.weatherNotes),
         content: Form(
           key: form,
           child: Column(
@@ -41,18 +53,18 @@ class _RoutesPageState extends State<RoutesPage> {
             children: [
               DropdownButtonFormField<String>(
                 initialValue: weather,
-                decoration: const InputDecoration(labelText: 'Conditions'),
+                decoration: InputDecoration(labelText: translations.weatherConditions),
                 items: [
-                  const DropdownMenuItem(value: '', child: Text('Unspecified')),
+                  DropdownMenuItem(value: '', child: Text(translations.weatherUnspecified)),
                   for (final condition in _conditions)
-                    DropdownMenuItem(value: condition, child: Text(condition)),
+                    DropdownMenuItem(value: condition, child: Text(_weatherLabel(condition))),
                 ],
                 onChanged: (value) => weather = value ?? '',
               ),
               TextFormField(
                 initialValue: temperature,
-                decoration: const InputDecoration(
-                  labelText: 'Temperature (\u00b0C)',
+                decoration: InputDecoration(
+                  labelText: translations.temperatureCelsius,
                 ),
                 keyboardType: const TextInputType.numberWithOptions(
                   signed: true,
@@ -66,7 +78,7 @@ class _RoutesPageState extends State<RoutesPage> {
                           !value.isFinite ||
                           value < -90 ||
                           value > 65
-                      ? 'Enter a temperature from -90 to 65'
+                      ? translations.temperatureRange
                       : null;
                 },
               ),
@@ -76,7 +88,7 @@ class _RoutesPageState extends State<RoutesPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(translations.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -86,7 +98,7 @@ class _RoutesPageState extends State<RoutesPage> {
                 temperature: parsedTemperature(),
               ));
             },
-            child: const Text('Save'),
+            child: Text(translations.save),
           ),
         ],
       ),
@@ -98,7 +110,7 @@ class _RoutesPageState extends State<RoutesPage> {
       debugPrint('Could not save hike weather: $error');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not save weather notes.')),
+          SnackBar(content: Text(translations.weatherSaveError)),
         );
       }
     }
@@ -109,20 +121,20 @@ class _RoutesPageState extends State<RoutesPage> {
     final date = DateFormat.yMMMd(Localizations.localeOf(context).toString())
         .add_jm();
     return Scaffold(
-      appBar: AppBar(title: const Text('Hike history')),
+      appBar: AppBar(title: Text(translations.hikeHistory)),
       body: StreamBuilder<List<HikeRecord>>(
         stream: _hikes,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Center(child: Text('Could not load hike history'));
+            return Center(child: Text(translations.hikeHistoryLoadError));
           }
           final hikes = snapshot.data;
           if (hikes == null) {
             return const Center(child: CircularProgressIndicator());
           }
           if (hikes.isEmpty) {
-            return const Center(
-              child: Text('Start a trail on the Map to see it here.'),
+            return Center(
+              child: Text(translations.hikeHistoryEmpty),
             );
           }
           return ListView.builder(
@@ -136,25 +148,29 @@ class _RoutesPageState extends State<RoutesPage> {
               return Card(
                 child: ListTile(
                   leading: const Icon(Icons.route),
-                  title: Text(hike.trailName),
+                  title: Text(
+                    hike.trailName == HikingRoute.unnamedTrailName
+                        ? translations.unnamedTrail
+                        : hike.trailName,
+                  ),
                   subtitle: Text(
                     [
-                      'Started ${date.format(hike.startedAt.toLocal())}',
+                      translations.hikeStartedAt(date.format(hike.startedAt.toLocal())),
                       if (end != null)
-                        'Ended ${date.format(end.toLocal())}'
+                        translations.hikeEndedAt(date.format(end.toLocal()))
                       else
-                        'End time not recorded',
+                        translations.hikeEndNotRecorded,
                       if (duration != null)
-                        'Duration ${duration.inHours} h ${duration.inMinutes.remainder(60)} min',
+                        translations.hikeDuration(duration.inHours.toString(), duration.inMinutes.remainder(60).toString()),
                       if (hike.weather != null || temperature != null)
                         [
-                          if (hike.weather != null) hike.weather!,
-                          if (temperature != null) '$temperature \u00b0C',
+                          if (hike.weather != null) _weatherLabel(hike.weather!),
+                          if (temperature != null) translations.temperatureValue(NumberFormat.decimalPattern(translations.localeName).format(temperature)),
                         ].join(' \u00b7 '),
                     ].join('\n'),
                   ),
                   trailing: IconButton(
-                    tooltip: 'Edit weather notes',
+                    tooltip: translations.editWeatherNotes,
                     onPressed: () => _editWeather(hike),
                     icon: const Icon(Icons.cloud_outlined),
                   ),

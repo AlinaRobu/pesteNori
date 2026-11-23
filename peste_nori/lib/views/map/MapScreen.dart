@@ -17,6 +17,7 @@ import './services/TrailEntryService.dart';
 import './map/TrailShieldRenderer.dart';
 import './TrailSearchDelegate.dart';
 import './SavedOfflineMapsSheet.dart';
+import 'package:peste_nori/globals.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key, this.isVisible = true});
@@ -33,7 +34,7 @@ class _MapScreenState extends State<MapScreen> {
   final _mapBearing = ValueNotifier<double>(0);
 
   String? _styleJson;
-  String _status = 'Loading map...';
+  String? _status;
   final _cityLayerIds = <String>{};
   bool _hikingView = false;
   Future<void> _hikingViewUpdate = Future<void>.value();
@@ -212,13 +213,14 @@ class _MapScreenState extends State<MapScreen> {
 
       setState(() {
         _styleJson = text;
-        _status = 'Map style loaded';
+        _status = translations.mapStyleLoaded;
       });
     } catch (e) {
+      debugPrint('Map style loading failed: $e');
       if (!mounted) return;
 
       setState(() {
-        _status = 'Map style error: $e';
+        _status = translations.mapStyleError;
       });
     }
   }
@@ -266,7 +268,7 @@ class _MapScreenState extends State<MapScreen> {
 
     if (mounted) {
       setState(() {
-        _status = 'Loading hiking routes and symbols...';
+        _status = translations.loadingHikingTrails;
       });
     }
 
@@ -289,7 +291,7 @@ class _MapScreenState extends State<MapScreen> {
         _routeCount = routes.length;
         _visibleRouteCount = rendered;
         _routesLoaded = true;
-        _status = 'Tap a hiking trail symbol';
+        _status = translations.tapTrailSymbol;
       });
     } catch (e, stack) {
       debugPrint('ROUTE ERROR: $e');
@@ -298,7 +300,7 @@ class _MapScreenState extends State<MapScreen> {
       if (!mounted) return;
 
       setState(() {
-        _status = 'Route loading failed: $e';
+        _status = translations.routeLoadingFailed;
       });
     } finally {
       _loadingRoutes = false;
@@ -354,7 +356,7 @@ class _MapScreenState extends State<MapScreen> {
           if (name == null || name.isEmpty) continue;
 
           if (!_routesLoaded) {
-            _showMapMessage('Hiking trails are still loading. Try again shortly.');
+            _showMapMessage(translations.trailsStillLoading);
             return;
           }
 
@@ -376,7 +378,7 @@ class _MapScreenState extends State<MapScreen> {
             target,
           );
           if (nearby == null) {
-            _showMapMessage('No marked hiking trail found near $name.');
+            _showMapMessage(translations.noTrailNear(name));
             return;
           }
           route = nearby.route;
@@ -419,7 +421,7 @@ class _MapScreenState extends State<MapScreen> {
     setState(() {
       _selectedRoute = route;
       _selectedLandmark = landmark;
-      _status = 'Selected: ${route.name}';
+      _status = translations.selectedTrail(route.displayName(translations.unnamedTrail));
     });
   }
 
@@ -443,7 +445,7 @@ class _MapScreenState extends State<MapScreen> {
       }
     } catch (error) {
       debugPrint('Trail search selection failed: $error');
-      if (mounted) _showMapMessage('Could not show the selected trail');
+      if (mounted) _showMapMessage(translations.selectedTrailError);
     } finally {
       _selectingMapFeature = false;
     }
@@ -463,15 +465,15 @@ class _MapScreenState extends State<MapScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  route.name,
+                  route.displayName(translations.unnamedTrail),
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 8),
-                if (landmark != null) Text('Near $landmark'),
-                if (route.to != null) Text('Destination: ${route.to}'),
+                if (landmark != null) Text(translations.nearLandmark(landmark)),
+                if (route.to != null) Text(translations.trailDestination(route.to!)),
                 if (route.distanceKm != null)
-                  Text('Trail length: ${route.distanceKm} km'),
-                if (route.symbol != null) Text('Marking: ${route.symbol}'),
+                  Text(translations.trailLength(route.distanceKm.toString())),
+                if (route.symbol != null) Text(translations.trailMarking(route.symbol!)),
               ],
             ),
           ),
@@ -498,7 +500,7 @@ class _MapScreenState extends State<MapScreen> {
     await _renderer?.clearSelection();
 
     if (!mounted || _selectedRoute != null) return;
-    setState(() => _status = 'Tap a hiking trail symbol');
+    setState(() => _status = translations.tapTrailSymbol);
   }
 
   Widget _routePanel(HikingRoute route) {
@@ -515,7 +517,7 @@ class _MapScreenState extends State<MapScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    route.name,
+                    route.displayName(translations.unnamedTrail),
                     style: Theme.of(context)
                         .textTheme.titleMedium,
                   ),
@@ -529,25 +531,25 @@ class _MapScreenState extends State<MapScreen> {
 
             if (landmark != null)
               Text(
-                'Near ${landmark.name} ? ${landmark.distanceMeters.round()} m from the trail',
+                translations.landmarkDistanceFromTrail(landmark.name, landmark.distanceMeters.round().toString()),
               ),
 
             if (route.symbol != null)
-              Text('Marking: ${route.symbol}'),
+              Text(translations.trailMarking(route.symbol!)),
 
             if (route.from != null)
-              Text('Start: ${route.from}'),
+              Text(translations.trailStart(route.from!)),
 
             if (route.to != null)
-              Text('Destination: ${route.to}'),
+              Text(translations.trailDestination(route.to!)),
 
             if (route.distanceKm != null)
               Text(
-                'OSM distance: ${route.distanceKm} km',
+                translations.trailDistanceOsm(route.distanceKm.toString()),
               ),
 
             if (route.network != null)
-              Text('Network: ${route.network}'),
+              Text(translations.trailNetwork(route.network!)),
 
             if (route.description != null &&
                 route.description!.isNotEmpty) ...[
@@ -571,10 +573,10 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                   label: Text(
                     _startingNavigation
-                        ? 'Starting GPS...'
+                        ? translations.startingGps
                         : _isNavigating
-                            ? 'Stop navigation'
-                            : 'Follow this trail',
+                            ? translations.stopNavigation
+                            : translations.followTrail,
                   ),
                   onPressed: _startingNavigation
                       ? null
@@ -592,7 +594,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _openOfflineMaps() async {
     if (kIsWeb) {
-      _showMapMessage('Offline downloads are available on Android and iOS.');
+      _showMapMessage(translations.offlineAvailability);
       return;
     }
 
@@ -629,7 +631,7 @@ class _MapScreenState extends State<MapScreen> {
       );
     } catch (error) {
       debugPrint('Could not show offline map: $error');
-      if (mounted) _showMapMessage('Could not show the saved map area.');
+      if (mounted) _showMapMessage(translations.savedAreaOpenError);
     }
   }
 
@@ -690,13 +692,13 @@ class _MapScreenState extends State<MapScreen> {
       final bounds = await controller.getVisibleRegion();
       if (!mounted) return;
       if (_estimatedOfflineTiles(bounds) > _offlineTileLimit) {
-        _finishOfflineDownload('Zoom in to download a smaller area.');
+        _finishOfflineDownload(translations.smallerOfflineArea);
         return;
       }
 
       final name = await showOfflineMapTitleDialog(
         context,
-        initialTitle: _selectedRoute?.name ?? '',
+        initialTitle: _selectedRoute?.displayName(translations.unnamedTrail) ?? '',
       );
       if (!mounted) return;
       if (name == null) {
@@ -730,12 +732,12 @@ class _MapScreenState extends State<MapScreen> {
                   : 0;
             });
           } else if (status is Success) {
-            _finishOfflineDownload('Map area downloaded.');
+            _finishOfflineDownload(translations.mapAreaDownloaded);
           } else if (status is Error) {
             _finishOfflineDownload(
               status.cause.code == 'TILE_COUNT_LIMIT_EXCEEDED'
-                  ? 'Zoom in to download a smaller area.'
-                  : 'Offline download failed. Check your connection and try again.',
+                  ? translations.smallerOfflineArea
+                  : translations.offlineDownloadError,
             );
             debugPrint('Offline download failed: ${status.cause}');
           }
@@ -745,7 +747,7 @@ class _MapScreenState extends State<MapScreen> {
       if (!mounted || !_downloading) return;
       debugPrint('Offline download failed: $error');
       _finishOfflineDownload(
-        'Offline download failed. Check your connection and try again.',
+        translations.offlineDownloadError,
       );
     }
   }
@@ -765,10 +767,10 @@ class _MapScreenState extends State<MapScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Choose an offline area',
+              translations.chooseOfflineArea,
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            const Text('Pan and zoom to frame the area you want to save.'),
+            Text(translations.frameOfflineArea),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -777,12 +779,12 @@ class _MapScreenState extends State<MapScreen> {
                   onPressed: _downloading
                       ? null
                       : () => setState(() => _pickingOfflineArea = false),
-                  child: const Text('Cancel'),
+                  child: Text(translations.cancel),
                 ),
                 FilledButton.icon(
                   onPressed: _downloading ? null : _downloadRegion,
                   icon: const Icon(Icons.download),
-                  label: const Text('Download area'),
+                  label: Text(translations.downloadArea),
                 ),
               ],
             ),
@@ -804,7 +806,7 @@ class _MapScreenState extends State<MapScreen> {
 
     setState(() {
       _startingNavigation = true;
-      _status = 'Starting GPS tracking...';
+      _status = translations.startingGpsTracking;
     });
 
     try {
@@ -818,8 +820,8 @@ class _MapScreenState extends State<MapScreen> {
             _trailProgress = progress;
             _isNavigating = true;
             _status = progress.offTrail
-                ? 'Warning: You may be off the trail'
-                : 'Following ${route.name}';
+                ? translations.offTrailWarning
+                : translations.followingTrail(route.displayName(translations.unnamedTrail));
           });
 
           if (progress.offTrail) {
@@ -842,7 +844,7 @@ class _MapScreenState extends State<MapScreen> {
           if (!mounted || session != _navigationSession) return;
 
           setState(() {
-            _status = 'GPS error: $error';
+            _status = translations.gpsError;
           });
         },
       );
@@ -860,7 +862,12 @@ class _MapScreenState extends State<MapScreen> {
       if (!mounted || session != _navigationSession) return;
 
       setState(() {
-        _status = 'Cannot start navigation: $e';
+        _status = switch (e) {
+          GpsNavigationStartError.servicesDisabled => translations.locationServicesRequired,
+          GpsNavigationStartError.permissionRequired => translations.locationPermissionRequired,
+          GpsNavigationStartError.invalidTrail => translations.invalidTrailGeometry,
+          _ => translations.navigationStartError,
+        };
         _isNavigating = false;
       });
     } finally {
@@ -880,7 +887,7 @@ class _MapScreenState extends State<MapScreen> {
     } catch (error) {
       debugPrint('Could not record hike start: $error');
       if (mounted && widget.isVisible) {
-        _showMapMessage('Could not save this hike to your history.');
+        _showMapMessage(translations.hikeSaveError);
       }
     }
   }
@@ -894,7 +901,7 @@ class _MapScreenState extends State<MapScreen> {
     } catch (error) {
       debugPrint('Could not record hike end: $error');
       if (mounted && widget.isVisible) {
-        _showMapMessage('Could not save the hike end time.');
+        _showMapMessage(translations.hikeEndSaveError);
       }
     }
   }
@@ -928,7 +935,7 @@ class _MapScreenState extends State<MapScreen> {
       _isNavigating = false;
       _currentPosition = null;
       _trailProgress = null;
-      _status = 'Navigation stopped';
+      _status = translations.navigationStopped;
     });
   }
 
@@ -1009,9 +1016,9 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                   const SizedBox(width: 8),
 
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Trail navigation',
+                      translations.trailNavigation,
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -1041,18 +1048,18 @@ class _MapScreenState extends State<MapScreen> {
           ),
 
           if (!_hikingView && _loadingWalkingApproach)
-            const Padding(
-              padding: EdgeInsets.only(bottom: 8),
-              child: Text('Finding walking directions?'),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(translations.findingWalkingDirections),
             )
           else if (!_hikingView && _walkingApproachUnavailable)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Flexible(child: Text('Walking directions unavailable')),
+                Flexible(child: Text(translations.walkingDirectionsUnavailable)),
                 TextButton(
                   onPressed: _requestWalkingApproach,
-                  child: const Text('Retry'),
+                  child: Text(translations.retry),
                 ),
               ],
             )
@@ -1060,9 +1067,9 @@ class _MapScreenState extends State<MapScreen> {
               progress != null &&
               progress.distanceFromTrailMeters > 25 &&
               progress.gpsAccuracyMeters > 50)
-            const Padding(
-              padding: EdgeInsets.only(bottom: 8),
-              child: Text('Waiting for a more accurate GPS fix…'),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(translations.waitingForAccurateGps),
             ),
 
           // Only visible when expanded
@@ -1078,35 +1085,32 @@ class _MapScreenState extends State<MapScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (progress == null)
-                    const Text(
-                      'Waiting for GPS...',
-                      style: TextStyle(fontSize: 12),
+                    Text(
+                      translations.waitingForGps,
+                      style: const TextStyle(fontSize: 12),
                     )
                   else ...[
                     Text(
-                      'Distance from trail: '
-                      '${progress.distanceFromTrailMeters.toStringAsFixed(0)} m',
+                      translations.distanceFromTrail(progress.distanceFromTrailMeters.toStringAsFixed(0)),
                       style: const TextStyle(fontSize: 12),
                     ),
 
                     Text(
-                      'GPS accuracy: '
-                      '±${progress.gpsAccuracyMeters.toStringAsFixed(0)} m',
+                      translations.gpsAccuracy(progress.gpsAccuracyMeters.toStringAsFixed(0)),
                       style: const TextStyle(fontSize: 12),
                     ),
 
                     if (progress.remainingMeters != null)
                       Text(
-                        'Estimated remaining: '
-                        '${(progress.remainingMeters! / 1000).toStringAsFixed(2)} km',
+                        translations.estimatedRemaining((progress.remainingMeters! / 1000).toStringAsFixed(2)),
                         style: const TextStyle(fontSize: 12),
                       ),
 
                     if (progress.offTrail)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 6),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6),
                         child: Text(
-                          'Warning: You may be off the trail',
+                          translations.offTrailWarning,
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.deepOrange,
@@ -1124,7 +1128,7 @@ class _MapScreenState extends State<MapScreen> {
                         MainAxisAlignment.spaceEvenly,
                     children: [
                       IconButton(
-                        tooltip: 'Follow GPS',
+                        tooltip: translations.followGps,
                         onPressed: () {
                           setState(() {
                             _followCamera = !_followCamera;
@@ -1145,7 +1149,7 @@ class _MapScreenState extends State<MapScreen> {
                       ),
 
                       IconButton(
-                        tooltip: 'Show trail',
+                        tooltip: translations.showTrail,
                         onPressed: () async {
                           setState(() {
                             _followCamera = false;
@@ -1162,7 +1166,7 @@ class _MapScreenState extends State<MapScreen> {
                       ),
 
                       IconButton(
-                        tooltip: 'My location',
+                        tooltip: translations.myLocation,
                         onPressed: () async {
                           setState(() {
                             _followCamera = false;
@@ -1179,7 +1183,7 @@ class _MapScreenState extends State<MapScreen> {
                       ),
 
                       IconButton(
-                        tooltip: 'Stop navigation',
+                        tooltip: translations.stopNavigation,
                         onPressed: _clearSelection,
                         icon: const Icon(
                           Icons.stop_circle_outlined,
@@ -1516,7 +1520,7 @@ class _MapScreenState extends State<MapScreen> {
       elevation: 3,
       shape: const CircleBorder(),
       child: IconButton(
-        tooltip: 'Reset map to north',
+        tooltip: translations.resetMapNorth,
         onPressed: _resetMapNorth,
         icon: ValueListenableBuilder<double>(
           valueListenable: _mapBearing,
@@ -1549,17 +1553,17 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Romania Hiking Map'),
+        title: Text(translations.hikingMapTitle),
         actions: [
           IconButton(
-            tooltip: 'Search trails',
+            tooltip: translations.searchTrails,
             onPressed: _routesLoaded && !_startingNavigation && !_pickingOfflineArea
                 ? _searchTrails
                 : null,
             icon: const Icon(Icons.search),
           ),
           IconButton(
-            tooltip: 'Saved offline maps',
+            tooltip: translations.savedOfflineMaps,
             onPressed: _controller == null || _downloading || _pickingOfflineArea
                 ? null
                 : _openOfflineMaps,
@@ -1571,7 +1575,7 @@ class _MapScreenState extends State<MapScreen> {
                 preferredSize: const Size.fromHeight(4),
                 child: LinearProgressIndicator(
                   value: _downloadProgress > 0 ? _downloadProgress : null,
-                  semanticsLabel: 'Downloading offline map',
+                  semanticsLabel: translations.downloadingOfflineMap,
                 ),
               )
             : null,
@@ -1579,7 +1583,7 @@ class _MapScreenState extends State<MapScreen> {
       body: _styleJson == null || _initialMapCamera == null
           ? Center(
               child: Text(
-                _styleJson == null ? _status : 'Finding your location…',
+                _styleJson == null ? _status ?? translations.loadingMap : translations.findingLocation,
               ),
             )
           : Stack(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peste_nori/globals.dart';
 
 import 'models/HikingRoute.dart';
 
@@ -8,11 +9,16 @@ class TrailSearchDelegate extends SearchDelegate<HikingRoute> {
         return (
           route: route,
           searchText: _normalize(
-            [route.name, route.ref, route.from, route.to].nonNulls.join(' '),
+            [
+              route.displayName(translations.unnamedTrail),
+              route.ref,
+              route.from,
+              route.to,
+            ].nonNulls.join(' '),
           ),
         );
       }).toList(),
-      super(searchFieldLabel: 'Search trails');
+      super(searchFieldLabel: translations.searchTrails);
 
   final List<({HikingRoute route, String searchText})> _trails;
 
@@ -27,7 +33,7 @@ class TrailSearchDelegate extends SearchDelegate<HikingRoute> {
   List<Widget> buildActions(BuildContext context) => [
     if (query.isNotEmpty)
       IconButton(
-        tooltip: 'Clear search',
+        tooltip: translations.clearSearch,
         onPressed: () {
           query = '';
           showSuggestions(context);
@@ -48,14 +54,14 @@ class TrailSearchDelegate extends SearchDelegate<HikingRoute> {
   Widget _buildMatches() {
     final search = _normalize(query.trim());
     if (search.isEmpty) {
-      return const Center(child: Text('Enter a trail name, place, or reference'));
+      return Center(child: Text(translations.trailSearchHint));
     }
     final words = search.split(RegExp(r'\s+'));
     final matches = _trails
         .where((trail) => words.every(trail.searchText.contains))
         .toList();
     if (matches.isEmpty) {
-      return const Center(child: Text('No matching trails'));
+      return Center(child: Text(translations.noMatchingTrails));
     }
     return ListView.builder(
       itemCount: matches.length,
@@ -64,11 +70,11 @@ class TrailSearchDelegate extends SearchDelegate<HikingRoute> {
         final details = [
           if (route.ref?.isNotEmpty == true) route.ref!,
           if (route.to?.isNotEmpty == true) route.to!,
-          if (route.distanceKm != null) '${route.distanceKm} km',
+          if (route.distanceKm != null) translations.distanceKm(route.distanceKm.toString()),
         ];
         return ListTile(
           leading: const Icon(Icons.route),
-          title: Text(route.name),
+          title: Text(route.displayName(translations.unnamedTrail)),
           subtitle: details.isEmpty ? null : Text(details.join(' · ')),
           onTap: () => close(context, route),
         );

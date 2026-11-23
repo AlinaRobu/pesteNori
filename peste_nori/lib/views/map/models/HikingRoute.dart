@@ -1,5 +1,10 @@
 
 class HikingRoute {
+  static const unnamedTrailName = 'Unnamed trail';
+
+  String displayName(String unnamedLabel) =>
+      name == unnamedTrailName ? unnamedLabel : name;
+
   final String id;
   final String name;
   final String routeType;
@@ -38,7 +43,7 @@ class HikingRoute {
 
     return HikingRoute(
       id: properties['@id']?.toString() ?? '',
-      name: properties['name']?.toString() ?? 'Unnamed trail',
+      name: properties['name']?.toString() ?? unnamedTrailName,
       routeType: properties['route']?.toString() ?? '',
       symbol: properties['osmc:symbol']?.toString(),
       network: properties['network']?.toString(),
