@@ -615,4 +615,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sexLabel => 'Sex';
+
+  @override
+  String get profileLanguage => 'Language';
+
+  @override
+  String get profileRomanian => 'Romanian';
+
+  @override
+  String get profileEnglish => 'English';
+
+  @override
+  String get profileDarkMode => 'Dark mode';
+
+  @override
+  String get profileOn => 'On';
+
+  @override
+  String get profileOff => 'Off';
+
+  @override
+  String get profileNotifications => 'Notifications';
+
+  @override
+  String get profileBearAlert => 'Bear sightings';
+
+  @override
+  String get profileSevereWeather => 'Severe weather';
+
+  @override
+  String get profileTrailClosure => 'Trail closures';
+
+  @override
+  String get profileAccidents => 'Accidents';
+
+  @override
+  String get profileNotificationInfo => 'These preferences are saved on this device. Trail alerts are not available yet.';
+
+  @override
+  String get profilePrivacy => 'Privacy settings';
+
+  @override
+  String get profileTrailVisibility => 'Trail visibility';
+
+  @override
+  String get profileVisibilityInfo => 'Saved on this device. Your location is currently private.';
+
+  @override
+  String get profileSupport => 'Contact support';
+
+  @override
+  String get profileSupportUnavailable => 'Support contact details are not available yet.';
+
+  @override
+  String get profileTerms => 'Terms & Conditions';
+
+  @override
+  String get profileTermsUnavailable => 'Terms & Conditions are not available yet.';
+
+  @override
+  String get profileSettingsSaveError => 'Could not save the setting. Please try again.';
+
+  @override
+  String get profileSettingsLoadError => 'Could not load your saved preferences.';
 }

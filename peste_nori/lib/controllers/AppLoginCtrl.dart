@@ -106,10 +106,11 @@ class AppLoginCtrl {
   }
 
   Future<void> deleteAccount() async{
-    await authService.deleteAccount();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
 
-    print('Deleted account ${currentUser}');
-    await userService.deleteUser(currentUser);
+    await userService.deleteUser(user);
+    await authService.deleteAccount(user);
 
     print('Logged in: ' + authService.getIfLoggedIn().toString());
   }

@@ -15,8 +15,8 @@ import 'utils/ThemeNotifier.dart';
 import 'package:peste_nori/globals.dart';
 
 Future<void> main() async {
-  //WidgetsFlutterBinding.ensureInitialized();
-  DevicePreview.enable(enabled: !kReleaseMode);
+  WidgetsFlutterBinding.ensureInitialized();
+  //DevicePreview.enable(enabled: !kReleaseMode);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -29,18 +29,20 @@ Future<void> main() async {
         : const AppleAppAttestProvider(),
   );
   
-  await themeNotifier.load();
+  await Future.wait([themeNotifier.load(), localeNotifier.load()]);
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  static final _authStateChanges = AuthService().authStateChanges;
+
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
-      builder: (context, themeMode, _) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([themeNotifier, localeNotifier]),
+      builder: (context, _) {
         return OverlaySupport(
           child: MaterialApp(
             onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
@@ -48,10 +50,11 @@ class MyApp extends StatelessWidget {
             supportedLocales: AppLocalizations.supportedLocales,
             theme: AppTheme.light(),
             darkTheme: AppTheme.dark(),
-            themeMode: themeMode,
+            themeMode: themeNotifier.value,
+            locale: localeNotifier.value,
             navigatorKey: navigatorKey,
             home: StreamBuilder<User?>(
-              stream: AuthService().authStateChanges,
+              stream: _authStateChanges,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Scaffold(

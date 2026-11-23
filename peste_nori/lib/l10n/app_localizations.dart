@@ -1210,6 +1210,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sex'**
   String get sexLabel;
+
+  /// No description provided for @profileLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get profileLanguage;
+
+  /// No description provided for @profileRomanian.
+  ///
+  /// In en, this message translates to:
+  /// **'Romanian'**
+  String get profileRomanian;
+
+  /// No description provided for @profileEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get profileEnglish;
+
+  /// No description provided for @profileDarkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark mode'**
+  String get profileDarkMode;
+
+  /// No description provided for @profileOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get profileOn;
+
+  /// No description provided for @profileOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get profileOff;
+
+  /// No description provided for @profileNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get profileNotifications;
+
+  /// No description provided for @profileBearAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Bear sightings'**
+  String get profileBearAlert;
+
+  /// No description provided for @profileSevereWeather.
+  ///
+  /// In en, this message translates to:
+  /// **'Severe weather'**
+  String get profileSevereWeather;
+
+  /// No description provided for @profileTrailClosure.
+  ///
+  /// In en, this message translates to:
+  /// **'Trail closures'**
+  String get profileTrailClosure;
+
+  /// No description provided for @profileAccidents.
+  ///
+  /// In en, this message translates to:
+  /// **'Accidents'**
+  String get profileAccidents;
+
+  /// No description provided for @profileNotificationInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'These preferences are saved on this device. Trail alerts are not available yet.'**
+  String get profileNotificationInfo;
+
+  /// No description provided for @profilePrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy settings'**
+  String get profilePrivacy;
+
+  /// No description provided for @profileTrailVisibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Trail visibility'**
+  String get profileTrailVisibility;
+
+  /// No description provided for @profileVisibilityInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this device. Your location is currently private.'**
+  String get profileVisibilityInfo;
+
+  /// No description provided for @profileSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact support'**
+  String get profileSupport;
+
+  /// No description provided for @profileSupportUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Support contact details are not available yet.'**
+  String get profileSupportUnavailable;
+
+  /// No description provided for @profileTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions'**
+  String get profileTerms;
+
+  /// No description provided for @profileTermsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions are not available yet.'**
+  String get profileTermsUnavailable;
+
+  /// No description provided for @profileSettingsSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the setting. Please try again.'**
+  String get profileSettingsSaveError;
+
+  /// No description provided for @profileSettingsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your saved preferences.'**
+  String get profileSettingsLoadError;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

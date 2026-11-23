@@ -615,4 +615,67 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get sexLabel => 'Sex';
+
+  @override
+  String get profileLanguage => 'Limbă';
+
+  @override
+  String get profileRomanian => 'Română';
+
+  @override
+  String get profileEnglish => 'Engleză';
+
+  @override
+  String get profileDarkMode => 'Mod întunecat';
+
+  @override
+  String get profileOn => 'Activat';
+
+  @override
+  String get profileOff => 'Dezactivat';
+
+  @override
+  String get profileNotifications => 'Notificări';
+
+  @override
+  String get profileBearAlert => 'Alerte de urs';
+
+  @override
+  String get profileSevereWeather => 'Vreme severă';
+
+  @override
+  String get profileTrailClosure => 'Trasee închise';
+
+  @override
+  String get profileAccidents => 'Accidente';
+
+  @override
+  String get profileNotificationInfo => 'Preferințele sunt salvate pe acest dispozitiv. Alertele de traseu nu sunt încă disponibile.';
+
+  @override
+  String get profilePrivacy => 'Setări de confidențialitate';
+
+  @override
+  String get profileTrailVisibility => 'Vizibilitate pe traseu';
+
+  @override
+  String get profileVisibilityInfo => 'Preferința este salvată pe acest dispozitiv. Locația ta este în prezent privată.';
+
+  @override
+  String get profileSupport => 'Contactează asistența';
+
+  @override
+  String get profileSupportUnavailable => 'Datele de contact pentru asistență nu sunt încă disponibile.';
+
+  @override
+  String get profileTerms => 'Termeni și condiții';
+
+  @override
+  String get profileTermsUnavailable => 'Termenii și condițiile nu sunt încă disponibili.';
+
+  @override
+  String get profileSettingsSaveError => 'Setarea nu a putut fi salvată. Încearcă din nou.';
+
+  @override
+  String get profileSettingsLoadError => 'Preferințele salvate nu au putut fi încărcate.';
 }

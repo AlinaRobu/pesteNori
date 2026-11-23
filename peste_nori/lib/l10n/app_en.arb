@@ -360,5 +360,26 @@
         }
     },
     "@@locale": "en",
-    "sexLabel": "Sex"
+    "sexLabel": "Sex",
+    "profileLanguage": "Language",
+    "profileRomanian": "Romanian",
+    "profileEnglish": "English",
+    "profileDarkMode": "Dark mode",
+    "profileOn": "On",
+    "profileOff": "Off",
+    "profileNotifications": "Notifications",
+    "profileBearAlert": "Bear sightings",
+    "profileSevereWeather": "Severe weather",
+    "profileTrailClosure": "Trail closures",
+    "profileAccidents": "Accidents",
+    "profileNotificationInfo": "These preferences are saved on this device. Trail alerts are not available yet.",
+    "profilePrivacy": "Privacy settings",
+    "profileTrailVisibility": "Trail visibility",
+    "profileVisibilityInfo": "Saved on this device. Your location is currently private.",
+    "profileSupport": "Contact support",
+    "profileSupportUnavailable": "Support contact details are not available yet.",
+    "profileTerms": "Terms & Conditions",
+    "profileTermsUnavailable": "Terms & Conditions are not available yet.",
+    "profileSettingsSaveError": "Could not save the setting. Please try again.",
+    "profileSettingsLoadError": "Could not load your saved preferences."
 }

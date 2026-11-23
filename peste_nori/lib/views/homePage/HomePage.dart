@@ -3,11 +3,10 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:peste_nori/controllers/AppLoginCtrl.dart';
 import 'package:peste_nori/controllers/UserProfileCtrl.dart';
 import 'package:peste_nori/globals.dart';
 import 'package:peste_nori/views/homePage/FullScreenImage.dart';
-import 'package:peste_nori/views/startup/StartupScreen.dart';
+import 'package:peste_nori/views/profile/AccountActions.dart';
 import 'ProfilePicture.dart';
 
 enum _HomeMenuAction { deleteAccount, signOut }
@@ -31,18 +30,11 @@ class HomePageState extends State<HomePage> {
   bool isLoading = true;
 
   final UserProfileCtrl _userProfileCtrl = UserProfileCtrl();
-  final AppLoginCtrl _authCtrl = AppLoginCtrl();
-  final controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
-  }
-
-  void dispose() {
-    super.dispose();
-    controller.dispose();
   }
 
   @override
@@ -210,41 +202,6 @@ class HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        Positioned(
-          top: 8,
-          right: 12,
-          child: SafeArea(
-            child: PopupMenuButton<_HomeMenuAction>(
-              tooltip: translations.settings,
-              icon: const Icon(Icons.settings, color: Colors.white),
-              color: Colors.white,
-              onSelected: (action) {
-                switch (action) {
-                  case _HomeMenuAction.deleteAccount:
-                    _confirmDeleteAccount();
-                  case _HomeMenuAction.signOut:
-                    _signOut();
-                }
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: _HomeMenuAction.signOut,
-                  child: Row(children: [Icon(Icons.logout), SizedBox(width: 12), Text(translations.signOut)]),
-                ),
-                PopupMenuItem(
-                  value: _HomeMenuAction.deleteAccount,
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete_forever, color: Colors.red),
-                      SizedBox(width: 12),
-                      Text(translations.deleteAccount, style: TextStyle(color: Colors.red)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -374,113 +331,5 @@ class HomePageState extends State<HomePage> {
 
       debugPrint('${translations.loadingUserDataError}: $e');
     }
-  }
-
-  Future<void> _signOut() async {
-    try {
-      await _authCtrl.signOut();
-
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute<void>(builder: (_) => const StartupScreen()), (route) => false);
-    } catch (e) {
-      debugPrint('${translations.signOutError}: $e');
-    }
-  }
-
-  Future<void> _confirmDeleteAccount() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text('${translations.deleteAccount}?'),
-        content: Text(translations.deleteAccountConfirm),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: Text(translations.cancel)),
-          TextButton(onPressed: () => Navigator.pop(dialogContext, true), child: Text(translations.deleteAccount)),
-        ],
-      ),
-    );
-
-    if (confirmed != true) return;
-
-    try {
-      await _authCtrl.deleteAccount();
-    } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
-
-      if (e.code == 'requires-recent-login') {
-        bool authenticated = await _reauthenticateUser();
-
-        if (!authenticated) {
-          return;
-        }
-
-        // Try deleting again after reauthentication.
-        await _authCtrl.deleteAccount();
-      } else {
-        final message = translations.deleteAccountError;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-        return;
-      }
-    }
-
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute<void>(builder: (_) => const StartupScreen()), (route) => false);
-  }
-
-  Future<String?> _askForPassword() async {
-    try {
-      return await showDialog<String>(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(translations.confirmYourPassword),
-            content: TextField(
-              controller: controller,
-              obscureText: true,
-              decoration: InputDecoration(labelText: translations.password),
-            ),
-            actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: Text(translations.cancel)),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context, controller.text);
-                },
-                child: Text(translations.confirm),
-              ),
-            ],
-          );
-        },
-      );
-    } finally {
-      controller.clear();
-    }
-  }
-
-  Future<bool> _reauthenticateUser() async {
-    if (currentUser == null) {
-      return false;
-    }
-
-    String? password;
-    final providers = currentUser?.providerData.map((provider) => provider.providerId).toSet();
-
-    // Email / password
-    if (providers!.contains('password')) {
-      password = await _askForPassword();
-    }
-
-    bool authenticated = false;
-    try {
-      authenticated = await _authCtrl.reauthenticateWithCredential(providers, password);
-    } on FirebaseAuthException catch (e) {
-      String message = translations.deleteAccountError;
-      if (e.code == "invalid-credential") {
-        message = translations.wrongPassword;
-      }
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-    }
-
-    setState(() {
-      password = "";
-    });
-    return authenticated;
   }
 }

@@ -18,13 +18,15 @@ class ThemeNotifier extends ValueNotifier<ThemeMode> {
     }
   }
 
-  Future<void> toggle() async {
-    value = value == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+  Future<void> toggle() => setDarkMode(!isDark);
+
+  Future<void> setDarkMode(bool enabled) async {
     const storage = FlutterSecureStorage();
     await storage.write(
       key: 'APP_THEME',
-      value: value == ThemeMode.dark ? 'dark' : 'light',
+      value: enabled ? 'dark' : 'light',
     );
+    value = enabled ? ThemeMode.dark : ThemeMode.light;
   }
 
   bool get isDark => value == ThemeMode.dark;

@@ -83,12 +83,7 @@ class AuthService {
     await _auth.signOut();
   }
 
-  Future<void> deleteAccount() async {
-    final user = _auth.currentUser;
-    if (user == null) return;
-
-    await user.delete();
-  }
+  Future<void> deleteAccount(User user) => user.delete();
 
   Future<void> _ensureGoogleSignInInitialized() {
     return _googleSignInInitialization ??= GoogleSignIn.instance.initialize(
